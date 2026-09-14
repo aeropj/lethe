@@ -1,0 +1,55 @@
+% Where Lethe sits: one mandatory tier in two very different stacks.
+\begin{tikzpicture}[iso, scale=0.58]
+  \def\W{3.6}\def\D{2.8}\def\GAP{1.55}
+
+  % ================================================== personal stack
+  \foreach \k/\col/\hh/\name/\what in {
+    0/slate/0.28/{Silicon}/{Secure Enclave or TPM. The key that wraps the vault},
+    1/slate/0.28/{Operating system}/{A background service, not an app you visit},
+    2/indigo/0.70/{LETHE}/{Detectors, vault, policy, ledger. All local},
+    3/teal/0.28/{Local endpoint}/{A localhost URL, and an MCP gateway},
+    4/sky/0.28/{Your surfaces}/{Coding agents, chat apps, browser. One variable each}} {
+    \pgfmathsetmacro{\z}{\k*\GAP}
+    \isobox{0}{0}{\z}{\W}{\D}{\hh}{\col}{}
+    \ifnum\k=2\relax
+      \draw[indigo!70!black, line width=0.7pt]
+        (0,0,\z) -- (\W,0,\z) -- (\W,\D,\z) -- (0,\D,\z) -- cycle;
+      \draw[indigo!70!black, line width=0.7pt]
+        (0,0,{\z+\hh}) -- (\W,0,{\z+\hh}) -- (\W,\D,{\z+\hh}) -- (0,\D,{\z+\hh}) -- cycle;
+    \fi
+    \node[isolabel, anchor=east, text=\col!55!black, align=right] at (-0.3,0,{\z+\hh*0.5}) {\name};
+    \node[isocap, anchor=west, text width=3.0cm, align=left] at ({\W+0.3},\D,{\z+\hh*0.5}) {\what};
+  }
+  \isobox{0.8}{0.7}{7.1}{2.0}{1.4}{0.55}{violet}{any model}
+  \draw[flow, teal, line width=1.2pt] ({\W*0.5},{\D*0.5},6.52) -- ({\W*0.5},{\D*0.5},7.05);
+  \node[zone, text=indigo!75!black, anchor=west, rotate=-30] at (0,-0.5,0) {THE PERSONAL STACK};
+
+  % ================================================== enterprise stack, level with the first
+  \begin{scope}[shift={(8.4,8.4,0)}]
+  \foreach \k/\col/\hh/\name/\what in {
+    0/slate/0.28/{Identity}/{SSO and devices. Who an agent acts for},
+    1/amber/0.28/{Systems of record}/{CRM, core banking, inbox. Where real values live},
+    2/indigo/0.70/{LETHE GATEWAY}/{HSM vault, manifests, egress gate, ledger. In your VPC},
+    3/teal/0.28/{Agent runtime}/{Each agent gets a scope, never a secret},
+    4/lime/0.28/{Assurance}/{SIEM feed, and the evidence auditors ask for}} {
+    \pgfmathsetmacro{\z}{\k*\GAP}
+    \isobox{0}{0}{\z}{\W}{\D}{\hh}{\col}{}
+    \ifnum\k=2\relax
+      \draw[indigo!70!black, line width=0.7pt]
+        (0,0,\z) -- (\W,0,\z) -- (\W,\D,\z) -- (0,\D,\z) -- cycle;
+      \draw[indigo!70!black, line width=0.7pt]
+        (0,0,{\z+\hh}) -- (\W,0,{\z+\hh}) -- (\W,\D,{\z+\hh}) -- (0,\D,{\z+\hh}) -- cycle;
+    \fi
+    \node[isolabel, anchor=east, text=\col!55!black, align=right] at (-0.3,0,{\z+\hh*0.5}) {\name};
+    \node[isocap, anchor=west, text width=3.0cm, align=left] at ({\W+0.3},\D,{\z+\hh*0.5}) {\what};
+  }
+  \isobox{0.35}{0.7}{7.1}{1.4}{1.2}{0.55}{violet}{models}
+  \isobox{2.05}{0.7}{7.1}{1.4}{1.2}{0.55}{violet}{MCP\\servers}
+  \draw[flow, teal, line width=1.2pt] ({\W*0.5},{\D*0.5},6.52) -- ({\W*0.5},{\D*0.5},7.05);
+  \node[zone, text=indigo!75!black, anchor=west, rotate=-30] at (0,-0.5,0) {THE ENTERPRISE STACK};
+  \end{scope}
+
+  \node[anchor=north, inner sep=0, font=\sffamily, text width=16cm, align=center]
+    at ([yshift=-9pt]current bounding box.south)
+    {\footnotesize\color{ink!80}Same tier, same invariants, two deployments. The one layer nothing above it is allowed to route around.};
+\end{tikzpicture}

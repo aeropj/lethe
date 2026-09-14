@@ -6,9 +6,9 @@ A privacy harness for the agentic era. Identity-bearing data is replaced with re
 
 ## Layout
 
-- `paper/lethe.tex` — concept paper, 5 pages, technical.
-- `paper/slides.tex` — 13-slide pitch deck: problem, insight, two worked use cases, the objection, why now, the gap, the ethos, the plan.
-- `paper/figs/` — TikZ figures. `hero` (the two shores), `fanout` (the problem), `cardanalogy` (the insight), `story-personal` and `story-enterprise` (worked examples), `pipeline` (detection layers), `swarm` (the agent gateway), `mini` (title mark).
+- `paper/lethe.tex` — concept paper, 6 pages. Pranjal Joshi and Prashil Bulbule.
+- `paper/slides.tex` — 15-slide concept deck that mirrors the paper section by section.
+- `paper/figs/` — TikZ figures. `hero` (the two shores), `fanout` (the problem), `cardanalogy` (the insight), `story-personal` and `story-enterprise` (worked examples), `stacks` (where it sits), `pipeline` (detection layers), `swarm` (the agent gateway), `mini` (title mark).
 - `paper/lethe-iso.tex` — isometric TikZ macro library, palette, card and fit helpers.
 - `research/` — background: competitive landscape, naming and mythology, LLM first principles, technical architecture.
 

@@ -65,7 +65,8 @@
 \vspace{-6mm}
 \eyebrow{Lethe · concept paper · September 2026}\\[6pt]
 {\fontsize{26}{29}\selectfont\bfseries\color{ink}Lethe}\\[2pt]
-{\fontsize{14}{17}\selectfont\color{ink!80}A privacy harness for the agentic era.}\\[7pt]
+{\fontsize{14}{17}\selectfont\color{ink!80}A privacy harness for the agentic era.}\\[6pt]
+{\fontsize{8.5}{11}\selectfont\color{ink!65}Pranjal Joshi\quad·\quad Prashil Bulbule}\\[7pt]
 \begin{minipage}{0.86\textwidth}
 {\fontsize{9.5}{13}\selectfont\color{ink!85}
 Lethe sits between people, their agent swarms and every frontier model. It replaces identity-bearing data with realistic surrogates \emph{before} anything leaves your device or VPC, keeps the mapping in a vault whose keys never leave, and restores identity on the way back. The model gets a convincing double; you keep the person. Nothing to forget, because nothing arrived.}
@@ -177,6 +178,35 @@ Models do not enforce need-to-know on their own. GPT-4 leaks in 25.7\,\% of agen
 
 Lethe's gateway evaluates Nissenbaum's contextual-integrity tuple on every hop: subject, sender, recipient, information type, transmission principle~\cite{nissenbaum}. Surrogates are self-labelling (the id encodes type, scope and subject), so taint tracking is parsing, not instrumentation. Agents on different providers get different surrogates for the same person; cross-provider hand-offs are re-mapped inside the boundary, like NAT. This removes one leg of the ``lethal trifecta'' (private data, untrusted content, external communication) by construction~\cite{willison}.
 
+% ======================================================================  06b
+\section{Where it sits}
+Lethe is not an application. It is a tier, and the point of a tier is that nothing above it may route around it. The same code and the same three invariants ship into two stacks that otherwise share nothing.
+
+\begin{figure*}[t]
+\centering
+\figfit{0.96\textwidth}{figs/stacks}
+\caption{\textbf{One tier, two stacks.} On a laptop it is a background service between your surfaces and the network. In a company it is the egress choke point between the agent runtime and every provider. Neither deployment asks the model to behave.}
+\label{fig:stacks}
+\end{figure*}
+
+\para{On a laptop.} A daemon, started once, that nothing visits. It holds the vault in a file wrapped by a key that lives in the Secure Enclave or the TPM, runs the detectors on the local NPU, and exposes two things: an OpenAI- and Anthropic-compatible URL on localhost, and an MCP gateway. Adoption is one environment variable per surface, which is what makes coding agents the first beachhead. The browser extension and the share sheet extend the same daemon to chat sites and to the phone. The correct mental model is the one people already have for a password manager or a local firewall: it sits below the apps, it is boring, and it is always on.
+
+\para{In a company.} The same engine, deployed in the VPC as the egress choke point. Below it sit identity and the systems of record, where real values actually live. Above it sits the agent runtime, whichever framework the team picked. Lethe holds the vault behind an HSM, evaluates a signed manifest per agent, and writes the ledger that the SIEM ingests. Crucially it is the last thing traffic touches before leaving the network, so ``did anything identifying leave?'' becomes a question with a recorded answer rather than an architectural belief. It slots into the AI-gateway tier that most enterprises are standing up anyway, next to the egress proxy, and it feeds the evidence pipeline that the compliance team is already building by hand.
+
+% ======================================================================  06c
+\section{Why anyone adopts it}
+A privacy layer that nobody wants is a science project. The pull is different on each side, and neither depends on the buyer caring about privacy in the abstract.
+
+\para{For a person: the self-censorship tax.} Everyone who uses these tools seriously has hit the same wall. You have the actual tax return, the real medical letter, the genuine dispute with your landlord, and the model would give a much better answer if it could see them. So you either paste it and feel the small lurch, or you blank the details by hand and get a worse answer. Almost everyone pastes. Lethe removes the choice rather than resolving it: the model sees a coherent, complete document and answers as if it were yours, because structurally it is.
+
+Three things make that pull stronger this year than last. Assistant memory is on by default and is quietly assembling a durable profile of a named person on someone else's disk. Most people now use three or four models, so identity accumulates at whichever lab is winning this quarter rather than at one they chose. And unlike every other privacy tool, this one costs nothing in capability: a VPN slows you down, a blocker breaks pages, private search returns worse results, and Lethe returns the same answer. That is the only reason a consumer privacy product ever reaches scale.
+
+\para{For a company: the blocked list is the business case.} Every enterprise has a list of workloads that AI is not allowed to touch. Claims handling, underwriting, HR cases, patient correspondence, legal review, anything with a customer record in it. That list is not the low-value work. It is the work with the headcount attached, and it is blocked for exactly one reason. The purchase is not a privacy control, it is the unlock for a roadmap already written and already funded.
+
+Four arguments close it. First, shadow AI is not hypothetical: roughly a third of employees already use personal accounts, so the real choice is whether sensitive data reaches models through something you control. Second, a swarm is unauditable by construction unless every hop passes one place, and the guardrails bolted onto a single vendor's gateway explicitly do not inspect tool-call arguments. Third, the compliance evidence arrives as a by-product; the ledger answers the security questionnaire instead of a quarter of screenshots. Fourth, the mapping belongs to the customer, so switching models stops requiring a renegotiated data agreement, which is worth real money in a market where the best model changes twice a year.
+
+The residual argument is blast radius. When a provider is breached, subpoenaed, or simply reads its own logs, what it holds is a set of coherent people who do not exist. That is a sentence a CISO can say out loud, and it is why the buyer is the security or platform owner rather than the privacy officer.
+
 % ======================================================================  06
 \section{Trust you can verify}
 \para{Ledger.} Each crossing appends a signed entry: payload hash, spans, detector versions, policy bundle hash, bypass rate. Chain heads are checkpointed to a public Merkle log (Sigstore Rekor first), the same shape Apple uses for Private Cloud Compute~\cite{pcc}. Content is never logged. Deleting entries after a checkpoint is detectable.
@@ -264,7 +294,6 @@ Every AI product will need to prove what it never learned about you. Lethe is th
 \textbf{Inside the product}, one mythology, used consistently. \textbf{Charon} is the tokeniser: \emph{the ferryman, and the obol you hand him is the token}. \textbf{Mnemosyne} is the vault. \textbf{Metis} is the on-device classifier: \emph{the intelligence Zeus kept inside his own head, never externalised}. \textbf{Themis} is the policy engine. \textbf{Eidolon} is the outbound payload. \textbf{Eunoe} is the re-identifier: \emph{Dante's river that restores memory}. \textbf{Aletheia} is the ledger. \textbf{Argus} watches the return path for leaks: \emph{the hundred-eyed guardian}. The badge is the \textbf{Mnemosyne Mark}: proof you drank from memory, not from Lethe.
 
 % ======================================================================  back matter
-\clearpage
 \section*{Appendix · Performance budget}
 \footnotesize
 \begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}X r r@{}}
