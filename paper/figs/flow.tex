@@ -1,0 +1,21 @@
+% Worked example: a tax question, end to end. Flat on purpose (it is a workflow); colour carries the semantics.
+\begin{tikzpicture}[font=\sffamily\scriptsize,
+  stage/.style={draw=#1!70!black, fill=#1!10, rounded corners=2pt, line width=0.5pt, inner sep=4pt, align=left, text width=4.3cm},
+  chip/.style={draw=#1!70!black, fill=#1, text=white, rounded corners=1.5pt, inner sep=2.5pt, font=\sffamily\bfseries\tiny},
+  hl/.style={fill=#1!25, rounded corners=1pt, inner sep=1pt, text=#1!60!black, font=\sffamily\bfseries\scriptsize}]
+  \node[stage=coral] (in) {\textbf{You type}\\[1pt]
+    ``I'm \tikz[baseline=(a.base)]\node[hl=coral](a){Pranjal Jain};, SSN \tikz[baseline=(b.base)]\node[hl=coral](b){123-45-6789};. I earn \$184{,}000 at \tikz[baseline=(c.base)]\node[hl=coral](c){Rivers Labs}; in \tikz[baseline=(d.base)]\node[hl=coral](d){Pune}; and my daughter \tikz[baseline=(e.base)]\node[hl=coral](e){Priya}; is 4. Which tax regime?''};
+  \node[stage=teal, right=17mm of in] (mid) {\textbf{The model sees}\\[1pt]
+    ``I'm \tikz[baseline=(a.base)]\node[hl=teal](a){Arjun Mehta};, SSN \tikz[baseline=(b.base)]\node[hl=teal](b){803-51-2276};. I earn \$184{,}000 at \tikz[baseline=(c.base)]\node[hl=teal](c){Coriander Systems}; in \tikz[baseline=(d.base)]\node[hl=teal](d){a tier-1 Indian city}; and my daughter \tikz[baseline=(e.base)]\node[hl=teal](e){Meera}; is 4. Which tax regime?''};
+  \node[stage=indigo, right=17mm of mid] (out) {\textbf{You read}\\[1pt]
+    ``\tikz[baseline=(a.base)]\node[hl=indigo](a){Pranjal};, at \$184{,}000 with one dependant the new regime saves you about \$1{,}900 a year … file with \tikz[baseline=(b.base)]\node[hl=indigo](b){Rivers Labs};' Form 16 …''};
+  \draw[flow, teal] (in.east) -- node[chip=teal, above=1.5pt] {detect · tokenise} (mid.west);
+  \draw[flow, indigo] (mid.east) -- node[chip=indigo, above=1.5pt] {stream-detokenise} (out.west);
+  \node[draw=amber!70!black, fill=amber!12, rounded corners=2pt, below=3.5mm of mid, inner sep=3pt, align=center, text width=5.6cm] (vault)
+    {\textbf{Vault} · local · per-scope HMAC surrogates\\[1pt]
+     \texttt{Pranjal Jain\,$\leftrightarrow$\,Arjun Mehta}\quad \texttt{123-45-6789\,$\leftrightarrow$\,803-51-2276}\\[1pt]
+     gender, culture, format, checksum preserved · amounts, ages, dates untouched};
+  \draw[flowd, amber!80!black] (mid.south) -- (vault.north);
+  \node[isocap, below=1.5mm of in, text width=4.3cm, align=left] {identity: 5 spans replaced\\semantics: salary, age, question intact};
+  \node[isocap, below=1.5mm of out, text width=4.3cm, align=left] {same answer quality\\provider learned nothing about you};
+\end{tikzpicture}

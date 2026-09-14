@@ -1,0 +1,15 @@
+# LaTeX build artefacts
+*.aux
+*.log
+*.out
+*.toc
+*.nav
+*.snm
+*.vrb
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+build/
+paper/test-fig.*
+.DS_Store
+.claude/worktrees/

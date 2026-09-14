@@ -1,0 +1,291 @@
+% ======================================================================
+%  Lethe — ideation deck (16:9). Build: pdflatex slides.tex
+% ======================================================================
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{default}
+\usefonttheme{professionalfonts}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[type1,mainfont,semibold]{inter}
+\usepackage[type1,scale=0.88]{plex-mono}
+\usepackage{microtype}
+\usepackage{tikz,amsmath,amssymb,booktabs,tabularx,array,graphicx}
+\usepackage[skins]{tcolorbox}
+\input{lethe-iso}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{normal text}{fg=ink}
+\setbeamercolor{structure}{fg=indigo}
+\setbeamercolor{itemize item}{fg=indigo}
+\setbeamertemplate{itemize item}{\tikz\fill[indigo] (0,0) circle (1.6pt);}
+\setbeamertemplate{itemize subitem}{\tikz\draw[indigo] (0,0) circle (1.4pt);}
+\setbeamerfont{normal text}{size=\small}
+\setlength{\leftmargini}{1.1em}
+\setbeamersize{text margin left=9mm, text margin right=9mm}
+
+\newcommand{\eyebrow}[1]{{\fontsize{6.5}{8}\selectfont\bfseries\textcolor{indigo}{\MakeUppercase{#1}}}}
+\newcommand{\slideeyebrow}{}
+\newcommand{\slide}[2]{\renewcommand{\slideeyebrow}{#1}\frametitle{#2}}
+\setbeamertemplate{frametitle}{%
+  \vspace{7mm}\eyebrow{\slideeyebrow}\\[1pt]
+  {\fontsize{17}{20}\selectfont\bfseries\color{ink}\insertframetitle}\\[-2pt]
+  {\color{indigo}\rule{9mm}{1.2pt}}\vspace{2mm}}
+\setbeamertemplate{footline}{%
+  \hspace{9mm}{\fontsize{6}{7}\selectfont\color{ink!50}LETHE\,·\,ideation deck\,·\,September 2026}\hfill
+  {\fontsize{6}{7}\selectfont\color{ink!50}\insertframenumber}\hspace{9mm}\vspace{4mm}}
+
+\newtcolorbox{callout}[2][indigo]{enhanced, colback=#1!4!white, colframe=#1!4!white, boxrule=0pt, arc=1.5pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, borderline west={2pt}{0pt}{#1}, fontupper=\footnotesize,
+  title={\eyebrow{#2}}, coltitle=#1, attach title to upper={\\[1pt]}}
+\newcommand{\full}{\tikz[baseline=-0.55ex]\fill[teal] (0,0) circle (2.4pt);}
+\newcommand{\half}{\tikz[baseline=-0.55ex]{\draw[amber!80!black,line width=0.6pt] (0,0) circle (2.4pt);\fill[amber!80!black] (0,-2.4pt) arc (-90:90:2.4pt) -- cycle;}}
+\newcommand{\none}{\tikz[baseline=-0.55ex]\draw[coral,line width=0.7pt] (0,0) circle (2.4pt);}
+\newcommand{\bignum}[1]{{\fontsize{22}{24}\selectfont\bfseries\color{indigo}#1}}
+
+\begin{document}
+
+% ---------------------------------------------------------------- 1 title
+\begin{frame}[plain]
+\vspace{14mm}\hspace{9mm}\begin{minipage}{0.55\textwidth}
+\eyebrow{Lethe · ideation deck · September 2026}\\[8pt]
+{\fontsize{34}{36}\selectfont\bfseries\color{ink}Lethe}\\[4pt]
+{\fontsize{15}{18}\selectfont\color{ink!80}A privacy harness for the agentic era.}\\[10pt]
+{\footnotesize\color{ink!75}The model drinks from Lethe and forgets who you are, because it never knew. You keep Mnemosyne.}
+\end{minipage}\hfill
+\begin{minipage}{0.38\textwidth}\centering
+\begin{tikzpicture}[iso, scale=0.55]
+  \isoplate{0}{0}{0}{4}{4}{indigo}\isoriver{4.3}{-0.4}{4.4}{1}\isoplate{5.6}{0}{0}{3}{4}{violet}
+  \isobox{0.6}{1.3}{0}{1.4}{1.4}{0.35}{indigo}{}\isostack{0.9}{1.6}{0.35}{0.8}{0.8}{5}{teal}
+  \isobox{6.2}{0.5}{0}{1.2}{1}{0.8}{violet}{}\isobox{6.2}{2.3}{0}{1.2}{1}{0.8}{violet}{}
+  \draw[flow, teal, line width=1.1pt] (2,2,0.3) -- (6.2,1.9,0.4);\isocube{4.6}{1.9}{0.35}{0.3}{teal}
+\end{tikzpicture}
+\end{minipage}
+\end{frame}
+
+% ---------------------------------------------------------------- 2 problem
+\begin{frame}
+\slide{01 · The problem}{Conversation became orchestration. Nobody sees the data flow.}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{itemize}
+\item One question fans out to a planner, a researcher, a booker. Each calls tools, reads the web, and talks to a different lab.
+\item The flow carries your name, employer, your daughter's name, your account numbers. Hundreds of details you never notice.
+\item Provider promises are policy, not physics: 30-day abuse logs, human safety review, litigation holds, 5-year opt-in retention, covered-model retention even under ZDR, memory features that build a profile.
+\end{itemize}
+\column{0.42\textwidth}
+\begin{callout}{Honest risk ranking of PII in a prompt}
+1. Logging, retention, human review, subpoena\\
+2. Agent and tool traces, injection exfiltration\\
+3. Memory features\\
+4. Being trained in
+\end{callout}
+\vspace{2mm}
+\bignum{39.7\,\%}\\{\footnotesize of enterprise AI interactions involve sensitive data (Cyberhaven 2026), up from 10.7\,\% two years earlier.}
+\end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------- 3 idea
+\begin{frame}
+\slide{02 · The idea}{Tokenisation for identity, with surrogates that look real.}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{itemize}
+\item Card networks solved this once: the merchant holds a token that is useless outside the vault.
+\item Lethe does it for identity. ``Pranjal Jain'' becomes ``Arjun Mehta'', not \texttt{[PERSON\_1]}, so every model prior about names, pronouns and formality still fires.
+\item Keys and the mapping stay on your device or in your VPC. Answers are re-identified locally, as they stream.
+\end{itemize}
+\vspace{2mm}
+\textbf{Three invariants}
+\begin{itemize}
+\item[I1] No byte leaves the boundary except through tokenise, with a logged policy decision.
+\item[I2] Detokenise runs only inside the boundary: your screen, or an allow-listed tool at execution.
+\item[I3] Every crossing is recorded in a tamper-evident log you can verify.
+\end{itemize}
+\column{0.42\textwidth}
+\begin{callout}{Why the name}
+Orphic initiates were told to avoid the spring of Lethe and drink from Mnemosyne, memory. The model drinks from Lethe. You keep Mnemosyne. \emph{Aletheia}, truth, is literally \emph{a-lethe}: un-forgetting. It names the audit log.
+\end{callout}
+\begin{callout}[teal]{Eidolon}
+In Euripides the phantom Helen went to Troy while the real one stayed in Egypt. The model meets your eidolon, never you.
+\end{callout}
+\end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------- 4 hero
+\begin{frame}
+\slide{03 · Architecture}{The two shores.}
+\centering\scalebox{0.8}{\input{figs/hero}}
+\end{frame}
+
+% ---------------------------------------------------------------- 5 pipeline
+\begin{frame}
+\slide{03 · Architecture}{Five detection layers, all on your silicon.}
+\begin{columns}[T]
+\column{0.5\textwidth}\centering
+\scalebox{1.05}{\input{figs/pipeline}}
+\column{0.46\textwidth}
+\begin{itemize}
+\item Cheap deterministic layers first; only spans still uncertain escalate.
+\item L1 is an encoder ensemble (GLiNER-PII, DeBERTa-PII, OpenAI Privacy Filter) via ONNX or CoreML.
+\item L2 is a 0.6--1.7B local model on residual text only, returning grammar-constrained spans: ``my daughter Priya'', employer+role+city.
+\item L3, your own dictionary, makes recall for what matters most exactly one.
+\item L4 estimates how many people match a tuple of quasi-identifiers and generalises when $k$ is small.
+\item No layer calls a cloud model. Budget: under 50\,ms added TTFT without L2, under 300\,ms with it.
+\end{itemize}
+\end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------- 6 example
+\begin{frame}
+\slide{03 · Architecture}{A tax question, end to end.}
+\centering\scalebox{0.95}{\input{figs/flow}}
+\vspace{3mm}
+\begin{itemize}
+\item Surrogates are HMAC-derived per scope: same entity, same surrogate within a scope; unlinkable across providers.
+\item Formats preserved: valid-structure SSNs, Luhn-valid cards, per-subject date shifts, functional e-mail relays, gender- and culture-matched names. Amounts, ages, dosages untouched.
+\item Tool arguments are detokenised only inside the boundary and only if the agent's manifest allows that tool to act with real values.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------- 7 intelligence
+\begin{frame}
+\slide{04 · First principles}{Why intelligence survives.}
+\begin{columns}[T]
+\column{0.5\textwidth}
+A frontier model is BPE tokenisation, next-token pretraining, then SFT and preference optimisation (RLHF, RLAIF, DPO, GRPO). Every stage is statistics over token sequences. None of it can tell whether ``Michael Brooks'' is real; all of it can tell that a bracketed tag is not narrative text.
+\vspace{3mm}
+\begin{center}\footnotesize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+String & GPT-4o & Llama\,3.2 & Qwen3 \\
+\midrule
+\texttt{Michael Brooks} & 2 & 2 & 2 \\
+\texttt{[PERSON\_1]} & 5 & 5 & 5 \\
+\texttt{$\langle$PERSON\_3$\rangle$} & 9 & 6 & 5 \\
+\bottomrule
+\end{tabular}\\[2pt]{\fontsize{6.5}{8}\selectfont tokens per string}
+\end{center}
+\column{0.46\textwidth}
+\begin{itemize}
+\item Drafting tasks: entity replacement costs about 1 point in 10 (Pasch \& Cha 2025).
+\item PAPILLON, 901 real prompts: naive redaction 88.2 $\to$ 77.2; tuned pipeline 85.5.
+\item Realistic, consistent pseudonyms beat tags roughly 10$\times$ (Yermilov 2023); type-consistent fakes lift BERTScore 81.6 $\to$ 94.9 (SurrogateShield).
+\item The one catastrophe, retrieval 0.80 $\to$ 0.32 (Deußer 2026), came from anonymising queries and documents \emph{independently}. A consistency bug; invariant I1 designs it out.
+\end{itemize}
+\begin{callout}[teal]{Design rules}
+Identifiers in, semantics out. Never mask amounts. Shift dates. Match gender and culture. One mapping per scope, everywhere.
+\end{callout}
+\end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------- 8 swarm
+\begin{frame}
+\slide{05 · Agent swarms}{One gateway. Need-to-know, enforced structurally.}
+\begin{columns}[T]
+\column{0.52\textwidth}\centering
+\scalebox{1.05}{\input{figs/swarm}}
+\column{0.44\textwidth}
+\begin{itemize}
+\item Models do not enforce need-to-know: GPT-4 leaks in 25.7\,\% of agent actions (PrivacyLens); one hijack drops Gemini Ultra from 94\,\% to 45\,\%, an architectural minimiser holds 97\,\% (AirGapAgent).
+\item AWS documents that Bedrock guardrails do not evaluate tool-call arguments or results at all. That is where agent data lives.
+\item Every hop is checked against Nissenbaum's contextual-integrity tuple: subject, sender, recipient, type, transmission principle.
+\item Surrogates are self-labelling, so taint tracking is parsing, not instrumentation. Cross-provider hand-offs are re-mapped inside the boundary, like NAT.
+\item An injected ``send the SSN'' can only leak a fake: one leg of the lethal trifecta removed by construction.
+\end{itemize}
+\end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------- 9 trust
+\begin{frame}
+\slide{06 · Trust}{Prove what was never learned about you.}
+\begin{columns}[T]
+\column{0.48\textwidth}
+\textbf{Ledger.} Each crossing appends a signed entry: payload hash, spans, detector versions, policy hash, bypass rate. Chain heads checkpoint to a public Merkle log (Sigstore Rekor first), the shape Apple uses for Private Cloud Compute. Content is never logged.
+\vspace{2mm}
+
+\textbf{What is provable.} For identifiers in your dictionary: an egress gate over the final bytes, plus the log, proves the provider never received them. For unknown identifiers the claim is statistical, measured out of distribution, and published. ZK proofs of absence for regex classes are practical; ZK proofs of a neural pass are not, and we say so.
+\column{0.48\textwidth}
+\textbf{Legal posture.} CJEU, \emph{EDPS v SRB}, September 2025: identifiability is judged from the recipient's perspective. A recipient without reasonable means to re-identify may not be processing personal data. On-device keys make the provider that recipient. Nobody markets this yet.
+\vspace{2mm}
+
+\textbf{The Mnemosyne Mark.} A revocable badge for products built on Lethe, backed by a public verifier. Controls map onto SOC 2, ISO/IEC 42001 and the CSA AI Controls Matrix. A confidential-compute tier composes with tokenisation rather than replacing it.
+\end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------- 10 landscape
+\begin{frame}
+\slide{07 · Landscape}{What exists, and what nobody ships.}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{3.2cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{4.6cm}@{}}
+\toprule
+& Who & Gap \\
+\midrule
+Detection & OpenAI Privacy Filter (Apache-2.0, Apr 2026), GLiNER2-PII, Presidio & Commodity. Off-the-shelf recall collapses out of distribution (0.20--0.51 F1 on REDACT). \\
+Reversible tokens, org-side & Protecto, WitnessAI, Skyflow, Kong sanitizer restore flag & Vendor holds the keys; no agent or MCP path. \\
+Reversible, consumer & Wald.ai; OSS proxies and extensions & Single session, no swarm, no ledger. \\
+Confidential compute & Tinfoil (YC X25), Confer, Privatemode, Apple PCC & Open-weight models only; positioned \emph{against} redaction. \\
+\midrule
+\textbf{Nobody ships} & \multicolumn{2}{>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.2cm-2\tabcolsep}}{User-side key custody + swarm-wide consistent bijection + tool-boundary detokenisation + a public ledger, as one product.} \\
+\bottomrule
+\end{tabularx}
+\vspace{3mm}
+\begin{callout}{Positioning}
+The standalone AI-gateway market is small (\$251M in 2026) and consolidating into platforms. Lethe is the privacy substrate for agent builders, not ``anonymise ChatGPT''.
+\end{callout}
+\end{frame}
+
+% ---------------------------------------------------------------- 11 threat
+\begin{frame}
+\slide{08 · Threat model}{Honestly.}
+\begin{columns}[T]
+\column{0.55\textwidth}\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{3.6cm}>{\centering\arraybackslash}p{0.5cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Adversary & v1 & Residual \\
+\midrule
+Logging, human review, subpoena & \full & quasi-identifiers \\
+Training, breach, insider & \full & surrogates map to nobody \\
+Provider memory features & \half & rotate scope per session \\
+Malicious tool or MCP server & \half & gets fakes; real-data tools gated \\
+Prompt injection in agent context & \half & semantics still exfiltrable \\
+Another agent in the swarm & \full & only with structural scopes \\
+Attribute inference from prose & \none & 85\,\% top-1 from text; v2 \\
+Detector miss on new data & \none & dictionary, ask-budget, fail-closed \\
+\bottomrule
+\end{tabularx}\\[3pt]
+\full\ mitigated \quad \half\ partial \quad \none\ open
+\column{0.4\textwidth}
+\textbf{Unsolved, stated plainly}
+\begin{itemize}
+\item Quasi-identifier re-identification from prose.
+\item Multilingual, out-of-distribution recall.
+\item Context sharding across providers: no empirical study yet.
+\item Images, voice, files: local OCR and ASR, v2.
+\item The vault is the honeypot: local-first, hardware-wrapped, rate-limited, never bulk-exportable.
+\end{itemize}
+\end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------- 12 wedge
+\begin{frame}
+\slide{09 · Plan}{The wedge.}
+\begin{columns}[T]
+\column{0.58\textwidth}
+\textbf{Now.} \texttt{brew install lethe \&\& lethe up}: a Rust daemon exposing an OpenAI- and Anthropic-compatible endpoint on localhost that Claude Code, Codex, Cursor, LangGraph and the agent SDKs adopt with one environment variable.
+\vspace{2mm}
+
+\textbf{Next.} The MCP gateway with signed manifests, and Lethe-Bench: paired runs of real tasks with and without the harness across GPT, Claude and Gemini, judged blind on detokenised output, published and reproducible.
+\vspace{2mm}
+
+\textbf{Then.} Team gateway with HSM keys and the ledger service, SOC 2 Type I, the Mark. Consumer desktop and browser surfaces once the brand carries them.
+\column{0.38\textwidth}
+\begin{callout}{In one line}
+Every AI product will need to prove what it never learned about you. Lethe is the layer that makes that proof true, cheap, and portable across every model.
+\end{callout}
+\vspace{3mm}
+\eyebrow{Engineering-heavy by design}\\[2pt]
+{\footnotesize Rust core, ONNX/CoreML encoders, MLX or llama.cpp SLM, hash-chained log with public checkpoints, MCP on both sides. The moat is the mapping, the policy and the agent substrate, not the detector.}
+\end{columns}
+\end{frame}
+
+\end{document}
