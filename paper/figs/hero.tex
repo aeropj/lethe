@@ -5,46 +5,49 @@
   \isoriver{7.9}{-0.6}{7.2}{1.6}
 
   % ---- your side (far to near)
-  \isocube{0.55}{2.5}{0}{0.55}{sky}\isocube{1.2}{2.5}{0}{0.55}{sky}
-  \isocube{0.55}{3.15}{0}{0.55}{sky}\isocube{1.2}{3.15}{0}{0.55}{sky}
-  \isocyl{5.0}{5.5}{0}{0.55}{1.2}{amber}{}
-  \isobox{0.5}{0.5}{0}{1.3}{1.3}{0.5}{sky}{You}
-  \isobox{2.9}{1.3}{0}{3.0}{3.6}{0.4}{indigo}{}
-  \isostack{3.5}{1.9}{0.4}{1.7}{2.4}{5}{teal}
+  \isocube{0.55}{3.3}{0}{0.6}{sky}\isocube{1.3}{3.3}{0}{0.6}{sky}
+  \isocube{0.55}{4.05}{0}{0.6}{sky}\isocube{1.3}{4.05}{0}{0.6}{sky}
+  \isocyl{5.1}{5.6}{0}{0.55}{1.2}{amber}{}
+  \isobox{0.5}{0.6}{0}{1.4}{1.4}{0.6}{sky}{You}
+  \isobox{2.9}{1.4}{0}{3.1}{3.6}{0.5}{indigo}{}
+  \isostack{3.6}{2.1}{0.5}{1.7}{2.2}{5}{teal}
 
-  % ---- providers (far to near)
-  \isobox{10.3}{4.2}{0}{1.4}{1.1}{0.9}{violet}{Gemini}
-  \isobox{12.5}{5.0}{0}{1.4}{1.1}{0.9}{violet}{Next\\lab}
-  \isobox{10.3}{2.4}{0}{1.4}{1.1}{0.9}{violet}{Anthropic}
-  \isobox{12.5}{3.2}{0}{1.4}{1.1}{0.9}{violet}{Open\\weights}
-  \isobox{10.3}{0.6}{0}{1.4}{1.1}{0.9}{violet}{OpenAI}
-  \isobox{12.5}{1.4}{0}{1.4}{1.1}{0.9}{violet}{xAI}
+  % ---- providers, aligned 2 x 3 grid (far to near)
+  \isobox{10.4}{4.4}{0}{1.4}{1.1}{0.9}{violet}{Gemini}
+  \isobox{12.6}{4.4}{0}{1.4}{1.1}{0.9}{violet}{Next\\lab}
+  \isobox{10.4}{2.5}{0}{1.4}{1.1}{0.9}{violet}{Anthropic}
+  \isobox{12.6}{2.5}{0}{1.4}{1.1}{0.9}{violet}{Open\\weights}
+  \isobox{10.4}{0.6}{0}{1.4}{1.1}{0.9}{violet}{OpenAI}
+  \isobox{12.6}{0.6}{0}{1.4}{1.1}{0.9}{violet}{xAI}
 
-  % ---- flows (three ideas, three colours)
-  \draw[flow, coral] (1.8,1.15,0.3) -- (2.9,1.7,0.3);
-  \draw[flow, coral] (1.8,2.85,0.3) -- (2.9,3.0,0.3);
-  \draw[flow, teal, line width=1.2pt] (5.9,3.1,0.25) -- (10.3,3.0,0.45);
-  \draw[flowd, teal] (10.3,2.6,0.45) -- (5.9,2.5,0.25);
-  \draw[flow, indigo] (2.9,2.2,0.42) -- (1.8,1.6,0.42);
-  \draw[flowd, amber!80!black] (5.0,4.9,0.4) -- (5.0,5.25,0.4);
+  % ---- flows
+  \draw[flow, coral] (1.9,1.25,0.35) -- (2.9,1.8,0.35);
+  \draw[flow, coral] (1.95,3.65,0.35) -- (2.9,3.3,0.35);
+  \draw[flow, teal, line width=1.2pt] (6.0,3.2,0.3) -- (10.4,3.05,0.45);
+  \draw[flowd, teal] (10.4,2.7,0.45) -- (6.0,2.6,0.3);
+  \draw[flow, indigo] (2.9,2.4,0.5) -- (1.9,1.8,0.5);
+  \draw[flowd, amber!80!black] (5.1,5.0,0.45) -- (5.1,5.35,0.45);
 
   % ---- packets
-  \isocube{2.15}{1.35}{0.35}{0.3}{coral}
-  \isocube{2.3}{2.9}{0.35}{0.3}{coral}
-  \isocube{7.5}{3.0}{0.35}{0.32}{teal}
-  \isocube{8.6}{3.0}{0.35}{0.32}{teal}
+  \isocube{2.25}{1.45}{0.4}{0.32}{coral}
+  \isocube{2.3}{3.35}{0.4}{0.32}{coral}
+  \isocube{7.5}{3.1}{0.35}{0.34}{teal}
+  \isocube{8.8}{3.1}{0.35}{0.34}{teal}
 
-  % ---- captions
-  \node[isolabel, text=white] at (4.4,1.3,0.2) {LETHE HARNESS};
-  \draw[ink!35, line width=0.3pt] (4.35,3.1,2.25) -- (4.35,3.1,3.3);
-  \node[isocap, anchor=south] at (4.35,3.1,3.3) {five detection layers\\run on your silicon};
-  \node[isocap, anchor=south] at (5.0,5.5,1.35) {vault · keys never leave};
-  \node[isocap, anchor=north] at (1.2,2.6,-0.15) {your agents};
-  \node[zone, text=indigo!75!black, anchor=west, rotate=-30] at (0.1,-0.4,0) {YOUR SIDE\,·\,device or VPC};
-  \node[zone, text=violet!75!black, anchor=west, rotate=-30] at (9.9,-0.4,0) {THEIR SIDE\,·\,any model, any lab};
+  % ---- leader-line captions, all outside the solids
+  \draw[ink!30, line width=0.3pt] (4.4,3.2,2.35) -- (4.4,3.2,3.5);
+  \node[isocap, anchor=south, font=\sffamily\bfseries\scriptsize, text=indigo!80!black] at (4.4,3.2,3.85)
+    {THE LETHE HARNESS};
+  \node[isocap, anchor=south] at (4.4,3.2,3.5) {five detection layers, on your silicon};
+  \node[isocap, anchor=west, align=left] at (5.8,6.0,0.9) {vault\\keys never leave};
+  \node[isocap, anchor=east, align=right] at (0.3,3.9,0.3) {your\\agents};
+
+  % ---- zones
+  \node[zone, text=indigo!75!black, anchor=west, rotate=-30] at (0.1,-0.5,0) {YOUR SIDE\,·\,device or VPC};
+  \node[zone, text=violet!75!black, anchor=west, rotate=-30] at (9.9,-0.5,0) {THEIR SIDE\,·\,any model, any lab};
   \node[zone, text=river!55!black, rotate=30] at (8.7,8.0,0) {LETHE\,·\,what crosses forgets who you are};
 
-  \node[anchor=north west, inner sep=0, font=\sffamily] at ([yshift=-5pt]current bounding box.south west)
+  \node[anchor=north west, inner sep=0, font=\sffamily] at ([yshift=-6pt]current bounding box.south west)
     {\chip{coral}{identity-bearing · never crosses}\quad
      \chip{teal}{surrogates · all that crosses}\quad
      \chip{indigo}{re-identified locally}\quad

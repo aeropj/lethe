@@ -1,0 +1,57 @@
+% Storyboard: one person, one tax question. Scene on top, steps beneath.
+\begin{tabular}{@{}c@{}}
+\begin{tikzpicture}[iso, scale=0.62]
+  % ---- ground: three stages on the (1,1) diagonal; the river sits between stage 2 and 3
+  \isoplate{-0.4}{-0.4}{0}{6.6}{6.6}{sky}
+  \isoplate{6.1}{6.1}{0}{6.6}{6.6}{indigo}
+  \isoplate{12.6}{12.6}{0}{6.6}{6.6}{violet}
+  \isoriverv{23.9}{25.3}{-6.4}{6.4}
+
+  % ---- stage 1: you
+  \isobox{1.4}{1.4}{0}{2.3}{2.3}{1.1}{sky}{You}
+  \isocube{2.4}{2.4}{1.1}{0.5}{coral}
+
+  % ---- stage 2: lethe, on your laptop (far to near: descending y-x)
+  \isocyl{7.2}{12.2}{0}{0.55}{1.3}{amber}{}
+  \draw[ink!30, line width=0.3pt] (7.2,12.2,1.35) -- (7.2,12.2,2.4);
+  \node[isocap, anchor=south, font=\sffamily\fontsize{5}{6}\selectfont, align=center] at (7.2,12.2,2.4) {vault · keys stay here};
+  \isobox{6.9}{6.9}{0}{3.0}{3.0}{0.55}{indigo}{}
+  \isostack{7.4}{7.4}{0.55}{2.0}{2.0}{5}{teal}
+  \isostack{11.0}{7.0}{0}{1.2}{1.2}{3}{plum}
+
+  % ---- stage 3: any frontier model
+  \isobox{13.2}{16.4}{0}{1.7}{1.5}{1.1}{violet}{}
+  \isobox{14.0}{13.8}{0}{2.8}{2.6}{1.9}{violet}{any frontier\\model}
+
+  % ---- flows
+  \draw[flow, coral, line width=1.1pt] (4.3,3.5,0.5) -- (7.3,6.5,0.5);
+  \isocube{5.65}{4.85}{0.5}{0.45}{coral}
+  \draw[flow, teal, line width=1.3pt] (10.8,10.0,0.6) -- (14.4,13.7,0.6);
+  \isocube{12.45}{11.65}{0.6}{0.48}{teal}
+  \draw[flowd, teal] (13.5,15.9,0.5) -- (9.5,11.9,0.5);
+  \draw[flow, indigo, line width=1.1pt] (6.5,8.7,0.5) -- (3.3,5.5,0.5);
+
+  % ---- stage badges, floating clear of every solid
+  \node[anchor=center] at (1.2,1.2,3.5) {\stepno{sky}{1}};
+  \node[anchor=center] at (7.7,7.7,3.5) {\stepno{indigo}{2}};
+  \node[anchor=center] at (14.2,14.2,3.5) {\stepno{violet}{3}};
+
+  % ---- zone labels
+  \node[zone, text=sky!65!black, anchor=west, rotate=-30] at (-0.3,-0.85,0) {YOUR LAPTOP};
+  \node[zone, text=indigo!75!black, anchor=west, rotate=-30] at (6.2,5.65,0) {LETHE · RUNS LOCALLY};
+  \node[zone, text=violet!75!black, anchor=west, rotate=-30] at (12.7,12.15,0) {REMOTE DATA CENTER};
+  \node[zone, text=river!55!black, rotate=90] at (10.75,13.85,0) {surrogates only};
+\end{tikzpicture}
+\\[3mm]
+\begin{tikzpicture}[font=\sffamily\scriptsize, x=1cm, y=1cm]
+  \node[card=coral, anchor=north west] at (0,0) {\cardtitle{coral}{\stepno{coral}{1}\ YOU ASK}
+    ``I'm \hl{coral}{Michael Reyes}, SSN \hl{coral}{512-38-4471}. I work at Boeing in Seattle and made \$148{,}000 last year. My wife \hl{coral}{Sarah} teaches at \hl{coral}{Roosevelt High}; we paid \$18{,}400 in mortgage interest on our house at \hl{coral}{1420 NE 60th St}. Should we itemize?''};
+  \node[card=indigo, anchor=north west] at (4.15,0) {\cardtitle{indigo}{\stepno{indigo}{2}\ LETHE DECIDES · 41 MS}
+    Five identifiers: two names, an SSN, a school, a street address. Names and SSN get realistic surrogates; the address becomes the city. Employer, salary and interest stay, because the answer depends on them.};
+  \node[card=violet, anchor=north west] at (8.30,0) {\cardtitle{violet}{\stepno{violet}{3}\ THE MODEL REASONS}
+    ``I'm \hl{teal}{Daniel Whitaker}, SSN \hl{teal}{803-51-2276}. I work at Boeing in Seattle and made \$148{,}000 last year. My wife \hl{teal}{Laura} teaches at \hl{teal}{a public high school}; we paid \$18{,}400 in mortgage interest on our house \hl{teal}{in Seattle, WA}.''};
+  \node[card=indigo, anchor=north west] at (12.45,0) {\cardtitle{indigo}{\stepno{indigo}{4}\ YOU READ, RE-IDENTIFIED}
+    ``\hl{indigo}{Michael}, with \$18{,}400 of interest plus Washington's sales-tax deduction, itemizing beats the standard deduction for you and \hl{indigo}{Sarah}\,\ldots''\\[2pt]
+    {\color{ink!60}Their logs, reviewers and memory now describe \hl{teal}{Daniel Whitaker}, who does not exist.}};
+\end{tikzpicture}
+\end{tabular}

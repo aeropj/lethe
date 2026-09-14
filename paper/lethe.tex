@@ -10,7 +10,7 @@
 \usepackage{microtype}
 \usepackage[table]{xcolor}
 \usepackage{tikz,amsmath,amssymb}
-\usepackage{booktabs,tabularx,array,multicol}
+\usepackage{booktabs,tabularx,array,multicol,adjustbox}
 \usepackage{enumitem}
 \usepackage{titlesec}
 \usepackage[font={sf,footnotesize},labelfont={bf},labelsep=period,skip=4pt]{caption}
@@ -73,10 +73,10 @@ Lethe sits between people, their agent swarms and every frontier model. It repla
 \vspace{5mm}
 
 \begin{center}
-\input{figs/hero}
+\figfit{0.88\textwidth}{figs/hero}
 \end{center}
 \vspace{-1mm}
-\captionof{figure}{\textbf{The two shores.} Everything on your side keeps memory. Only surrogates cross the river to any provider. Answers return and are re-identified locally, so the provider never learns who asked.}
+\captionof{figure}{\textbf{The two shores.} Everything on your side keeps memory. Only surrogates cross the river to any provider. Answers return and are re-identified locally, so no data centre ever holds a record of you.}
 \vspace{5mm}
 \end{@twocolumnfalse}
 }]
@@ -91,10 +91,10 @@ The honest risk ranking for personal data in a prompt is: (1) logging, retention
 
 % ======================================================================  02
 \section{The idea: tokenisation for identity}
-Card networks solved this once. A merchant never stores your PAN; it stores a token that is useless outside the vault. Lethe does the same for identity in the AI era, with one difference that matters for intelligence: the surrogate must look \emph{real}. ``Pranjal Jain'' becomes ``Arjun Mehta'', not \texttt{[PERSON\_1]}, so every model prior about names, pronouns and formality still fires.
+Card networks solved this once. A merchant never stores your PAN; it stores a token that is useless outside the vault. Lethe does the same for identity in the AI era, with one difference that matters for intelligence: the surrogate must look \emph{real}. ``Michael Reyes'' becomes ``Daniel Whitaker'', not \texttt{[PERSON\_1]}, so every model prior about names, pronouns and formality still fires.
 
 \begin{callout}{Why the name}
-Orphic initiates were told to avoid the spring of Lethe and drink instead from the pool of Mnemosyne, memory~\cite{petelia}. That is the architecture. The model drinks from Lethe: it forgets who you are because it never knew. You keep Mnemosyne: the vault. \emph{Aletheia}, the Greek word for truth, is literally \emph{a-lethe}, un-forgetting; it names the audit log. And in Euripides the phantom Helen went to Troy while the real one stayed safe in Egypt: the model meets your \emph{eidolon}, never you.
+\emph{Lethe: the river in Hades whose water erases memory. Mnemosyne: the pool that restores it.} Orphic initiates were told to avoid the first and drink from the second~\cite{petelia}. That is the architecture. The model drinks from Lethe and forgets you, because it never knew. You keep Mnemosyne, the vault. \emph{Aletheia}, the Greek word for truth, is literally \emph{a-lethe}, un-forgetting; it names the ledger. And in Euripides a phantom Helen went to Troy while the real one stayed safe in Egypt: the model meets your \emph{eidolon}, never you.
 \end{callout}
 
 Three invariants define the product; everything else is engineering.
@@ -108,7 +108,7 @@ Three invariants define the product; everything else is engineering.
 \section{How it works}
 \begin{figure}[t]
 \centering
-\input{figs/pipeline}
+\figfit{\columnwidth}{figs/pipeline}
 \caption{\textbf{Five detection layers, all local.} Cheap deterministic layers run first; only spans still uncertain escalate to the small language model. Your own dictionary makes recall for the identifiers that matter most exactly one.}
 \label{fig:pipeline}
 \end{figure}
@@ -117,16 +117,29 @@ Three invariants define the product; everything else is engineering.
 
 \para{Tokenise.} Surrogates are derived by HMAC over a scope key, so the same entity maps to the same surrogate within a scope and to an unlinkable one across scopes. Formats are preserved: valid-structure SSNs, Luhn-valid cards, dates shifted by a per-subject offset so every interval survives, e-mails as functional relay addresses, names matched for gender, culture and length. Amounts, ages and dosages pass through untouched.
 
-\para{Send, then re-identify.} Any provider, through a drop-in \texttt{base\_url} proxy, an SDK hook, or the MCP gateway (\S5). Streaming responses are detokenised with a small lookahead buffer that handles inflections (``Arjun's'', ``Mr.\ Mehta''). Tool arguments are detokenised only if the agent's manifest allows that tool to act with real values, and only inside the boundary; tool results are re-tokenised before the model sees them.
+\para{Send, then re-identify.} Any provider, through a drop-in \texttt{base\_url} proxy, an SDK hook, or the MCP gateway (\S6). Streaming responses are detokenised with a small lookahead buffer that handles inflections (``Arjun's'', ``Mr.\ Mehta''). Tool arguments are detokenised only if the agent's manifest allows that tool to act with real values, and only inside the boundary; tool results are re-tokenised before the model sees them.
 
 \begin{figure*}[t]
 \centering
-\input{figs/flow}
-\caption{\textbf{A tax question, end to end.} Five identity spans are replaced; salary, age and the question are untouched. The vault holds the mapping locally. The answer is re-identified as it streams.}
-\label{fig:flow}
+\figfit{\textwidth}{figs/story-personal}
+\caption{\textbf{One person, one tax question.} Five identifiers are replaced on the laptop. Salary, interest and employer stay, because the answer depends on them. The model answers a convincing double, and the answer is re-identified as it streams.}
+\label{fig:personal}
 \end{figure*}
 
 % ======================================================================  04
+\section{Two walkthroughs}
+\para{A person.} Figure~\ref{fig:personal}. Michael Reyes types a tax question the way people actually do: name, SSN, employer, spouse, school, street address, numbers. Lethe finds five identifiers in 41\,ms on his laptop. Names and the SSN become realistic surrogates. The street address becomes ``Seattle, WA''. The employer passes, because tens of thousands of people share it in that city. Salary and mortgage interest are untouched, because the answer depends on them. The model reasons about Daniel Whitaker and answers correctly. Michael reads his own name. The provider's logs, reviewers and memory now hold a coherent record of someone who does not exist.
+
+\para{An AI-native company.} Figure~\ref{fig:enterprise}. A support-automation company runs a swarm for a credit union: triage, resolution, communications. A member's ticket carries a name, member number, phone and e-mail. The gateway in the company's VPC gives each agent only its scope. Triage sees category and amount. The resolver sees a surrogate member. Communications may act with the real e-mail address, inside the VPC only. The frontier model reasons about Thomas Park and recommends a reversal. The core-banking tool detokenises the member number at the action boundary, the refund executes, and both calls are signed into the ledger. The company's SOC~2 evidence is a log showing that no raw identifier crossed, for every ticket.
+
+\begin{figure*}[t]
+\centering
+\figfit{\textwidth}{figs/story-enterprise}
+\caption{\textbf{An AI-native support company, one ticket.} Every agent, tool and model speaks to one gateway. Surrogates are consistent across the swarm and different per provider. Real values re-enter only at the action boundary, inside the VPC.}
+\label{fig:enterprise}
+\end{figure*}
+
+% ======================================================================  05
 \section{Why intelligence survives}
 Go back to first principles. A frontier model is byte-pair tokenisation, next-token pretraining on trillions of tokens, then supervised fine-tuning and preference optimisation (RLHF, RLAIF, DPO, GRPO). Every stage is statistics over token sequences. None of it can tell whether ``Michael Brooks'' is a real person; all of it can tell that \texttt{$\langle$PERSON\_3$\rangle$} is not narrative text.
 
@@ -155,7 +168,7 @@ Identifiers in, semantics out. Never mask amounts. Shift dates, don't tag them. 
 \section{Agent swarms: one gateway, need-to-know}
 \begin{figure}[t]
 \centering
-\input{figs/swarm}
+\figfit{\columnwidth}{figs/swarm}
 \caption{\textbf{Every hop is mediated.} Agents, tools and providers speak MCP to one gateway. Each agent holds a signed manifest of what it may see and which tools may act with real values. Because an agent never held the SSN, an injected ``send the SSN'' can only leak a fake.}
 \label{fig:swarm}
 \end{figure}
@@ -231,27 +244,29 @@ Unsolved and stated plainly: quasi-identifier re-identification; multilingual re
 Every AI product will need to prove what it never learned about you. Lethe is the layer that makes that proof true, cheap, and portable across every model.
 \end{callout}
 
-% ======================================================================  appendix
-\clearpage
-\section*{Appendix A · The name, and the names inside}
-\footnotesize
+% ======================================================================  11
+\section{The name, and the names inside}
 \textbf{Lethe} is the recommended primary name: two syllables, an unmatched literary spine, and a built-in vocabulary. Its risks are known and addressable: it is pronounced \emph{LEE-thee}; \emph{lethal} and \emph{lethargy} share the root; and in machine-learning circles the word now signals \emph{unlearning}, post-hoc erasure, which is exactly the promise this product refuses to rely on. The framing that fixes it: \emph{oblivion by construction}. Fallbacks, in order, with the same register as Anthropic or Aether:
 
 \vspace{3pt}
+{\footnotesize
 \setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\columnwidth}{@{}p{1.55cm}>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Eidolon} & Greek \emph{phantom double}. The phantom Helen went to Troy; the real one stayed in Egypt. The truest metaphor for reversible tokenisation; a real English word. \\
-\textbf{Kynee} & Hades' cap of invisibility, worn by Athena, Hermes and Perseus. The cleanest field; reads like infrastructure. \\
-\textbf{Ameles} & Plato's own name for the river of unmindfulness (\emph{Republic} 621a). ``The cloud can't mind you.'' \\
-\textbf{Nephele} & The cloud-nymph Zeus shaped as a decoy Hera. ``Send the cloud a cloud.'' \\
+\textbf{Eidolon} & \emph{Greek: a phantom double.} A phantom Helen went to Troy while the real one stayed in Egypt. The truest metaphor for reversible tokenisation, and a real English word. \\
+\textbf{Kynee} & \emph{Hades' cap of invisibility}, worn by Athena, Hermes and Perseus. The cleanest field; reads like infrastructure. \\
+\textbf{Ameles} & \emph{Plato's own name for the river of unmindfulness} (\emph{Republic} 621a). ``The cloud can't mind you.'' \\
+\textbf{Nephele} & \emph{The cloud-nymph Zeus shaped as a decoy Hera.} ``Send the cloud a cloud.'' \\
 \bottomrule
-\end{tabularx}
+\end{tabularx}}
 
 \vspace{5pt}
-\textbf{Inside the product}, one mythology, used consistently: \textbf{Charon} ferries text across (the tokeniser; the obol you hand him is the token). \textbf{Mnemosyne} is the vault. \textbf{Metis} is the on-device classifier, the intelligence Zeus kept inside his own head and never externalised. \textbf{Themis} is the policy engine. \textbf{Eidolon} is the outbound payload. \textbf{Eunoe}, Dante's river that restores memory, is the re-identifier. \textbf{Aletheia} is the ledger. \textbf{Argus} watches the return path for leaks. The compliance badge is the \textbf{Mnemosyne Mark}: proof that you drank from memory, not from Lethe.
+\textbf{Inside the product}, one mythology, used consistently. \textbf{Charon} is the tokeniser: \emph{the ferryman, and the obol you hand him is the token}. \textbf{Mnemosyne} is the vault. \textbf{Metis} is the on-device classifier: \emph{the intelligence Zeus kept inside his own head, never externalised}. \textbf{Themis} is the policy engine. \textbf{Eidolon} is the outbound payload. \textbf{Eunoe} is the re-identifier: \emph{Dante's river that restores memory}. \textbf{Aletheia} is the ledger. \textbf{Argus} watches the return path for leaks: \emph{the hundred-eyed guardian}. The badge is the \textbf{Mnemosyne Mark}: proof you drank from memory, not from Lethe.
 
-\section*{Appendix B · Performance budget}
+% ======================================================================  back matter
+\clearpage
+\section*{Appendix · Performance budget}
+\footnotesize
 \begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}X r r@{}}
 \toprule
 Stage & p50 & p99 \\
