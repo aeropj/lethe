@@ -1,21 +1,32 @@
 # Lethe
 
-A privacy harness for the agentic era. Identity-bearing data is replaced with realistic surrogates before anything leaves your device or VPC; the keys never leave; the answer is re-identified locally. The model gets a convincing double.
+**Anonymous access to frontier AI models.**
 
-*Lethe: the river in Hades whose water erases memory. Mnemosyne: the pool that restores it.* The model drinks from Lethe. You keep Mnemosyne.
+Pranjal Joshi · Prashil Bulbule
+
+You use GPT, Claude and Gemini at full capability. No provider knows who you are, because your credential
+is a blind signature rather than an account. No provider can link your payment to your usage. No edge
+network can join your traffic across providers. What you write still reaches the model, and we measure
+what that text carries before it leaves rather than pretending we removed it.
+
+## Start here
+
+**[LETHE.md](LETHE.md)** — the complete document. Thesis, evidence, plan, risks, what to file, next steps.
 
 ## Layout
 
-- `paper/lethe.tex` — concept paper, 6 pages. Pranjal Joshi and Prashil Bulbule.
-- `paper/slides.tex` — 15-slide concept deck that mirrors the paper section by section.
-- `paper/figs/` — TikZ figures. `hero` (the two shores), `fanout` (the problem), `cardanalogy` (the insight), `story-personal` and `story-enterprise` (worked examples), `stacks` (where it sits), `pipeline` (detection layers), `swarm` (the agent gateway), `mini` (title mark).
-- `paper/lethe-iso.tex` — isometric TikZ macro library, palette, card and fit helpers.
-- `research/` — background: competitive landscape, naming and mythology, LLM first principles, technical architecture.
+- `LETHE.md` — the single source of truth.
+- `research/` — ten research files behind it: source study of the nearest open-source implementation,
+  the academic frontier, the startup and YC sweeps, the profiling-channel enumeration, and the patent
+  freedom-to-operate study.
+- `paper/` — an earlier concept paper and deck describing a superseded plan. Kept for the figures and
+  for the record. Build with `cd paper && latexmk -pdf lethe.tex && latexmk -pdf slides.tex`.
+- `STRATEGY.md`, `yc-application.md` — earlier drafts, superseded by `LETHE.md`.
 
-## Build
+## What changed, and when
 
-```bash
-cd paper && latexmk -pdf lethe.tex && latexmk -pdf slides.tex
-```
-
-Requires TeX Live 2025 with Inter and IBM Plex Mono, TikZ, tcolorbox, adjustbox. Figures are vector TikZ so both documents scale to any size and stay diffable in git.
+The project began as a reversible identity-tokenisation harness. Research in September 2026 showed that
+the mechanism was already published and patented, that per-provider surrogate rotation does not defeat
+linkage, and that four of the ten channels through which a profile gets built close with cryptography at
+no cost to answer quality. The company moved from hiding what is in a prompt to hiding who is asking.
+`LETHE.md` §4 records what the evidence killed and why.
