@@ -61,6 +61,19 @@ shipped the entire stack — anonymous credentials, oblivious transport, atteste
 at hundreds of millions of users, for their own models. **Nobody offers it as access to frontier
 models.** That is the gap.
 
+**The join is already operating, and not by a cloud.** Koi Security found eight extensions from one
+publisher, 8M+ installs, intercepting conversations from ten AI platforms including ChatGPT, Claude,
+Gemini, Copilot and Perplexity, capturing prompts and responses before they render, with no opt-out,
+added silently in July 2025, flowing to a company affiliated with the data broker BiScience. One party
+holds a person's traffic across all five providers today, with no subpoena and no cloud-level access.
+**This kills the browser extension as a surface.** Ship a native client.
+
+**And memory became an ad input this year.** OpenAI shipped ads in February 2026 on US free and Go
+tiers, targeted on conversation topic and past chats, and published "Dreaming" in June, which builds
+narrative prose dossiers between sessions. Their own EU policy concedes that memory-as-ad-input requires
+affirmative consent. The problem statement is no longer "providers retain data." It is that the profile
+is now a revenue line.
+
 And one measured fact makes channel 9 urgent. On 2026-09-18, `api.openai.com`, `api.anthropic.com`,
 `api.mistral.ai`, `api.x.ai`, `api.together.xyz`, `api.groq.com` and `openrouter.ai` all return
 `server: cloudflare`. **One commercial party terminates TLS for at least seven major providers.** The
@@ -85,8 +98,9 @@ claims otherwise is selling a feeling.
 - Zero utility cost on the four channels we lead with. The entire privacy-versus-capability tradeoff,
   which was the old plan's central weakness, does not apply to them.
 - No dependence on detector recall. The old plan's guarantee was only as good as its weakest NER pass.
-- It is a *cannot*, not a *promise*. Blind signatures mean the provider is structurally unable to
-  identify the account, in the same sense that Kagi cannot link a search to a subscriber.
+- It is a *cannot*, not a *promise*, and there is a number for what that is worth. Proton complied with
+  88.4% of Mail orders between 2017 and 2025 and denied **410 of 410** VPN orders, because they are
+  unable to comply even when the order is legally binding. That gap is the entire product line, measured.
 - Anonos's patents read on PII substitution, which we demote to a measured feature. They do not read on
   anonymous credentials or oblivious transport.
 - The patent white space is exactly here: no filing claims per-recipient unlinkability for *model
@@ -106,7 +120,10 @@ claims otherwise is selling a feeling.
    sidesteps both the money-transmitter question and the unstandardised anonymous-metering crypto.
 4. Constant-rate response padding. Mandatory, not optional: the token-length side channel reconstructs
    27% of streamed responses and the topic of 53%, and OHTTP explicitly does not cover it.
-5. Uniform client. One pinned TLS stack, fixed JA4, fixed header order.
+5. **A native client, not a browser extension**, with one pinned TLS stack, fixed JA4 and fixed header
+   order. This removes an entire adversary class for almost no engineering. Uniformity beats
+   randomisation: Brave retired its own Strict mode because sub-0.5% adoption made those users *more*
+   identifiable.
 
 **Tier 2, real cost and real benefit.** A local quasi-identifier pass using adversary-in-the-loop
 rewriting rather than a PII list, spent against a per-session risk budget. Timing decorrelation.
@@ -115,6 +132,10 @@ Memory abstinence by default.
 **Tier 3, optional.** Style obfuscation, per session, for high-risk use only. It is the worst
 privacy-per-unit-cost item on the list: it damages the text, partly fails against a retrained attacker,
 and is itself detectable at F1 0.87, which makes "this user obfuscates" a durable label.
+
+**Do not lean on TEEs for the trust story.** Independent 2026 measurements put overhead at 1% to 118%,
+not the sub-9% vendors quote, and Battering RAM at $47.62 of parts forges attestation. Use confidential
+compute as defence in depth, never as the claim.
 
 **Do not build.** Mixnets. Homomorphic or multi-party inference for proprietary weights. Word-level
 differential privacy rewriting. Post-quantum Privacy Pass at 85 to 175 kB per token. Anonymous *metered*
