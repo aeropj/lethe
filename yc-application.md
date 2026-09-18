@@ -109,11 +109,13 @@ the pull is not there, and no amount of enterprise narrative will rescue it.
 **Org-side reversible tokenisation** — Protecto, WitnessAI, Skyflow, Kong's AI Sanitizer with its restore
 flag. Closest to us in mechanism. In all of them the vendor holds the keys, and none has an agent or MCP path.
 
-**Consumer and open source** — Wald.ai, and a set of local proxies of which Anonproxy is clearly the
-best. Anonproxy already has the local proxy, format-preserving surrogates, a layered local detector chain,
-a user dictionary, a tolerant streaming restorer it benchmarked from 78% to 100%, and an MCP shim. We
-treat it as the real state of the art, not as a toy, and our plan assumes its feature set as a starting
-line rather than a finish line.
+**Consumer and open source** — Wald.ai, plus a set of local proxies. `DontFeedTheAI` has 655 stars;
+Anonproxy is a cleaner reimplementation of it with 7. Anonproxy already has the local proxy,
+format-preserving surrogates for structured identifiers, a layered all-local detector chain, a user
+dictionary, and a tolerant streaming restorer it benchmarked from 78% to 100% including JSON tool-call
+arguments. We read every line of it. We treat that transport layer as table stakes we will match or reuse
+in two weeks, not as a moat, and we have dropped "realistic surrogates" and "no cloud model in the hot
+path" from our differentiator list because they are already shipped under an MIT licence.
 
 **Guardrails and AI gateways** — Bedrock Guardrails, Prisma AIRS (formerly Portkey), Cloudflare, Lakera.
 One-way redaction bolted to one vendor's control plane.
@@ -156,10 +158,17 @@ checkpointed publicly, turns it into a receipt. Paired with the CJEU's September
 identifiability is judged from the recipient's perspective, customer-held keys become a legal argument
 nobody is making in market.
 
+**The platforms cannot ship the part that matters, and that is structural rather than a head start.**
+A frontier lab can add provider-side redaction next quarter, and probably will. It cannot ship
+cross-provider unlinkability, because that is a promise about what a *competitor* must not be able to
+correlate. It cannot ship a log proving what it did not receive, because a claim by the observed party
+about the observer is not evidence. Both of our core guarantees are assertions against the provider, so
+they can only be issued by something the provider does not control. That is the whole company.
+
 **And we understand that our own v1 is not defensible.** The local proxy is a table stake that already
-exists under an MIT licence. We are not planning to win there, and we would rather contribute to
-Anonproxy's restorer than re-derive it. We plan to win on the three things its author explicitly put out
-of scope: unlinkability across providers, structural need-to-know for swarms, and a verifiable negative.
+exists for free. We are not planning to win there. We plan to win on the three things Anonproxy's author
+explicitly put out of scope, in writing: unlinkability across providers, structural need-to-know for
+swarms, and a verifiable negative.
 
 ---
 
