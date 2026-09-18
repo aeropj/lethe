@@ -88,11 +88,12 @@ The share of enterprise AI traffic carrying sensitive data went from 10.7% to 39
 standard corporate response has been a ban followed by a contract, which is a legal control over a
 technical problem.
 
-The sharpest evidence is that practitioners build this for themselves. A pentester spent three months
-solo writing Anonproxy, 4,700 lines with 120 tests and eight releases on PyPI, because he needed to send
-client data to Claude and would not. There are half a dozen more open-source proxies and browser
-extensions doing a weaker version of the same thing. When people write this much code for an internal
-need, the need is real and the market is unserved.
+The sharpest evidence is that practitioners keep building this for themselves. `DontFeedTheAI` has 655
+stars. Anonproxy is a cleaner reimplementation of it, 4,700 lines with 120 tests and eight PyPI releases,
+written by one person at a pentest firm who needed to send client data to Claude and would not. There are
+half a dozen more proxies and browser extensions doing a weaker version. Nobody builds this much
+infrastructure for a problem they do not have, and nobody would build it at all if something were
+purchasable.
 
 And the trigger that makes it urgent now is agents rather than chat. One prompt is one hop you approved.
 A swarm is forty hops across tools nobody audited, and AWS documents that its own guardrails do not
