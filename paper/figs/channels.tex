@@ -1,0 +1,29 @@
+% The ten channels, sorted by what closing them costs the answer.
+\begin{tikzpicture}[font=\sffamily\scriptsize, x=1cm, y=1cm,
+  band/.style={draw=#1!55!black, fill=#1!8, rounded corners=3pt, line width=0.5pt},
+  ch/.style={draw=#1!55!black, fill=#1!18, rounded corners=2.5pt, line width=0.4pt,
+    text width=2.35cm, align=center, inner sep=4pt, font=\sffamily\fontsize{7}{8.5}\selectfont, text=#1!45!black},
+  hdr/.style={font=\sffamily\bfseries\fontsize{7.5}{9}\selectfont, text=#1!60!black},
+  note/.style={font=\sffamily\fontsize{6.5}{8}\selectfont, text=ink!65}]
+
+  \fill[teal!6, rounded corners=3pt] (0,0.25) rectangle (14.6,2.15);
+  \node[hdr=teal, anchor=west] at (0.15,1.85) {CLOSE WITH CRYPTOGRAPHY · no cost to the answer · nobody offers this for frontier models};
+  \node[ch=teal] at (1.55,1.05) {\textbf{Account}\\blind signatures};
+  \node[ch=teal] at (4.35,1.05) {\textbf{Payment}\\flat-rate vouchers};
+  \node[ch=teal] at (7.15,1.05) {\textbf{Network}\\oblivious HTTP};
+  \node[ch=teal] at (9.95,1.05) {\textbf{Cross-provider}\\separate relays};
+  \node[ch=teal] at (12.75,1.05) {\textbf{Device}\\native client};
+
+  \fill[slate!8, rounded corners=3pt] (0,-1.75) rectangle (14.6,-0.35);
+  \node[hdr=slate, anchor=west] at (0.15,-0.65) {CLOSE BY DEFAULT · cheap, mostly configuration};
+  \node[ch=slate] at (1.55,-1.25) {\textbf{Memory}\\keep it local};
+  \node[ch=slate] at (4.35,-1.25) {\textbf{Timing}\\queue and jitter};
+
+  \fill[amber!8, rounded corners=3pt] (0,-3.75) rectangle (14.6,-2.35);
+  \node[hdr=amber, anchor=west] at (0.15,-2.65) {MEASURE, NEVER PROMISE · the model has to read the prompt};
+  \node[ch=amber] at (1.55,-3.25) {\textbf{Content}\\tokenise};
+  \node[ch=amber] at (4.35,-3.25) {\textbf{Quasi-identity}\\generalise};
+  \node[ch=amber] at (7.15,-3.25) {\textbf{Writing style}\\last resort};
+  \node[note, anchor=west, text width=5.2cm, align=left] at (8.7,-3.25)
+    {Presidio still leaves 59\% re-identifiable. Five rounds of rewriting leave 41.6\%. Score it and show the user.};
+\end{tikzpicture}

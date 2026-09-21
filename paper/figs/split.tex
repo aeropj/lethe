@@ -1,0 +1,50 @@
+% The architecture: no single party can identify you and read you at the same time.
+\begin{tabular}{@{}c@{}}
+\begin{tikzpicture}[iso, scale=0.58]
+  \isoplate{-0.4}{-0.4}{0}{6.2}{6.2}{sky}
+  \isoplate{-0.8}{7.4}{0}{5.2}{5.2}{lime}
+  \isoplate{6.4}{6.4}{0}{6.2}{6.2}{teal}
+  \isoplate{13.0}{13.0}{0}{6.6}{6.6}{violet}
+
+  \isobox{0.8}{9.0}{0}{2.1}{2.1}{1.0}{lime}{}
+  \isocube{1.6}{9.8}{1.0}{0.45}{amber}
+  \isobox{1.2}{1.2}{0}{2.2}{2.2}{1.1}{sky}{}
+  \isocube{2.1}{2.1}{1.1}{0.45}{coral}
+  \isobox{7.4}{7.4}{0}{2.8}{2.8}{1.3}{teal}{}
+  \isobox{13.6}{16.4}{0}{1.6}{1.4}{1.0}{violet}{}
+  \isobox{13.9}{13.7}{0}{2.8}{2.6}{1.8}{violet}{any frontier\\model}
+
+  \draw[flow, amber!80!black, line width=1.1pt] (2.0,8.7,0.6) -- (2.0,3.8,0.6);
+  \draw[flow, teal, line width=1.3pt] (3.6,3.6,0.6) -- (7.2,7.2,0.6);
+  \isocube{5.0}{5.0}{0.6}{0.45}{teal}
+  \draw[flow, teal, line width=1.3pt] (10.4,10.4,0.7) -- (13.8,13.5,0.7);
+  \isocube{11.9}{11.7}{0.7}{0.45}{teal}
+  \draw[flowd, teal] (13.5,14.9,0.45) -- (10.0,11.4,0.45);
+  \draw[flow, sky!60!black, line width=1.1pt] (7.2,8.4,0.45) -- (3.5,4.7,0.45);
+
+  \node[anchor=center] at (1.85,10.05,3.1) {\stepno{lime}{1}};
+  \node[anchor=center] at (1.0,1.0,3.3) {\stepno{sky}{2}};
+  \node[anchor=center] at (7.9,7.9,3.3) {\stepno{teal}{3}};
+  \node[anchor=center] at (14.5,14.5,3.3) {\stepno{violet}{4}};
+
+  \node[zone, text=lime!55!black, anchor=west, rotate=-30] at (-0.7,6.9,0) {ISSUER};
+  \node[zone, text=sky!65!black, anchor=west, rotate=-30] at (-0.3,-0.85,0) {YOUR DEVICE};
+  \node[zone, text=teal!65!black, anchor=west, rotate=-30] at (6.5,5.95,0) {OBLIVIOUS RELAY};
+  \node[zone, text=violet!75!black, anchor=west, rotate=-30] at (13.1,12.55,0) {GATEWAY AND MODEL};
+\end{tikzpicture}
+\\[3mm]
+\begin{tikzpicture}[font=\sffamily\scriptsize, x=1cm, y=1cm]
+  \node[card=lime, anchor=north west] at (0,0) {\cardtitle{lime}{\stepno{lime}{1}\ THE ISSUER}
+    Takes a flat-rate voucher and mints single-use blind-signature tokens.\\[2pt]
+    {\color{ink!60}Sees your payment. Never sees a request, and cannot link a token it signed to the one you spend.}};
+  \node[card=sky, anchor=north west] at (4.15,0) {\cardtitle{sky}{\stepno{sky}{2}\ YOUR DEVICE}
+    A native client. One pinned TLS profile, local memory, on-device risk scoring of the prompt.\\[2pt]
+    {\color{ink!60}Holds everything. Nothing leaves except through the relay.}};
+  \node[card=teal, anchor=north west] at (8.30,0) {\cardtitle{teal}{\stepno{teal}{3}\ THE RELAY}
+    Oblivious HTTP, RFC 9458. A different relay per provider.\\[2pt]
+    {\color{ink!60}Sees your address. Cannot read the request, and cannot tell which provider it is bound for.}};
+  \node[card=violet, anchor=north west] at (12.45,0) {\cardtitle{violet}{\stepno{violet}{4}\ THE MODEL}
+    Verifies a valid token, answers at full capability, streams back through the relay.\\[2pt]
+    {\color{ink!60}Reads the prompt. Never learns your address, your account or your payment.}};
+\end{tikzpicture}
+\end{tabular}

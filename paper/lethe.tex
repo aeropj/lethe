@@ -1,5 +1,5 @@
 % ======================================================================
-%  Lethe — concept paper.  Build:  latexmk -pdf lethe.tex   (pdflatex)
+%  Lethe — full proposal.  Build:  latexmk -pdf lethe.tex
 % ======================================================================
 \documentclass[9pt,twocolumn,a4paper]{extarticle}
 \usepackage[a4paper,top=14mm,bottom=16mm,left=15mm,right=15mm,columnsep=7mm]{geometry}
@@ -19,17 +19,14 @@
 \usepackage[hidelinks]{hyperref}
 \input{lethe-iso}
 
-% ---------------------------------------------------------------- typography
 \renewcommand{\familydefault}{\sfdefault}
 \linespread{1.16}\raggedbottom
-\setlength{\parskip}{0pt}
-\setlength{\parindent}{0pt}
-\setlength{\columnsep}{7mm}
+\setlength{\parskip}{0pt}\setlength{\parindent}{0pt}\setlength{\columnsep}{7mm}
 \newcommand{\para}[1]{\vspace{3pt}\textbf{#1}\ }
 \setlist{nosep,leftmargin=1.1em,itemsep=1.5pt,topsep=2pt}
 \newcommand{\eyebrow}[1]{{\fontsize{6.5}{8}\selectfont\bfseries\textcolor{indigo}{\MakeUppercase{#1}}}}
+\newcommand{\q}[1]{{\fontsize{7}{9}\selectfont\bfseries\itshape\color{indigo!80!black}#1}\\[2pt]}
 
-% section = "01 — Title"
 \titleformat{\section}
   {\vspace{2pt}\sffamily\bfseries\fontsize{11.5}{13}\selectfont\color{ink}}
   {\textcolor{indigo}{\two\thesection}}{0.55em}{}
@@ -37,24 +34,20 @@
 \newcommand{\two}{\ifnum\thesection<10 0\fi}
 \renewcommand{\thesection}{\arabic{section}}
 
-% callout
 \newtcolorbox{callout}[2][indigo]{
   enhanced, colback=#1!4!white, colframe=#1!4!white, boxrule=0pt, arc=1.5pt,
   left=6pt, right=6pt, top=4pt, bottom=4pt, before skip=5pt, after skip=6pt,
   borderline west={2pt}{0pt}{#1},
   fontupper=\footnotesize, title={\eyebrow{#2}}, coltitle=#1, fonttitle=\bfseries,
-  attach title to upper={\\[1pt]}
-}
+  attach title to upper={\\[1pt]}}
 
-% threat-matrix glyphs
 \newcommand{\full}{\tikz[baseline=-0.55ex]\fill[teal] (0,0) circle (2.4pt);}
 \newcommand{\half}{\tikz[baseline=-0.55ex]{\draw[amber!80!black,line width=0.6pt] (0,0) circle (2.4pt);\fill[amber!80!black] (0,-2.4pt) arc (-90:90:2.4pt) -- cycle;}}
 \newcommand{\none}{\tikz[baseline=-0.55ex]\draw[coral,line width=0.7pt] (0,0) circle (2.4pt);}
 
-% footer
 \pagestyle{fancy}\fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
-\fancyfoot[L]{\fontsize{6.5}{8}\selectfont\textcolor{ink!55}{LETHE\,·\,concept paper v0.1\,·\,September 2026\,·\,draft for discussion}}
+\fancyfoot[L]{\fontsize{6.5}{8}\selectfont\textcolor{ink!55}{LETHE\,·\,proposal v1.0\,·\,September 2026}}
 \fancyfoot[R]{\fontsize{6.5}{8}\selectfont\textcolor{ink!55}{\thepage}}
 
 \begin{document}
@@ -63,283 +56,211 @@
 \twocolumn[{
 \begin{@twocolumnfalse}
 \vspace{-6mm}
-\eyebrow{Lethe · concept paper · September 2026}\\[6pt]
+\eyebrow{Lethe · proposal · September 2026}\\[6pt]
 {\fontsize{26}{29}\selectfont\bfseries\color{ink}Lethe}\\[2pt]
-{\fontsize{14}{17}\selectfont\color{ink!80}A privacy harness for the agentic era.}\\[6pt]
+{\fontsize{14}{17}\selectfont\color{ink!80}Anonymous access to frontier AI models.}\\[6pt]
 {\fontsize{8.5}{11}\selectfont\color{ink!65}Pranjal Joshi\quad·\quad Prashil Bulbule}\\[7pt]
-\begin{minipage}{0.86\textwidth}
+\begin{minipage}{0.88\textwidth}
 {\fontsize{9.5}{13}\selectfont\color{ink!85}
-Lethe sits between people, their agent swarms and every frontier model. It replaces identity-bearing data with realistic surrogates \emph{before} anything leaves your device or VPC, keeps the mapping in a vault whose keys never leave, and restores identity on the way back. The model gets a convincing double; you keep the person. Nothing to forget, because nothing arrived.}
+You use GPT, Claude and Gemini at full capability. No provider knows who you are, because your credential is a blind signature rather than an account. No provider can link your payment to your usage. No edge network can join your traffic across providers. What you write still reaches the model, and we measure what that text carries before it leaves rather than pretending we removed it.}
 \end{minipage}
 \vspace{5mm}
 
 \begin{center}
-\figfit{0.88\textwidth}{figs/hero}
+\figfit{0.98\textwidth}{figs/split}
 \end{center}
 \vspace{-1mm}
-\captionof{figure}{\textbf{The two shores.} Everything on your side keeps memory. Only surrogates cross the river to any provider. Answers return and are re-identified locally, so no data centre ever holds a record of you.}
+\captionof{figure}{\textbf{Four parties, and no single one of them can both identify you and read you.} The issuer sees your money and never a request. The relay sees your address and never your content. The model reads your prompt and never learns who sent it. This is the same split Apple and Meta already run in production for their own models.}
 \vspace{5mm}
 \end{@twocolumnfalse}
 }]
 
 % ======================================================================  01
-\section{The problem is now structural}
-A question typed into a chat box no longer goes to one model. It fans out to a planner, a researcher, a booker; each calls tools, reads web pages, and talks to a different lab. Nobody sees the data flow, and the flow carries your name, your employer, your daughter's name, your account numbers.
+\section{The problem changed this year}
+Three things became true in 2026 that were not true when earlier attempts at this failed.
 
-Provider promises are policy, not physics. Abuse logs are kept for 30 days; safety review means humans reading raw prompts; a litigation hold forced OpenAI to preserve deleted consumer chats through 2025; opt-in training data is retained for five years; since June 2026 Anthropic's covered models require 30-day retention even under zero-data-retention contracts~\cite{openai-data,anthropic-covered,anthropic-consumer}. Memory features (ChatGPT ``Dreaming'', Gemini Personal Intelligence) turn one disclosure into a persistent profile~\cite{dreaming}. On the buyer side, 39.7\,\% of enterprise AI interactions already involve sensitive data, up from 10.7\,\% two years earlier~\cite{cyberhaven}.
+\para{The profile became a revenue line.} OpenAI shipped advertising in February on US free and Go tiers, targeted on conversation topic, past chats and prior ad interactions~\cite{ads}. In June it published \emph{Dreaming}, background consolidation that builds narrative prose dossiers about a user between sessions~\cite{dreaming}. Its own EU policy concedes that using memory for personalised advertising requires affirmative consent, while non-consented contextual ads are limited to the live conversation. The industry has already stated what memory is for. This is no longer a retention policy that a contract can fix. It is a business model, and it will get better at its job rather than worse.
 
-The honest risk ranking for personal data in a prompt is: (1) logging, retention, human review and subpoena; (2) agent and tool traces, including injection-driven exfiltration; (3) memory features; (4) being trained in. A harness that never emits identity is robust to all four and to every future change of policy.
+\para{The cross-provider join stopped being hypothetical.} Figure~\ref{fig:join}. Measured on 18 September 2026, seven major endpoints all answer with Cloudflare headers: OpenAI, Anthropic, Mistral, xAI, Together, Groq and OpenRouter. Anthropic's endpoint resolves into Anthropic's own address block and still answers with those headers, so DNS and WHOIS give the wrong answer. Google is the only major provider fronting itself. One commercial party terminates TLS for at least seven providers, which means joining one person's activity across all of them requires no data broker and no subpoena, only a query against one edge network's logs.
+
+\para{A cruder join is already running.} Koi Security found eight browser extensions from a single publisher, more than eight million installs, capturing prompts and responses from ten AI platforms including ChatGPT, Claude, Gemini, Copilot and Perplexity before they render, with no opt-out, added silently in a July 2025 update, flowing to a company affiliated with a data broker~\cite{koi}. That is why we ship a native client and not a browser extension.
+
+\begin{figure}[t]
+\centering
+\figfit{\columnwidth}{figs/join}
+\caption{\textbf{The join needs no broker.} One person, seven providers, one edge network in between. Measured directly, not inferred.}
+\label{fig:join}
+\end{figure}
+
+\para{Meanwhile the tools to stop it finished.} Privacy Pass became RFC 9576, 9577 and 9578 in June 2024, over the VOPRF of RFC 9497 and blind RSA of RFC 9474. Oblivious HTTP is RFC 9458 and is deployed by Apple, Google, Mozilla and Meta. Apple Private Cloud Compute and Meta's WhatsApp Private Processing both ship anonymous credentials, oblivious transport and attested compute for language-model workloads, in production, at hundreds of millions of users~\cite{pcc}. Kagi shipped blind-signature tokens for paid search in February 2025 and can no longer link a query to a subscriber~\cite{kagi}. Every primitive exists. Nobody has assembled them in front of a frontier model.
 
 % ======================================================================  02
-\section{The idea: tokenisation for identity}
-Card networks solved this once. A merchant never stores your PAN; it stores a token that is useless outside the vault. Lethe does the same for identity in the AI era, with one difference that matters for intelligence: the surrogate must look \emph{real}. ``Michael Reyes'' becomes ``Daniel Whitaker'', not \texttt{[PERSON\_1]}, so every model prior about names, pronouns and formality still fires.
+\section{What we are making}
+\q{What is your company going to make?}
+Lethe is anonymous access to frontier models. It ships as a native client and a local daemon that speaks the OpenAI and Anthropic wire formats, so existing tools adopt it with one environment variable.
 
-\begin{callout}{Why the name}
-\emph{Lethe: the river in Hades whose water erases memory. Mnemosyne: the pool that restores it.} Orphic initiates were told to avoid the first and drink from the second~\cite{petelia}. That is the architecture. The model drinks from Lethe and forgets you, because it never knew. You keep Mnemosyne, the vault. \emph{Aletheia}, the Greek word for truth, is literally \emph{a-lethe}, un-forgetting; it names the ledger. And in Euripides a phantom Helen went to Troy while the real one stayed safe in Egypt: the model meets your \emph{eidolon}, never you.
-\end{callout}
+A request leaves your device carrying a single-use blind-signature token instead of an account. It crosses an oblivious relay that can see your address but not your content, and a different relay is used per provider, so no intermediary accumulates a picture of where you go. The provider verifies the token is valid, answers at full capability, and streams back along the same path. Your payment was a flat-rate voucher bought through a merchant of record, and the issuer that minted your tokens cannot link the token it signed to the one you spent.
 
-Three invariants define the product; everything else is engineering.
-\begin{enumerate}[label=\textbf{I\arabic*}]
-\item No byte leaves the trust boundary except through tokenise, with a logged policy decision.
-\item Detokenise runs only inside the boundary, at exactly two sinks: your screen, or an allow-listed tool at its execution boundary.
-\item Every crossing is recorded (hash of what left, spans, detector versions, policy hash) in a tamper-evident log you can verify.
-\end{enumerate}
+Before anything leaves, an on-device pass scores what the text itself still carries and shows you. Identifiers can be replaced with realistic surrogates and restored locally on the way back. We report a residual risk rather than claiming zero, because the model has to read the prompt.
+
+\begin{figure*}[t]
+\centering
+\figfit{0.96\textwidth}{figs/channels}
+\caption{\textbf{Ten channels build a profile.} Five of them close with cryptography or configuration at no cost to answer quality, and nobody offers those for frontier models today. Three are partial by nature, because a hosted model must read what you write. We lead with the first group and we measure the last.}
+\label{fig:channels}
+\end{figure*}
 
 % ======================================================================  03
-\section{How it works}
-\begin{figure}[t]
-\centering
-\figfit{\columnwidth}{figs/pipeline}
-\caption{\textbf{Five detection layers, all local.} Cheap deterministic layers run first; only spans still uncertain escalate to the small language model. Your own dictionary makes recall for the identifiers that matter most exactly one.}
-\label{fig:pipeline}
-\end{figure}
+\section{How it works, in order}
+Figure~\ref{fig:channels}. The build order follows the cost of each channel, cheapest first.
 
-\para{Detect.} Figure~\ref{fig:pipeline}. L0 regex and checksums (Luhn, mod-97, SSN structure, E.164) catch structured identifiers at precision near one. L1 is an on-device encoder ensemble (GLiNER-PII, DeBERTa-PII, the Apache-licensed OpenAI Privacy Filter) via ONNX or CoreML~\cite{gliner,privacy-filter}. L2 is a 0.6--1.7B local model (Qwen3 on MLX or llama.cpp) that sees only residual text and returns grammar-constrained spans for what encoders miss: ``my daughter Priya'', ``the oncologist I saw in March'', employer+role+city tuples. L3 is your dictionary. L4 estimates how many people match a tuple of quasi-identifiers and generalises the least useful one when $k$ is small~\cite{sweeney}. No layer calls a cloud model.
+\para{Tier one, cryptographic, weeks each against published specifications.} Blind-signature access tokens; Kagi's implementation is the template at 216 bytes per single-use token and about a second to mint five hundred. Oblivious HTTP with a third-party relay, taking care never to choose a relay that also fronts the upstream provider. Flat-rate prepaid vouchers through a merchant of record, which sells time rather than metered usage and so avoids both the money-transmitter question and the unstandardised anonymous-metering cryptography. Constant-rate response padding, which is mandatory rather than optional because the token-length side channel reconstructs 27\,\% of streamed responses and the topic of 53\,\%~\cite{weiss}, and Oblivious HTTP explicitly does not cover traffic analysis. And a native client with one pinned TLS profile.
 
-\para{Tokenise.} Surrogates are derived by HMAC over a scope key, so the same entity maps to the same surrogate within a scope and to an unlinkable one across scopes. Formats are preserved: valid-structure SSNs, Luhn-valid cards, dates shifted by a per-subject offset so every interval survives, e-mails as functional relay addresses, names matched for gender, culture and length. Amounts, ages and dosages pass through untouched.
+\para{Tier two, real cost and real benefit.} A local quasi-identifier pass using adversary-in-the-loop rewriting rather than a fixed list of PII types, spent against a per-session risk budget instead of applied blanket. Timing decorrelation. Memory held locally by default.
 
-\para{Send, then re-identify.} Any provider, through a drop-in \texttt{base\_url} proxy, an SDK hook, or the MCP gateway (\S6). Streaming responses are detokenised with a small lookahead buffer that handles inflections (``Arjun's'', ``Mr.\ Mehta''). Tool arguments are detokenised only if the agent's manifest allows that tool to act with real values, and only inside the boundary; tool results are re-tokenised before the model sees them.
+\para{Tier three, optional, high-risk sessions only.} Style obfuscation. It has the worst privacy per unit of cost on the list: it damages the text, loses most of its effect against a retrained attacker, and is itself detectable, which makes ``this user obfuscates'' a durable label.
 
-\begin{figure*}[t]
-\centering
-\figfit{\textwidth}{figs/story-personal}
-\caption{\textbf{One person, one tax question.} Five identifiers are replaced on the laptop. Salary, interest and employer stay, because the answer depends on them. The model answers a convincing double, and the answer is re-identified as it streams.}
-\label{fig:personal}
-\end{figure*}
-
-% ======================================================================  04
-\section{Two walkthroughs}
-\para{A person.} Figure~\ref{fig:personal}. Michael Reyes types a tax question the way people actually do: name, SSN, employer, spouse, school, street address, numbers. Lethe finds five identifiers in 41\,ms on his laptop. Names and the SSN become realistic surrogates. The street address becomes ``Seattle, WA''. The employer passes, because tens of thousands of people share it in that city. Salary and mortgage interest are untouched, because the answer depends on them. The model reasons about Daniel Whitaker and answers correctly. Michael reads his own name. The provider's logs, reviewers and memory now hold a coherent record of someone who does not exist.
-
-\para{An AI-native company.} Figure~\ref{fig:enterprise}. A support-automation company runs a swarm for a credit union: triage, resolution, communications. A member's ticket carries a name, member number, phone and e-mail. The gateway in the company's VPC gives each agent only its scope. Triage sees category and amount. The resolver sees a surrogate member. Communications may act with the real e-mail address, inside the VPC only. The frontier model reasons about Thomas Park and recommends a reversal. The core-banking tool detokenises the member number at the action boundary, the refund executes, and both calls are signed into the ledger. The company's SOC~2 evidence is a log showing that no raw identifier crossed, for every ticket.
-
-\begin{figure*}[t]
-\centering
-\figfit{\textwidth}{figs/story-enterprise}
-\caption{\textbf{An AI-native support company, one ticket.} Every agent, tool and model speaks to one gateway. Surrogates are consistent across the swarm and different per provider. Real values re-enter only at the action boundary, inside the VPC.}
-\label{fig:enterprise}
-\end{figure*}
-
-% ======================================================================  05
-\section{Why intelligence survives}
-Go back to first principles. A frontier model is byte-pair tokenisation, next-token pretraining on trillions of tokens, then supervised fine-tuning and preference optimisation (RLHF, RLAIF, DPO, GRPO). Every stage is statistics over token sequences. None of it can tell whether ``Michael Brooks'' is a real person; all of it can tell that \texttt{$\langle$PERSON\_3$\rangle$} is not narrative text.
-
-\begin{center}
-\footnotesize
-\begin{tabular}{@{}lccc@{}}
-\toprule
-String & GPT-4o & Llama\,3.2 & Qwen3 \\
-\midrule
-\texttt{Michael Brooks} & 2 & 2 & 2 \\
-\texttt{[PERSON\_1]} & 5 & 5 & 5 \\
-\texttt{$\langle$PERSON\_3$\rangle$} & 9 & 6 & 5 \\
-\texttt{123-45-6789} & 6 & 6 & 11 \\
-\bottomrule
-\end{tabular}
-\captionof{table}{Tokens per string. A realistic surrogate costs two tokens in the densest region of the embedding table; a bracketed tag costs four to nine tokens the model has mostly seen in code.}
-\end{center}
-
-The evidence agrees, and it is specific about \emph{how} to lose nothing. On drafting tasks, entity replacement costs about one point in ten~\cite{pasch}. In PAPILLON's benchmark of 901 real prompts, naive redaction drops quality from 88.2 to 77.2; a tuned pipeline recovers to 85.5~\cite{papillon}. Realistic, context-consistent pseudonyms preserve utility roughly ten times better than tags~\cite{yermilov}, and substituting type-consistent fakes rather than masks lifts BERTScore from 81.6 to 94.9~\cite{surrogateshield}. The one catastrophic result in the literature, retrieval collapsing from 0.80 to 0.32, occurred because queries and documents were anonymised \emph{independently}~\cite{deusser}. That is a consistency bug, not a cost of anonymisation, and invariant I1 designs it out: one bijection per scope, applied to prompts, history, retrieved chunks, tool results and model outputs alike.
-
-\begin{callout}[teal]{Design rules}
-Identifiers in, semantics out. Never mask amounts. Shift dates, don't tag them. Match gender and culture. One mapping per scope, everywhere. Detokenise only at side effects.
+\begin{callout}[coral]{What we do not build}
+Mixnets, which cap near 100\,KB/s with tail latency around three seconds. Homomorphic or multi-party inference for proprietary weights, which is three to four orders of magnitude off and works only on open weights. Word-level differential privacy rewriting, which is reconstructed at 72 to 94\,\% at the epsilons where utility survives. And we do not lean on confidential compute for the trust story: independent 2026 measurements put overhead between 1 and 118\,\%, not the single digits vendors quote, and attestation has been forged with \$47.62 of parts~\cite{bram}.
 \end{callout}
 
+% ======================================================================  04
+\section{Why this is defensible}
+Five reasons, in descending order of durability.
+
+\para{The platforms structurally cannot ship it.} A frontier lab can add provider-side redaction next quarter and probably will. It cannot ship cross-provider unlinkability, because that is a promise about what a competitor must not be able to correlate. It cannot ship a log proving what it did not receive, because a claim by the observed party about the observer is not evidence. Both of our core guarantees are assertions against the provider, so they can only be issued by something the provider does not control.
+
+\para{There is a number for what ``cannot'' is worth.} Proton complied with 88.4\,\% of legal orders against Mail between 2017 and 2025, and denied 410 of 410 against its VPN, because it is unable to comply even when the order binds~\cite{proton}. That gap between \emph{will not} and \emph{cannot} is the entire product line, and it is measured rather than asserted.
+
+\para{No utility cost on the channels we lead with.} The privacy-versus-capability tradeoff, which is the central weakness of every redaction product, simply does not apply to the account, the payment, the network path or the cross-provider join.
+
+\para{No dependence on detector recall.} A redaction product's guarantee is only as strong as its weakest named-entity pass. Ours does not rest there.
+
+\para{The patent white space sits exactly here.} No filing claims per-recipient unlinkability for \emph{model providers}, negative-disclosure attestation, or detokenisation bound to a tool's action boundary (\S\ref{sec:file}).
+
 % ======================================================================  05
-\section{Agent swarms: one gateway, need-to-know}
-\begin{figure}[t]
-\centering
-\figfit{\columnwidth}{figs/swarm}
-\caption{\textbf{Every hop is mediated.} Agents, tools and providers speak MCP to one gateway. Each agent holds a signed manifest of what it may see and which tools may act with real values. Because an agent never held the SSN, an injected ``send the SSN'' can only leak a fake.}
-\label{fig:swarm}
-\end{figure}
+\section{Why us, and how we know}
+\q{Why did you pick this idea? Do you have domain expertise? How do you know people need it?}
 
-Models do not enforce need-to-know on their own. GPT-4 leaks in 25.7\,\% of agent actions despite answering privacy quizzes correctly 97.6\,\% of the time~\cite{privacylens}; one context-hijacking message drops Gemini Ultra's protection from 94\,\% to 45\,\%, while an architectural minimiser holds 97\,\%~\cite{airgap}. Enforcement has to be structural. AWS documents that its Bedrock guardrails do not evaluate tool-call arguments or results at all~\cite{bedrock}; that gap is exactly where agent data lives.
+\textbf{[FILL: the origin story. The strongest version names a specific moment where one of you had real data, a model that would have answered it well, and no safe way to combine them. Name the company, the data and the workaround you built. If either of you has shipped security, privacy, infrastructure or inference systems, name the system and the scale. Specificity is the only signal here.]}
 
-Lethe's gateway evaluates Nissenbaum's contextual-integrity tuple on every hop: subject, sender, recipient, information type, transmission principle~\cite{nissenbaum}. Surrogates are self-labelling (the id encodes type, scope and subject), so taint tracking is parsing, not instrumentation. Agents on different providers get different surrogates for the same person; cross-provider hand-offs are re-mapped inside the boundary, like NAT. This removes one leg of the ``lethal trifecta'' (private data, untrusted content, external communication) by construction~\cite{willison}.
+What we can show without our own story. Practitioners keep building this for themselves: \texttt{DontFeedTheAI} has 655 stars, and Anonproxy is a cleaner reimplementation of it written by one person at a pentest firm who needed to send client data to Claude and would not. Nobody writes that much infrastructure for a problem they do not have, and nobody writes it at all if something is purchasable. A third of employees use personal accounts for AI work, and the share of enterprise AI traffic carrying sensitive data went from 10.7\,\% to 39.7\,\% in two years~\cite{cyberhaven}.
 
-% ======================================================================  06b
-\section{Where it sits}
-Lethe is not an application. It is a tier, and the point of a tier is that nothing above it may route around it. The same code and the same three invariants ship into two stacks that otherwise share nothing.
+And the evidence cuts the other way too, which we would rather state than have discovered. Brave converts 101 million privacy-selected users into roughly a hundred thousand VPN subscribers, a tenth of one percent. Mozilla earns \$66.4M from subscriptions and advertising combined across about 200 million users. The counter-example that matters is Venice.ai at roughly \$70M of annual recurring revenue, profitable, on an explicit no-logging pitch: paid AI privacy rides the twenty-dollar AI subscription anchor, not the five-dollar privacy anchor.
 
-\begin{figure*}[t]
-\centering
-\figfit{0.96\textwidth}{figs/stacks}
-\caption{\textbf{One tier, two stacks.} On a laptop it is a background service between your surfaces and the network. In a company it is the egress choke point between the agent runtime and every provider. Neither deployment asks the model to behave.}
-\label{fig:stacks}
-\end{figure*}
-
-\para{On a laptop.} A daemon, started once, that nothing visits. It holds the vault in a file wrapped by a key that lives in the Secure Enclave or the TPM, runs the detectors on the local NPU, and exposes two things: an OpenAI- and Anthropic-compatible URL on localhost, and an MCP gateway. Adoption is one environment variable per surface, which is what makes coding agents the first beachhead. The browser extension and the share sheet extend the same daemon to chat sites and to the phone. The correct mental model is the one people already have for a password manager or a local firewall: it sits below the apps, it is boring, and it is always on.
-
-\para{In a company.} The same engine, deployed in the VPC as the egress choke point. Below it sit identity and the systems of record, where real values actually live. Above it sits the agent runtime, whichever framework the team picked. Lethe holds the vault behind an HSM, evaluates a signed manifest per agent, and writes the ledger that the SIEM ingests. Crucially it is the last thing traffic touches before leaving the network, so ``did anything identifying leave?'' becomes a question with a recorded answer rather than an architectural belief. It slots into the AI-gateway tier that most enterprises are standing up anyway, next to the egress proxy, and it feeds the evidence pipeline that the compliance team is already building by hand.
-
-% ======================================================================  06c
-\section{Why anyone adopts it}
-A privacy layer that nobody wants is a science project. The pull is different on each side, and neither depends on the buyer caring about privacy in the abstract.
-
-\para{For a person: the self-censorship tax.} Everyone who uses these tools seriously has hit the same wall. You have the actual tax return, the real medical letter, the genuine dispute with your landlord, and the model would give a much better answer if it could see them. So you either paste it and feel the small lurch, or you blank the details by hand and get a worse answer. Almost everyone pastes. Lethe removes the choice rather than resolving it: the model sees a coherent, complete document and answers as if it were yours, because structurally it is.
-
-Three things make that pull stronger this year than last. Assistant memory is on by default and is quietly assembling a durable profile of a named person on someone else's disk. Most people now use three or four models, so identity accumulates at whichever lab is winning this quarter rather than at one they chose. And unlike every other privacy tool, this one costs nothing in capability: a VPN slows you down, a blocker breaks pages, private search returns worse results, and Lethe returns the same answer. That is the only reason a consumer privacy product ever reaches scale.
-
-\para{For a company: the blocked list is the business case.} Every enterprise has a list of workloads that AI is not allowed to touch. Claims handling, underwriting, HR cases, patient correspondence, legal review, anything with a customer record in it. That list is not the low-value work. It is the work with the headcount attached, and it is blocked for exactly one reason. The purchase is not a privacy control, it is the unlock for a roadmap already written and already funded.
-
-Four arguments close it. First, shadow AI is not hypothetical: roughly a third of employees already use personal accounts, so the real choice is whether sensitive data reaches models through something you control. Second, a swarm is unauditable by construction unless every hop passes one place, and the guardrails bolted onto a single vendor's gateway explicitly do not inspect tool-call arguments. Third, the compliance evidence arrives as a by-product; the ledger answers the security questionnaire instead of a quarter of screenshots. Fourth, the mapping belongs to the customer, so switching models stops requiring a renegotiated data agreement, which is worth real money in a market where the best model changes twice a year.
-
-The residual argument is blast radius. When a provider is breached, subpoenaed, or simply reads its own logs, what it holds is a set of coherent people who do not exist. That is a sentence a CISO can say out loud, and it is why the buyer is the security or platform owner rather than the privacy officer.
+\begin{callout}{How we would know we are wrong}
+If a few thousand people will not keep a native client installed and paid for, the anonymity set never forms, the guarantee stays thin, and no enterprise narrative rescues it.
+\end{callout}
 
 % ======================================================================  06
-\section{Trust you can verify}
-\para{Ledger.} Each crossing appends a signed entry: payload hash, spans, detector versions, policy bundle hash, bypass rate. Chain heads are checkpointed to a public Merkle log (Sigstore Rekor first), the same shape Apple uses for Private Cloud Compute~\cite{pcc}. Content is never logged. Deleting entries after a checkpoint is detectable.
+\section{Competitors, and what we understand}
+\q{Who are your competitors? What do you understand that they don't?}
 
-\para{What is provable.} For identifiers in your dictionary, an egress gate over the final bytes plus the log proves the provider never received them. For unknown identifiers the claim is statistical and published: detector bundle $v$ at threshold $\tau$, with recall measured on out-of-distribution benchmarks, not in-distribution ones. Zero-knowledge proofs of absence for regex classes are practical~\cite{zkregex}; ZK proofs of a neural pass are not, and we say so.
+\para{Reversible tokenisation, vendor-side.} Protecto, WitnessAI, Skyflow, Kong's sanitizer with its restore flag, Tonic. The vendor holds the keys and none has an agent path. Skyflow now ships a de-identify and re-identify gateway.
 
-\para{Legal posture.} In September 2025 the CJEU held that identifiability is assessed from the recipient's perspective: a recipient without reasonable means to re-identify may not be processing personal data at all~\cite{cjeu}. On-device keys make the provider that recipient. No vendor markets this yet.
+\para{Reversible tokenisation, open source.} Anonproxy is the best-engineered at 4{,}750 lines and 120 tests, and has 7 stars. Presidio has 10{,}931 and left Microsoft for a neutral foundation. Dataiku ships a fully reversible proxy as Apache-2.0 with no paid tier. LLM Guard, the most-cited comparison, was archived in July 2026. Detection itself is free from OpenAI and NVIDIA.
 
-\para{The Mnemosyne Mark.} A revocable badge for products built on Lethe, backed by a public verifier that checks a receipt (log head, inclusion proof, policy hash, optional TEE quote). Controls map onto SOC 2, ISO/IEC 42001 and the CSA AI Controls Matrix; a confidential-compute tier composes with, rather than replaces, tokenisation.
+\para{Confidential compute.} Tinfoil, Confer, Privatemode, Apple PCC. A stronger promise on the content channel, limited to open weights, and positioned explicitly against redaction. That objection is coming and it is answered in \S4 rather than avoided.
+
+\para{Anonymous access.} 1Privacy.ai, nullsink, Venice.ai. The nearest neighbours, and none combines blind credentials with oblivious transport in front of closed frontier models.
+
+\vspace{3pt}
+\textbf{What we understand that they do not.} Four things.
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+\item \textbf{The surrogate was never the linkage channel.} Everyone selling reversible tokenisation implies it prevents profiling. Carlini and Tramèr's group link the same person's pseudonymous profiles at up to 68\,\% recall at 90\,\% precision, against near zero for the best non-LLM method, including across a deliberately removed one-year gap~\cite{lermen}. Topic, expertise and recurring specifics carry identity. Rotating a fake name buys nothing, and we say so in public.
+\item \textbf{The cheap channels are the ones nobody closed.} The industry spent three years on the expensive, partial channel and skipped the four that close with cryptography at no cost.
+\item \textbf{Identity is a negative claim, and negative claims need a third party.} This is the structural argument in \S4 and it is the only durable answer to platform risk.
+\item \textbf{We know our own v1 is not defensible.} The local redaction proxy is a table stake that exists under an MIT licence. We do not plan to win there.
+\end{enumerate}
 
 % ======================================================================  07
-\section{What exists, and what does not}
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{2.35cm}>{\raggedright\arraybackslash}X@{}}
-\toprule
-Detection & Commodity. OpenAI Privacy Filter (Apache-2.0, Apr 2026), GLiNER2-PII, Presidio. Off-the-shelf recall collapses out of distribution (0.20--0.51 F1 on REDACT)~\cite{redact}. \\
-\midrule
-Reversible tokens, org-side & Protecto, WitnessAI, Skyflow, Kong's sanitizer restore flag. Vendor holds the keys; no agent or MCP path. \\
-\midrule
-Reversible, consumer & Wald.ai (seed, 2024); OSS proxies and extensions, single-session. \\
-\midrule
-Confidential compute & Tinfoil (YC X25), Confer, Privatemode, Apple PCC. Open-weight models only; positioned \emph{against} redaction. \\
-\midrule
-\textbf{Nobody ships} & User-side key custody + swarm-wide consistent bijection + tool-boundary detokenisation + a public ledger, as one product. \\
-\bottomrule
-\end{tabularx}
-\end{center}
-The standalone AI-gateway market is small (\$251M in 2026) and consolidating~\cite{gartner}. Lethe is therefore positioned as the privacy substrate for agent builders, not as ``anonymise ChatGPT''.
+\section{Technical stack}
+\q{What tech stack are you using? Include AI models and AI coding tools.}
+
+Rust for the client and the daemon: the token store, the Oblivious HTTP encapsulation, the streaming path and the padding scheduler, compiled to one signed binary per platform. Python for the detection and evaluation work, where the model ecosystem lives.
+
+Cryptography from published specifications rather than invention. Blind RSA per RFC 9474 and VOPRF per RFC 9497 for tokens, in the Privacy Pass framing of RFC 9576 through 9578. Oblivious HTTP per RFC 9458, with HPKE for encapsulation, against commercially operated relays from Fastly or Cloudflare, chosen per provider so the relay is never the provider's own edge. Token keys wrapped by the Apple Secure Enclave and by TPM 2.0 elsewhere.
+
+On-device scoring uses an encoder tier through ONNX Runtime with CoreML on Apple silicon, GLiNER2-PII and OpenAI's Apache-2.0 Privacy Filter, with a small local model, Qwen3 at 0.6 to 1.7 billion parameters on MLX or llama.cpp, for the contextual pass. Nothing in the hot path calls a cloud model. Surrogates derive by HMAC-SHA256 over a scope key from HKDF; the vault is SQLite with SQLCipher.
+
+Evaluation runs a paired harness: the same task with and without the harness, across three frontier models, judged blind to condition, with exact match where the answer is structured.
+
+\para{AI coding tools.} Claude Code is the primary agent and writes the first draft of most things, with Codex CLI as an adversarial second reader on security-sensitive diffs. Claude Opus and Fable for architecture and review. We dogfood: our own agents reach those models through Lethe, so our repository and our own identities travel the path we are shipping, which has been the best bug-finder we have.
 
 % ======================================================================  08
-\section{Threat model, honestly}
+\section{Business model}
+\q{How will you make money? How much could you make?}
+
+The client is free and open source, because the claim is that keys never leave the device and that claim is worthless if the code is closed.
+
+Revenue is a subscription at the AI price anchor rather than the privacy one, roughly twenty to thirty dollars a month, sold as access to frontier models with anonymity as the reason to choose us. Alongside it, an enterprise deployment where the customer brings their own provider contract, so pooling is internal and no resale occurs, priced against the workload it unblocks.
+
+\para{How much, honestly.} Two different companies depending on which path works. Priced as a security tool, the median contract for comparable products is about \$25{,}000 and the closest structural exit, Palo Alto buying Portkey, was \$117M disclosed. Acquisitions in this category run four to twelve times capital raised, clustering near ten. The modal good outcome is a company that raised \$8M to \$30M selling for \$250M to \$400M in a bidding window. That is a real company and not a venture-scale one, and it argues for keeping total raised under about \$15M, because a large Series B is an exit risk here rather than a milestone.
+
+The larger version is a consumer subscription business at the AI anchor, where Venice.ai is the existence proof at roughly \$70M of annual recurring revenue in about two years. We do not yet have evidence we can reach that, and we would rather say so than model it.
+
+% ======================================================================  09
+\section{What we tested and discarded}
+This proposal replaces an earlier one. Recording why is part of the argument.
+
+The earlier plan was reversible identity tokenisation with per-provider surrogates. Six findings ended it. The mechanism was already published in June 2026, including the quasi-identifier scoring we had claimed as a gap~\cite{surrogate}. Per-provider rotation does not defeat linkage~\cite{lermen}. Entity replacement leaves 59\,\% re-identifiable under Presidio and 41.6\,\% after five rounds of adversarial rewriting, against a regulatory threshold of 5\,\%~\cite{rat}. The mechanism is patented by a licensing company, granted in September 2025 with live continuations~\cite{anonos}. The consumer redaction thesis has a graveyard: Crosshatch, Blyss, Piiano's vault. And the analogy we were using, Datavant, is backwards, because Datavant holds the master salt and holding it is the business.
+
+\begin{callout}[teal]{One asset fell out of it}
+The paper everyone cites for ``anonymisation makes models dumber''~\cite{deusser} measured bracketed tags rather than realistic surrogates, and its own worked example redacts the words \emph{Earth} and \emph{Sun}. Nobody has run that experiment properly. Doing so across three frontier models is a few weeks, is publishable, and would let us own the evaluation frame for the category.
+\end{callout}
+
+% ======================================================================  10
+\section{Risks, and what we do not claim}
 \begin{center}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{3.15cm}>{\centering\arraybackslash}p{0.35cm}>{\raggedright\arraybackslash}X@{}}
+\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}p{3.3cm}c>{\raggedright\arraybackslash}X@{}}
 \toprule
-Adversary & v1 & Residual \\
+Adversary & & Residual \\
 \midrule
-Logging, human review, subpoena & \full & quasi-identifiers \\
-Training, breach, insider & \full & surrogates map to nobody \\
-Provider memory features & \half & rotate scope per session \\
-Malicious tool or MCP server & \half & gets fakes; real-data tools gated \\
-Prompt injection in agent context & \half & semantics still exfiltrable \\
-Another agent in the swarm & \full & only with structural scopes \\
-Attribute inference from prose & \none & 85\,\% top-1 from text~\cite{staab}; v2 \\
-Detector miss on new data & \none & dictionary, ask-budget, fail-closed \\
+Provider identifying the account & \full & none, by construction \\
+Provider linking payment to use & \full & none, by construction \\
+Edge network joining providers & \full & relay diversity required \\
+Provider memory features & \full & we do not use them \\
+Traffic analysis on the stream & \half & padding closes most of it \\
+Content and quasi-identifiers & \none & measured, reported, never zero \\
+Writing style across sessions & \none & partial, expensive, optional \\
+Small anonymity set & \none & shrinks as we grow \\
 \bottomrule
-\end{tabularx}
+\end{tabularx}\\[3pt]
+{\footnotesize\full\ closed \quad \half\ partial \quad \none\ open}
 \end{center}
-{\footnotesize\full\ mitigated \quad \half\ partial \quad \none\ open}\\[3pt]
 
-Unsolved and stated plainly: quasi-identifier re-identification; multilingual recall; context sharding across providers has no empirical study; images, voice and files need local OCR and ASR (v2); the vault is the honeypot, so it is local-first, hardware-wrapped, rate-limited and never bulk-exportable.
-
-% ======================================================================  09
-\section{The wedge}
-\para{Now.}\texttt{brew install lethe \&\& lethe up}: a Rust daemon exposing an OpenAI- and Anthropic-compatible endpoint on localhost that Claude Code, Codex, Cursor, LangGraph and the agent SDKs adopt with one environment variable. Budget: under 50\,ms added time-to-first-token without L2, under 300\,ms with it, on M-series hardware.
-
-\para{Next.}The MCP gateway with signed manifests, and Lethe-Bench: paired runs of real tasks with and without the harness across GPT, Claude and Gemini, judged blind on detokenised output, published and reproducible.
-
-\para{Then.}Team gateway with HSM keys and the ledger service, SOC 2 Type I, the Mark. Consumer desktop and browser surfaces once the brand carries them.
-
-\begin{callout}{In one line}
-Every AI product will need to prove what it never learned about you. Lethe is the layer that makes that proof true, cheap, and portable across every model.
-\end{callout}
+\para{Two constraints decide whether this is a company.} Anthropic's commercial terms forbid reselling except as expressly approved, so a pooled-account product is a partnership negotiation rather than a proxy we can simply build. We test that in week one, and if the answer is no the fallback is the enterprise shape where the customer holds the provider contract. And the anonymity set is the subscriber base: a blind signature is only as anonymous as the crowd holding one, which makes the privacy story and the growth story the same story.
 
 % ======================================================================  11
-\section{The name, and the names inside}
-\textbf{Lethe} is the recommended primary name: two syllables, an unmatched literary spine, and a built-in vocabulary. Its risks are known and addressable: it is pronounced \emph{LEE-thee}; \emph{lethal} and \emph{lethargy} share the root; and in machine-learning circles the word now signals \emph{unlearning}, post-hoc erasure, which is exactly the promise this product refuses to rely on. The framing that fixes it: \emph{oblivion by construction}. Fallbacks, in order, with the same register as Anthropic or Aether:
+\section{What we would file}
+\label{sec:file}
+Drafted narrowly against Datavant and Anonos. First, provider-scoped surrogate derivation where the salt binds to the recipient model provider's identity, the purpose is preventing rather than enabling linkage, and resolution is device-local. Second, negative-disclosure attestation: a hash-chained signed ledger committing to the set of entities withheld at a boundary, which inverts the usual transparency log and appears unclaimed. Third, detokenisation bound to a tool's action boundary. We would not file on PII detection, surrogate substitution as such, or vault round trips; all are owned or pre-2020 prior art. Before committing engineering to any tokenisation architecture, counsel answers one question: whether the AI-inference limitations in the Anonos grant are supported by its 2013 provisional or only by the 2021 and 2022 continuations.
 
-\vspace{3pt}
-{\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\columnwidth}{@{}p{1.55cm}>{\raggedright\arraybackslash}X@{}}
-\toprule
-\textbf{Eidolon} & \emph{Greek: a phantom double.} A phantom Helen went to Troy while the real one stayed in Egypt. The truest metaphor for reversible tokenisation, and a real English word. \\
-\textbf{Kynee} & \emph{Hades' cap of invisibility}, worn by Athena, Hermes and Perseus. The cleanest field; reads like infrastructure. \\
-\textbf{Ameles} & \emph{Plato's own name for the river of unmindfulness} (\emph{Republic} 621a). ``The cloud can't mind you.'' \\
-\textbf{Nephele} & \emph{The cloud-nymph Zeus shaped as a decoy Hera.} ``Send the cloud a cloud.'' \\
-\bottomrule
-\end{tabularx}}
+% ======================================================================  12
+\section{The name}
+\emph{Lethe: the river in Hades whose water erases memory. Mnemosyne: the pool that restores it.} Orphic initiates were told to avoid the first and drink from the second. The point was never that the model forgets. It is that there was nothing to remember, because the provider never learned who was asking.
 
-\vspace{5pt}
-\textbf{Inside the product}, one mythology, used consistently. \textbf{Charon} is the tokeniser: \emph{the ferryman, and the obol you hand him is the token}. \textbf{Mnemosyne} is the vault. \textbf{Metis} is the on-device classifier: \emph{the intelligence Zeus kept inside his own head, never externalised}. \textbf{Themis} is the policy engine. \textbf{Eidolon} is the outbound payload. \textbf{Eunoe} is the re-identifier: \emph{Dante's river that restores memory}. \textbf{Aletheia} is the ledger. \textbf{Argus} watches the return path for leaks: \emph{the hundred-eyed guardian}. The badge is the \textbf{Mnemosyne Mark}: proof you drank from memory, not from Lethe.
-
-% ======================================================================  back matter
-\section*{Appendix · Performance budget}
-\footnotesize
-\begin{tabularx}{\columnwidth}{@{}>{\raggedright\arraybackslash}X r r@{}}
-\toprule
-Stage & p50 & p99 \\
-\midrule
-L0 regex + checksums, L3 dictionary & 2\,ms & 5\,ms \\
-L1 encoder ensemble, $\le$512 tokens (M-series NPU) & 30\,ms & 80\,ms \\
-L2 local SLM, residual text only (Qwen3-0.6B, MLX) & 250\,ms & 600\,ms \\
-Streaming detokenise, per delta & $<$1\,ms & hold $\le$40 chars \\
-Added time-to-first-token, without / with L2 & 50\,ms & 300\,ms \\
-Resident memory, L1 / L2 & 300\,MB & 0.5--1.2\,GB \\
-\bottomrule
-\end{tabularx}
-\vspace{2pt}\\
-{\fontsize{6.6}{7.8}\selectfont Targets, not vendor measurements; Lethe-Bench replaces them with measured numbers before any external quote.}
-
-\normalsize
+% ======================================================================  refs
 \begin{thebibliography}{99}
 \fontsize{6.6}{7.8}\selectfont
 \setlength{\itemsep}{0pt}
-\bibitem{openai-data} OpenAI, \emph{Your data}, developer docs; and \emph{Response to NYT data demands} (2025).
-\bibitem{anthropic-covered} Anthropic, \emph{Data retention practices for covered models} (June 2026). \url{https://support.claude.com/en/articles/15425996}
-\bibitem{anthropic-consumer} Anthropic, \emph{Updates to consumer terms} (Aug 2025). \url{https://www.anthropic.com/news/updates-to-our-consumer-terms}
-\bibitem{dreaming} OpenAI, \emph{ChatGPT memory and Dreaming} (June 2026). \url{https://openai.com/index/chatgpt-memory-dreaming/}
+\bibitem{ads} OpenAI, advertising on free and Go tiers, February 2026; EU advertising policy, 14 August 2026.
+\bibitem{dreaming} OpenAI, \emph{Dreaming: better memory for a more helpful ChatGPT}, 4 June 2026.
+\bibitem{koi} Koi Security, eight extensions from one publisher intercepting ten AI platforms, 2026.
+\bibitem{pcc} Apple, \emph{Private Cloud Compute}; Meta, \emph{WhatsApp Private Processing} v2, 16 March 2026.
+\bibitem{kagi} Kagi, Privacy Pass for paid search, 13 February 2025.
+\bibitem{weiss} Weiss et al., token-length side channel in streamed LLM responses, USENIX Security 2024; \emph{Whisper Leak}, arXiv:2511.03675.
+\bibitem{bram} \emph{Battering RAM}, IEEE S\&P 2026; \emph{WireTap}, CCS 2025; \emph{TEE.Fail}, 2026.
+\bibitem{proton} Proton, transparency report 2017--2025.
 \bibitem{cyberhaven} Cyberhaven, \emph{2026 AI Adoption \& Risk Report}.
-\bibitem{petelia} Petelia gold tablet; Pausanias 9.39 on the rite at Trophonius. \url{https://en.wikipedia.org/wiki/Petelia_Gold_Tablet}
-\bibitem{gliner} GLiNER2-PII. arXiv:2605.09973; Knowledgator gliner-pii model cards.
-\bibitem{privacy-filter} OpenAI, \emph{Introducing OpenAI Privacy Filter} (Apr 2026). \url{https://openai.com/index/introducing-openai-privacy-filter/}
-\bibitem{sweeney} L. Sweeney, \emph{k-anonymity}; NIST SP 800-188.
-\bibitem{pasch} Pasch \& Cha, PrivateNLP 2025. \url{https://aclanthology.org/2025.privatenlp-main.3/}
-\bibitem{papillon} Siyan et al., \emph{PAPILLON}, NAACL 2025. arXiv:2410.17127
-\bibitem{yermilov} Yermilov et al., TrustNLP 2023. \url{https://aclanthology.org/2023.trustnlp-1.20/}
-\bibitem{surrogateshield} \emph{SurrogateShield}. arXiv:2606.29567
-\bibitem{deusser} Deußer et al., \emph{On the impact of anonymization on LLM performance} (Sept 2026). arXiv:2609.11335
-\bibitem{privacylens} Shao et al., \emph{PrivacyLens}, NeurIPS 2024. arXiv:2409.00138
-\bibitem{airgap} Bagdasarian et al., \emph{AirGapAgent}, CCS 2024. arXiv:2405.05175
-\bibitem{bedrock} AWS, \emph{Bedrock Guardrails: sensitive information filters}, user guide (``does not evaluate tool use input, tool results or tool specifications'').
-\bibitem{nissenbaum} H. Nissenbaum, \emph{Privacy as Contextual Integrity}, Wash. L. Rev. 2004.
-\bibitem{willison} S. Willison, \emph{The lethal trifecta} (2025). \url{https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/}
-\bibitem{pcc} Apple, \emph{Private Cloud Compute}. \url{https://security.apple.com/blog/private-cloud-compute/}
-\bibitem{zkregex} ZK Email, \emph{zk-regex}; $\varepsilon$-NFA path verification, ePrint 2026/1284.
-\bibitem{cjeu} CJEU, \emph{EDPS v SRB}, C-413/23 P (4 Sept 2025). \url{https://curia.europa.eu/site/upload/docs/application/pdf/2025-09/cp250107en.pdf}
-\bibitem{redact} \emph{REDACT} multilingual PII benchmark. arXiv:2606.19881
-\bibitem{gartner} Gartner, \emph{Forecast: market for securing AI to reach almost \$5B in 2027}, press release, 26 Aug 2026.
-\bibitem{staab} Staab et al., \emph{Beyond memorization}, ICLR 2024. arXiv:2310.07298
+\bibitem{lermen} Lermen, Paleka, Swanson, Aerni, Carlini, Tramèr, \emph{Large-scale online deanonymization with LLMs}, USENIX Security 2026. arXiv:2602.16800
+\bibitem{surrogate} Jathanna, \emph{SurrogateShield}, 28 June 2026. arXiv:2606.29567
+\bibitem{rat} \emph{RAT-Bench}, arXiv:2602.12806; Staab et al., \emph{LLMs are advanced anonymizers}, ICLR 2025, arXiv:2402.13846.
+\bibitem{anonos} Anonos IP LLC, US12417317, granted 16 September 2025; Anonos Innovations LLC, US12614034B2, granted 28 April 2026.
+\bibitem{deusser} Deußer et al., \emph{On the impact of anonymization on LLM performance}, September 2026. arXiv:2609.11335
 \end{thebibliography}
 
 \end{document}

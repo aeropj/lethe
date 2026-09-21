@@ -297,7 +297,7 @@ prior art becomes available.
 | `research/09-profiling-channels.md` | The ten channels, deployed systems, sequencing |
 | `research/10-patents.md` | Freedom to operate, white space, what to file |
 
-`paper/` holds the earlier concept paper and deck. They describe the superseded plan and are kept for the
+`paper/lethe.tex` is the current proposal. `paper/slides.tex` is stale and still describes the superseded plan.
 figures and for the record.
 
 ---

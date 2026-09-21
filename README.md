@@ -19,8 +19,10 @@ what that text carries before it leaves rather than pretending we removed it.
 - `research/` — ten research files behind it: source study of the nearest open-source implementation,
   the academic frontier, the startup and YC sweeps, the profiling-channel enumeration, and the patent
   freedom-to-operate study.
-- `paper/` — an earlier concept paper and deck describing a superseded plan. Kept for the figures and
-  for the record. Build with `cd paper && latexmk -pdf lethe.tex && latexmk -pdf slides.tex`.
+- `paper/lethe.tex` — **the full proposal**, five pages, current. Answers the five application
+  questions inline: what we are making, why us, competitors, technical stack, and revenue.
+  Build with `cd paper && latexmk -pdf lethe.tex`.
+- `paper/slides.tex` — **stale.** Still describes the superseded tokenisation plan. Do not send it.
 - `STRATEGY.md`, `yc-application.md` — earlier drafts, superseded by `LETHE.md`.
 
 ## What changed, and when
