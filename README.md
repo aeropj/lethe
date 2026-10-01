@@ -21,7 +21,7 @@ what that text carries before it leaves rather than pretending we removed it.
 - `research/` — ten research files behind it: source study of the nearest open-source implementation,
   the academic frontier, the startup and YC sweeps, the profiling-channel enumeration, and the patent
   freedom-to-operate study.
-- `paper/lethe.tex` — **the full proposal**, five pages, current. Answers the five application
+- `paper/lethe.tex` — **the full proposal**, five pages: the private pool for frontier AI. Answers the five
   questions inline: what we are making, why us, competitors, technical stack, and revenue.
   Build with `cd paper && latexmk -pdf lethe.tex`.
 - `paper/slides.tex` — **stale.** Still describes the superseded tokenisation plan. Do not send it.

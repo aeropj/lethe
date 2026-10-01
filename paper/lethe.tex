@@ -47,7 +47,7 @@
 
 \pagestyle{fancy}\fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
-\fancyfoot[L]{\fontsize{6.5}{8}\selectfont\textcolor{ink!55}{LETHE\,·\,proposal v1.0\,·\,September 2026}}
+\fancyfoot[L]{\fontsize{6.5}{8}\selectfont\textcolor{ink!55}{LETHE\,·\,proposal v1.1\,·\,October 2026}}
 \fancyfoot[R]{\fontsize{6.5}{8}\selectfont\textcolor{ink!55}{\thepage}}
 
 \begin{document}
@@ -56,13 +56,13 @@
 \twocolumn[{
 \begin{@twocolumnfalse}
 \vspace{-6mm}
-\eyebrow{Lethe · proposal · September 2026}\\[6pt]
+\eyebrow{Lethe · proposal · October 2026}\\[6pt]
 {\fontsize{26}{29}\selectfont\bfseries\color{ink}Lethe}\\[2pt]
-{\fontsize{14}{17}\selectfont\color{ink!80}Anonymous access to frontier AI models.}\\[6pt]
+{\fontsize{14}{17}\selectfont\color{ink!80}The private pool for frontier AI.}\\[6pt]
 {\fontsize{8.5}{11}\selectfont\color{ink!65}Pranjal Joshi\quad·\quad Prashil Bulbule}\\[7pt]
 \begin{minipage}{0.88\textwidth}
 {\fontsize{9.5}{13}\selectfont\color{ink!85}
-You use GPT, Claude and Gemini at full capability. No provider knows who you are, because your credential is a blind signature rather than an account. No provider can link your payment to your usage. No edge network can join your traffic across providers. What you write still reaches the model, and we measure what that text carries before it leaves rather than pretending we removed it.}
+Lethe is a shared anonymity pool in front of GPT, Claude and Gemini. Firms and people send their AI work through it, and the providers see a crowd instead of a customer. Every member makes every other member harder to identify, so the pool gets stronger as it grows. Firms pay for membership, because for a fund or a bank the question itself is the secret. What you write still reaches the model; Lethe hides who wrote it, and measures what the text itself gives away.}
 \end{minipage}
 \vspace{5mm}
 
@@ -97,9 +97,11 @@ Three things became true in 2026 that were not true when earlier attempts at thi
 % ======================================================================  02
 \section{What we are making}
 \q{What is your company going to make?}
-Lethe is anonymous access to frontier models. It ships as a native client and a local daemon that speaks the OpenAI and Anthropic wire formats, so existing tools adopt it with one environment variable.
+Lethe is a private pool for frontier AI, a dark pool for model queries. It is not a wrapper. A wrapper puts a screen on someone else's model, is no better with a million users than with ten, and can be rebuilt in a weekend. A pool is the opposite: its value rises with every member, because anonymity loves company~\cite{alc}; no customer can build it alone, because a firm running its own proxy is still the one firm using that proxy; and the provider cannot build it, because hiding a customer from yourself is a promise against yourself.
 
-A request leaves your device carrying a single-use blind-signature token instead of an account. It crosses an oblivious relay that can see your address but not your content, and a different relay is used per provider, so no intermediary accumulates a picture of where you go. The provider verifies the token is valid, answers at full capability, and streams back along the same path. Your payment was a flat-rate voucher bought through a merchant of record, and the issuer that minted your tokens cannot link the token it signed to the one you spent.
+There are two doors into the pool. \textbf{Firms}, funds, banks, law firms, pharmaceutical research and corporate development, send the work they cannot put their name on: deal analysis, research, strategy. Their compliance team keeps a complete record and the provider keeps nothing that points to them. \textbf{People} get one native app for every frontier model, with a memory that follows them from model to model and never leaves their machine. Every member, firm or person, uses the same tokens, relays and client fingerprint, so no provider can tell a hedge fund's request from a student's.
+
+A request leaves your device carrying a single-use blind-signature token instead of an account. It crosses an oblivious relay that can see your address but not your content, and a different relay is used per provider, so no intermediary accumulates a picture of where you go. The provider verifies the token is valid, answers at full capability, and streams back along the same path. Your membership was bought from an issuer that signs tokens without seeing them, so it cannot link the token it signed to the one you spent.
 
 Before anything leaves, an on-device pass scores what the text itself still carries and shows you. Identifiers can be replaced with realistic surrogates and restored locally on the way back. We report a residual risk rather than claiming zero, because the model has to read the prompt.
 
@@ -148,8 +150,10 @@ What we can show without our own story. Practitioners keep building this for the
 
 And the evidence cuts the other way too, which we would rather state than have discovered. Brave converts 101 million privacy-selected users into roughly a hundred thousand VPN subscribers, a tenth of one percent. Mozilla earns \$66.4M from subscriptions and advertising combined across about 200 million users. The counter-example that matters is Venice.ai at roughly \$70M of annual recurring revenue, profitable, on an explicit no-logging pitch: paid AI privacy rides the twenty-dollar AI subscription anchor, not the five-dollar privacy anchor.
 
+For institutions the evidence is the restrictions themselves: JPMorgan, Goldman Sachs, Citi, Deutsche Bank, Bank of America and Wells Fargo all limited frontier models over confidentiality~\cite{bans}, and the rest run weaker models in-house to keep their name off the request. They are giving up capability to hide intent, which is exactly the trade a pool removes.
+
 \begin{callout}{How we would know we are wrong}
-If a few thousand people will not keep a native client installed and paid for, the anonymity set never forms, the guarantee stays thin, and no enterprise narrative rescues it.
+If ten funds will not tell us what they would pay to use frontier models for deal work without being identified, or three will not join a founding cohort, the institutional thesis is wrong and no consumer growth rescues it.
 \end{callout}
 
 % ======================================================================  06
@@ -162,7 +166,7 @@ If a few thousand people will not keep a native client installed and paid for, t
 
 \para{Confidential compute.} Tinfoil, Confer, Privatemode, Apple PCC. A stronger promise on the content channel, limited to open weights, and positioned explicitly against redaction. That objection is coming and it is answered in \S4 rather than avoided.
 
-\para{Anonymous access.} 1Privacy.ai, nullsink, Venice.ai. The nearest neighbours, and none combines blind credentials with oblivious transport in front of closed frontier models.
+\para{Finance AI and anonymous access.} AlphaSense, Hebbia and Rogo sell answers to the same firms; Rogo was valued at \$2B in April~\cite{finai}. 1Privacy.ai, nullsink and Venice.ai sell private access to individuals. None hides the firm asking, and we found nobody selling anonymous frontier-model access to institutions as a shared pool.
 
 \vspace{3pt}
 \textbf{What we understand that they do not.} Four things.
@@ -171,7 +175,7 @@ If a few thousand people will not keep a native client installed and paid for, t
 \item \textbf{The surrogate was never the linkage channel.} Everyone selling reversible tokenisation implies it prevents profiling. Carlini and Tramèr's group link the same person's pseudonymous profiles at up to 68\,\% recall at 90\,\% precision, against near zero for the best non-LLM method, including across a deliberately removed one-year gap~\cite{lermen}. Topic, expertise and recurring specifics carry identity. Rotating a fake name buys nothing, and we say so in public.
 \item \textbf{The cheap channels are the ones nobody closed.} The industry spent three years on the expensive, partial channel and skipped the four that close with cryptography at no cost.
 \item \textbf{Identity is a negative claim, and negative claims need a third party.} This is the structural argument in \S4 and it is the only durable answer to platform risk.
-\item \textbf{We know our own v1 is not defensible.} The local redaction proxy is a table stake that exists under an MIT licence. We do not plan to win there.
+\item \textbf{For an institution, the secret is who is asking.} Everyone else hides what is in the prompt. A fund's question about a company is valuable precisely because of whose question it is, and a single customer cannot hide itself; only a crowd can.
 \end{enumerate}
 
 % ======================================================================  07
@@ -192,13 +196,15 @@ Evaluation runs a paired harness: the same task with and without the harness, ac
 \section{Business model}
 \q{How will you make money? How much could you make?}
 
-The client is free and open source, because the claim is that keys never leave the device and that claim is worthless if the code is closed.
+\para{Institutions already pay to hide what they are about to do.} Roughly 15 to 18\,\% of US equity volume trades in dark pools, and about 44\,\% off-exchange in total, so a large order does not move the market before it fills~\cite{dark}. Lethe is a dark pool for AI. The firms that pay are the ones whose questions are worth more than their answers.
 
-Revenue is a subscription at the AI price anchor rather than the privacy one, roughly twenty to thirty dollars a month, sold as access to frontier models with anonymity as the reason to choose us. Alongside it, an enterprise deployment where the customer brings their own provider contract, so pooling is internal and no resale occurs, priced against the workload it unblocks.
+\para{Three revenue lines.} \textbf{Firm membership}, \$100{,}000 to \$500{,}000 a year by size, is the profit centre, and includes the firm's own compliance ledger, policy controls and single sign-on. Analysts already pay \$10{,}000 to \$20{,}000 a seat for AI research tools~\cite{finai} and hedge funds average \$1.6M a year on alternative data~\cite{altdata}. \textbf{A per-query fee} sits on usage passed through at cost, the way a dark pool charges per share, so heavy users never sink the margin. \textbf{The consumer app}, about \$20 a month, is priced near break-even; its job is to make the pool large, because a large pool is what firms pay for.
 
-\para{How much, honestly.} Two different companies depending on which path works. Priced as a security tool, the median contract for comparable products is about \$25{,}000 and the closest structural exit, Palo Alto buying Portkey, was \$117M disclosed. Acquisitions in this category run four to twelve times capital raised, clustering near ten. The modal good outcome is a company that raised \$8M to \$30M selling for \$250M to \$400M in a bidding window. That is a real company and not a venture-scale one, and it argues for keeping total raised under about \$15M, because a large Series B is an exit risk here rather than a milestone.
+\para{Compliance is a selling point.} US regulators have fined financial firms more than \$2 billion since 2021 for business communications they failed to record~\cite{sec}. Anonymous AI with no record would be a liability. Lethe writes every request to a ledger the firm holds: the compliance team keeps everything; the provider keeps nothing that points to the firm.
 
-The larger version is a consumer subscription business at the AI anchor, where Venice.ai is the existence proof at roughly \$70M of annual recurring revenue in about two years. We do not yet have evidence we can reach that, and we would rather say so than model it.
+\para{Lethe holds the provider contracts.} Members are anonymous behind it. The pitch to providers is net-new demand: the work in the pool is work they do not get today, because its owners restrict frontier models or run weaker ones in-house.
+
+\para{How big, honestly.} Illustrative, not a forecast: 500 member firms at \$250{,}000 a year is \$125M of annual revenue before usage fees; 2{,}000 is \$500M. That is a different company from the security-tool path, where the median contract is about \$25{,}000 and the closest exit sold for \$117M. The constraint is not price, it is the crowd: a pool with one fund in it hides nobody. This is a network-effects business, the hardest kind to start and the hardest kind to catch.
 
 % ======================================================================  09
 \section{What we tested and discarded}
@@ -226,13 +232,14 @@ Provider memory features & \full & we do not use them \\
 Traffic analysis on the stream & \half & padding closes most of it \\
 Content and quasi-identifiers & \none & measured, reported, never zero \\
 Writing style across sessions & \none & partial, expensive, optional \\
-Small anonymity set & \none & shrinks as we grow \\
+Small pool at launch & \none & founding cohort, plus consumers \\
+Unique question, one asker & \half & hides who, not what \\
 \bottomrule
 \end{tabularx}\\[3pt]
 {\footnotesize\full\ closed \quad \half\ partial \quad \none\ open}
 \end{center}
 
-\para{Two constraints decide whether this is a company.} The first is accountability, not resale. Anthropic's commercial terms explicitly permit using the API ``to power products and services Customer makes available to its own customers and end users'' (A.1), and restrict only reselling the Services themselves without approval (D.4). An app serving our own subscribers is permitted; anonymous raw API access sold to developers would need approval. What remains is that we answer for our users' compliance, and anonymity makes abuse prevention our problem. The answer is the one Apple, Meta and Kagi use: credentials rate-limited by construction, each good for a finite number of requests. OpenAI's and Google's terms still need the same read. The second constraint is that the anonymity set is the subscriber base: a blind signature is only as anonymous as the crowd holding one, which makes the privacy story and the growth story the same story.
+\para{Three constraints decide whether this is a company.} The first is the cold start: a pool starts empty, and dark pools solved this by launching with a founding consortium of buyers, which is our plan for firms, with the consumer app filling the crowd from day one. The second is provider approval for institutional access, which is closer to reselling than an app is. The third is accountability, not resale. Anthropic's commercial terms explicitly permit using the API ``to power products and services Customer makes available to its own customers and end users'' (A.1), and restrict only reselling the Services themselves without approval (D.4). An app serving our own subscribers is permitted; anonymous raw API access sold to developers would need approval. What remains is that we answer for our users' compliance, and anonymity makes abuse prevention our problem. The answer is the one Apple, Meta and Kagi use: credentials rate-limited by construction, each good for a finite number of requests. OpenAI's and Google's terms still need the same read. Throughout, the anonymity set is the membership: a blind signature is only as anonymous as the crowd holding one, which makes the privacy story and the growth story the same story.
 
 % ======================================================================  11
 \section{What we would file}
@@ -241,7 +248,7 @@ Drafted narrowly against Datavant and Anonos. First, provider-scoped surrogate d
 
 % ======================================================================  12
 \section{The name}
-\emph{Lethe: the river in Hades whose water erases memory. Mnemosyne: the pool that restores it.} Orphic initiates were told to avoid the first and drink from the second. The point was never that the model forgets. It is that there was nothing to remember, because the provider never learned who was asking.
+\emph{Lethe: the river in Hades whose water erases memory. Mnemosyne: the pool that restores it.} Orphic initiates were told to avoid the first and drink from the second. The provider drinks from Lethe and never learns who was asking. You, and your compliance team, keep Mnemosyne.
 
 % ======================================================================  refs
 \begin{thebibliography}{99}
@@ -260,6 +267,12 @@ Drafted narrowly against Datavant and Anonos. First, provider-scoped surrogate d
 \bibitem{surrogate} Jathanna, \emph{SurrogateShield}, 28 June 2026. arXiv:2606.29567
 \bibitem{rat} \emph{RAT-Bench}, arXiv:2602.12806; Staab et al., \emph{LLMs are advanced anonymizers}, ICLR 2025, arXiv:2402.13846.
 \bibitem{anonos} Anonos IP LLC, US12417317, granted 16 September 2025; Anonos Innovations LLC, US12614034B2, granted 28 April 2026.
+\bibitem{alc} Dingledine and Mathewson, \emph{Anonymity loves company: usability and the network effect}, WEIS 2006.
+\bibitem{bans} Restrictions on ChatGPT and similar tools at JPMorgan Chase, Goldman Sachs, Citigroup, Deutsche Bank, Bank of America and Wells Fargo.
+\bibitem{dark} Off-exchange and dark-pool share of US equity volume, 2024--2025, Bloomberg data via New Constructs.
+\bibitem{finai} AlphaSense, Hebbia and Rogo pricing and valuations, Sacra and AI Agent Square, 2026.
+\bibitem{altdata} Lowenstein Sandler, \emph{2025 alternative data survey}; Kadoa, 2025.
+\bibitem{sec} SEC off-channel communications enforcement since 2021, Global Relay.
 \bibitem{deusser} Deußer et al., \emph{On the impact of anonymization on LLM performance}, September 2026. arXiv:2609.11335
 \end{thebibliography}
 

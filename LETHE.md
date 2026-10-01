@@ -1,6 +1,6 @@
 # Lethe
 
-**Anonymous access to frontier AI models.**
+**The private pool for frontier AI.**
 
 Pranjal Joshi · Prashil Bulbule · 18 September 2026
 
@@ -11,11 +11,14 @@ which describe an earlier plan that the evidence did not support. Sources are in
 
 ## 1. The thesis in one paragraph
 
-You use GPT, Claude and Gemini at full capability. No provider knows who you are, because your credential
-is a blind signature rather than an account. No provider can link your payment to your usage. No edge
-network can join your traffic across providers, because each one leaves by a different oblivious path.
-What you write still reaches the model, and we measure what that text carries before it leaves rather
-than pretending we removed it.
+Lethe is a shared anonymity pool in front of GPT, Claude and Gemini. Firms and people send their AI work
+through it, and the providers see a crowd instead of a customer: credentials are blind signatures rather
+than accounts, payment cannot be linked to usage, and traffic leaves by a different oblivious path per
+provider. Every member makes every other member harder to identify, so the pool gets stronger as it grows.
+Firms pay for membership because, for a fund or a bank, the question itself is the secret. People get a
+memory that lives on their own machine, priced near break-even, and they are what makes the pool large.
+What you write still reaches the model; we measure what that text carries rather than pretending we
+removed it.
 
 The last sentence is load-bearing. A hosted model must read the prompt. Any product claiming otherwise is
 selling a feeling, and will be taken apart in technical diligence.
@@ -126,7 +129,15 @@ that business, LiveRamp, sold to Publicis at about 2.7x revenue with 107% net re
 
 ## 5. The company
 
-Lethe sells anonymous access, not prompt redaction.
+Lethe sells membership in a pool, not prompt redaction and not a chat app.
+
+**Why this is not a wrapper.** A wrapper puts a screen on someone else's model; it is no better with a
+million users than with ten, a customer can rebuild it in a weekend, and the provider usually ships it
+themselves. A pool is the opposite on all three counts. Its value rises with every member, because
+anonymity loves company (Dingledine and Mathewson, WEIS 2006). No customer can build it alone, because a
+firm running its own proxy is still the one firm using that proxy. And the provider cannot build it,
+because hiding a customer from yourself is a promise against yourself. A competitor does not need a better
+UI to catch up. It needs a bigger crowd.
 
 **Why this is defensible where the old plan was not.**
 
@@ -216,22 +227,44 @@ me-too.
 
 ## 8. Business model
 
-Free open-source client. The claim is that keys never leave the device, and that claim is worthless if
-the code is closed.
+**Institutions already pay to hide what they are about to do.** Roughly 15 to 18% of US equity volume
+trades in dark pools, and around 44% off-exchange in total, so that a large order does not move the market
+before it fills. Lethe is a dark pool for AI. The firms that pay are the ones whose questions are worth
+more than their answers: hedge funds, private equity, investment banks and corporate development, large
+law firms, pharmaceutical research. Today most of them either restrict frontier models (JPMorgan, Goldman
+Sachs, Citi, Deutsche Bank, Bank of America and Wells Fargo all did) or run weaker models in-house and
+give up capability to keep their name off the request.
 
-Subscription at the AI price anchor rather than the privacy one, roughly $20 to $30 a month, sold as
-access to frontier models with anonymity as the reason to choose us.
+Three revenue lines:
 
-Enterprise deployment where the customer brings their own provider contract, so pooling is internal and
-no resale occurs. Price against the workload unblocked.
+1. **Firm membership, $100,000 to $500,000 a year by size.** The profit centre. Includes the firm's own
+   compliance ledger, policy controls and single sign-on. Anchors: analysts already pay $10,000 to
+   $20,000 a seat for AI research tools such as AlphaSense and Hebbia, Rogo was valued at $2B in April,
+   and hedge funds average $1.6M a year on alternative data.
+2. **A per-query fee on usage passed through at cost.** The way a dark pool charges per share. We never
+   subsidise anyone's tokens, so heavy users cannot sink the margin.
+3. **The consumer memory app at about $20 a month, near break-even.** Not where we make money. Its job is
+   to make the pool large, because a large pool is what the firms are paying for. Every member protects
+   every other member, consumers included.
 
-**Market reality, stated honestly.** The median contract for comparable AI data-protection products is
-about $25,000, not the $150,000 in the earlier plan. The closest structural exit, Palo Alto buying
-Portkey, was $117M disclosed. Acquisitions in this category run four to twelve times capital raised,
-clustering near ten. The modal outcome is a company that raised $8M to $30M selling for $250M to $400M in
-a bidding window, or $40M to $120M otherwise. **Keep total raised under about $15M.** A large Series B is
-an exit risk here, not a milestone.
+**Compliance is a selling point, not an obstacle.** US regulators have fined financial firms more than
+$2 billion since 2021 for business communications they failed to record. Anonymous AI that left no record
+would be a liability. Lethe writes every request to a ledger the firm holds: the compliance team keeps
+everything, the provider keeps nothing that points to the firm.
 
+**Lethe holds the provider contracts.** Members are anonymous behind it. A firm bringing its own contract
+would be identified by it, so that option gets content protection only and is not the product. The pitch
+to the providers is net-new demand: the work in the pool is work they do not get today.
+
+**How big, honestly.** Illustrative, not a forecast: 500 member firms at $250,000 a year is $125M of annual
+revenue before usage fees, 2,000 is $500M. That is a different company from the security-tool path, where
+the median contract is about $25,000 and the closest exit, Portkey, sold for $117M. The constraint is not
+price, it is the crowd: a pool with one fund in it hides nobody. Capital discipline still applies; raise
+what the founding cohort needs, not more.
+
+**Nobody does this.** We searched for anyone selling anonymous frontier-model access to institutions as a
+shared pool and found no one. Everyone else hides what is in the prompt or sells answers; nobody hides who
+is asking.
 ---
 
 ## 9. The two things that decide whether this is a company
@@ -247,9 +280,18 @@ answer is the one Apple, Meta and Kagi already use: credentials that are rate-li
 each one is good for a finite number of requests. We have read Anthropic's terms; OpenAI's and Google's
 still need the same read.
 
-**The anonymity set is the subscriber base.** A blind signature is only as anonymous as the crowd holding
-one. The privacy story and the growth story are therefore the same story, which is unusual and worth
-saying out loud rather than hiding.
+**The pool starts empty.** A blind signature is only as anonymous as the crowd holding one, and a pool
+with one fund in it hides nobody. This is the classic network-effect cold start, and it is the single
+biggest risk. Dark pools solved it by launching with a founding consortium of buyers; we plan the same, a
+founding cohort of firms who join together, with the consumer app filling the crowd from day one. Until
+the pool is large, we say on the page how large it is.
+
+**Institutional access needs the providers' approval.** An app serving our own members is permitted.
+Pooled access for a firm's own agents is closer to reselling and needs approval. We believe the providers
+want the demand; we have not yet asked.
+
+**The pool hides who, not what.** If only one member is asking about a particular company, the question is
+a signal even when nobody can tell whose. We measure and show this; we never claim zero.
 
 ---
 
@@ -277,15 +319,17 @@ prior art becomes available.
 
 ## 11. Next thirty days
 
-1. Read OpenAI's and Google's commercial terms the way we read Anthropic's, confirm the app shape is
-   permitted, and design abuse controls around rate-limited anonymous credentials before launch.
-2. Stand up blind-signature tokens plus OHTTP against one provider and measure added latency end to end.
-3. Run the paired capability benchmark nobody has run. The paper everyone cites for "anonymisation makes
+1. Talk to ten firms, funds first, and find the three who would join a founding cohort. Ask what they
+   do today instead of using frontier models for deal work, and what they would pay to stop.
+2. Read OpenAI's and Google's commercial terms the way we read Anthropic's, and open the conversation
+   with one provider about institutional access through the pool.
+3. Stand up blind-signature tokens plus OHTTP against one provider and measure added latency end to end.
+4. Run the paired capability benchmark nobody has run. The paper everyone cites for "anonymisation makes
    models dumber" (Deußer et al. 2026) measured bracketed tags, not realistic surrogates, and its own
    worked example redacts the words *Earth* and *Sun*. Measuring realistic surrogates properly across
    three frontier models is a few weeks, is publishable, and would let us own the evaluation frame.
-4. Ask counsel the Anonos priority question.
-5. Email John Freeman, who wrote Anonproxy. He is the best-informed person on this problem outside the
+5. Ask counsel the Anonos priority question.
+6. Email John Freeman, who wrote Anonproxy. He is the best-informed person on this problem outside the
    team, has eight open issues and no contributors, and the conversation costs nothing.
 
 ---
@@ -315,5 +359,5 @@ figures and for the record.
 *Lethe: the river in Hades whose water erases memory. Mnemosyne: the pool that restores it.* Orphic
 initiates were told to avoid the first and drink from the second.
 
-The name still fits the new thesis, and fits it better. The point was never that the model forgets. It is
-that there was never anything to remember, because the provider never learned who was asking.
+The name still fits the new thesis, and fits it better. The provider drinks from Lethe and never learns
+who was asking. You, and your compliance team, keep Mnemosyne.
