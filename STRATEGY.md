@@ -145,11 +145,10 @@ credit until ACT or an equivalent reaches a standard.
 
 ## The two constraints that decide whether this is a company
 
-**1. Reseller terms.** Anthropic's commercial terms prohibit reselling except as expressly approved.
-A pooled-account intermediary is not a clever proxy, it is a partnership, and it has to be negotiated
-before anything else matters. **This is the go/no-go and it should be tested in week one, not month
-six.** The fallback if the answer is no: sell the harness to enterprises who bring their own provider
-contract, where pooling is internal and no resale occurs.
+**1. Accountability, not resale.** *Corrected 2026-10-01.* Anthropic's commercial terms permit powering
+products for our own end users (A.1) and restrict only reselling the Services themselves (D.4). An app is
+permitted; anonymous raw API access for developers is not without approval. The real constraint is
+abuse accountability for anonymous users, answered with rate-limited anonymous credentials.
 
 **2. The anonymity set is the subscriber base.** A blind signature is only as anonymous as the crowd
 holding one. Below a few thousand active users the guarantee is thin and we must say so. This makes the

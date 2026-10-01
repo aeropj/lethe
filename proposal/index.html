@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Introducing Lethe</title>
+<style>
+:root{
+  --ivory:#FAF9F5; --pampas:#F0EEE6; --cloud:#E8E6DC; --line:#DEDCD1;
+  --slate:#141413; --ink:#3D3D3A; --muted:#73726C; --faint:#A3A29B;
+  --clay:#D97757; --clay-deep:#B85C3E; --clay-tint:#F7E4DA;
+  --sky:#6A9BCC; --sky-deep:#3F6F9E; --sky-tint:#E2EDF7;
+  --olive:#788C5D; --olive-deep:#55663F; --olive-tint:#E8EDDE;
+  --kraft:#D4A27F; --kraft-tint:#F4E7DA;
+  --serif: ui-serif, "Iowan Old Style", Charter, "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ivory);color:var(--ink);font:17px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--clay-deep);text-decoration-thickness:1px;text-underline-offset:3px}
+.wrap{max-width:720px;margin:0 auto;padding:0 24px}
+.wide{max-width:1080px;margin:0 auto;padding:0 24px}
+header.top{position:sticky;top:0;z-index:5;background:rgba(250,249,245,.92);backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid var(--cloud)}
+header.top .wide{display:flex;align-items:center;justify-content:space-between;height:58px}
+.mark{font:400 24px/1 var(--serif);color:var(--slate);letter-spacing:-.01em;text-decoration:none}
+.mark i{font-style:normal;color:var(--clay)}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;margin-left:22px}
+nav a:hover{color:var(--slate)}
+.eyebrow{font-size:13px;letter-spacing:.02em;color:var(--muted)}
+.eyebrow b{color:var(--clay-deep);font-weight:600}
+h1{font:400 clamp(44px,7vw,72px)/1.04 var(--serif);color:var(--slate);letter-spacing:-.025em;margin:18px 0 14px}
+h2{font:400 clamp(30px,4vw,40px)/1.14 var(--serif);color:var(--slate);letter-spacing:-.015em;margin:0 0 18px}
+h3{font:600 17px/1.35 var(--sans);color:var(--slate);margin:0 0 6px}
+.sub{font:400 clamp(21px,2.6vw,26px)/1.35 var(--serif);color:var(--ink);margin:0 0 22px}
+.lead{font-size:19px;line-height:1.6;color:var(--ink)}
+.byline{font-size:14px;color:var(--muted);margin-top:22px}
+section{padding:88px 0}
+section.alt{background:var(--pampas)}
+section.dark{background:var(--slate);color:#E8E6DC}
+section.dark h2{color:#FAF9F5}
+p{margin:0 0 18px}
+sup{line-height:0}
+sup a{text-decoration:none;font-size:11px;color:var(--clay-deep)}
+.tag{display:inline-block;font:600 11px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--clay-deep);background:var(--clay-tint);padding:6px 9px;border-radius:999px;margin-bottom:14px}
+.caption{font-size:14px;color:var(--muted);margin-top:14px;max-width:720px}
+figure{margin:40px 0 0}
+.frame{background:#fff;border:1px solid var(--cloud);border-radius:18px;padding:28px}
+
+/* ---------- hero product shot ---------- */
+.shot{display:grid;grid-template-columns:1.15fr 1fr;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff;margin-top:48px}
+.pane{padding:26px 28px}
+.pane+.pane{border-left:1px solid var(--cloud);background:#FCFBF8}
+.pane-h{display:flex;align-items:center;justify-content:space-between;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.models{display:flex;gap:6px}
+.models span{font:500 12px/1 var(--sans);text-transform:none;letter-spacing:0;padding:6px 10px;border-radius:999px;border:1px solid var(--cloud);color:var(--muted)}
+.models span.on{background:var(--slate);color:#fff;border-color:var(--slate)}
+.msg{border-radius:14px;padding:12px 15px;font-size:15px;line-height:1.5;margin-bottom:10px}
+.msg.you{background:var(--pampas);margin-left:40px}
+.msg.ai{background:#fff;border:1px solid var(--cloud);margin-right:24px}
+.mem{margin-top:16px;padding-top:14px;border-top:1px dashed var(--cloud)}
+.mem small{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
+.chip{display:inline-block;font-size:12.5px;padding:5px 10px;border-radius:999px;margin:0 5px 6px 0;background:var(--olive-tint);color:var(--olive-deep)}
+.risk{margin-top:12px;display:flex;gap:10px;align-items:flex-start;font-size:13px;background:var(--kraft-tint);color:#7A5232;border-radius:12px;padding:10px 12px}
+.risk b{font-weight:600}
+.log{font:13px/1.9 var(--mono);color:var(--ink)}
+.log div{display:grid;grid-template-columns:124px 1fr;border-bottom:1px solid var(--pampas)}
+.log span:first-child{color:var(--faint)}
+.log .ok{color:var(--olive-deep)}
+.log .sur{color:var(--sky-deep)}
+.log .txt{font-family:var(--sans);font-size:13.5px;line-height:1.5;padding:6px 0;color:var(--ink)}
+
+/* ---------- grids and cards ---------- */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:#fff;border:1px solid var(--cloud);border-radius:16px;padding:22px 22px 20px}
+.card p{font-size:15px;line-height:1.55;margin:0;color:var(--ink)}
+.num{font:400 15px/1 var(--serif);width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--clay);color:#fff;margin-bottom:14px}
+.stat{font:400 52px/1 var(--serif);color:var(--slate);letter-spacing:-.02em}
+.stat.clay{color:var(--clay-deep)}
+.stat.olive{color:var(--olive-deep)}
+
+/* ---------- four parties ---------- */
+.party{position:relative}
+.party .who{font:400 22px/1.2 var(--serif);color:var(--slate);margin-bottom:10px}
+.party .sees,.party .never{font-size:14px;line-height:1.5;padding:10px 12px;border-radius:10px;margin-top:8px}
+.party .sees{background:var(--pampas);color:var(--ink)}
+.party .never{background:var(--olive-tint);color:var(--olive-deep)}
+.party .lbl{display:block;font:600 10.5px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:5px}
+.party:not(:last-child)::after{content:"";position:absolute;right:-12px;top:34px;width:10px;height:10px;border-top:2px solid var(--faint);border-right:2px solid var(--faint);transform:rotate(45deg)}
+
+/* ---------- comparison table ---------- */
+table.cmp{width:100%;border-collapse:collapse;font-size:15px;background:#fff;border:1px solid var(--cloud);border-radius:16px;overflow:hidden}
+table.cmp th,table.cmp td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--pampas);vertical-align:top}
+table.cmp thead th{font:600 13px/1.3 var(--sans);color:var(--muted);background:#FCFBF8}
+table.cmp thead th.us{color:var(--clay-deep)}
+table.cmp td.us{background:#FDF6F1;font-weight:600;color:var(--slate)}
+table.cmp tr:last-child td{border-bottom:0}
+.y{color:var(--clay-deep)} .n{color:var(--olive-deep)} .m{color:var(--muted)}
+
+/* ---------- channels ---------- */
+.band{border-radius:16px;padding:20px 22px;margin-bottom:12px}
+.band h3{font-size:14px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+.band .row{display:flex;flex-wrap:wrap;gap:8px}
+.band .c{background:#fff;border-radius:10px;padding:9px 13px;font-size:14px;line-height:1.35}
+.band .c b{display:block;font-weight:600;color:var(--slate)}
+.band .c span{color:var(--muted);font-size:13px}
+.b1{background:var(--olive-tint)} .b1 h3{color:var(--olive-deep)}
+.b2{background:var(--sky-tint)} .b2 h3{color:var(--sky-deep)}
+.b3{background:var(--kraft-tint)} .b3 h3{color:#8A5A33}
+
+/* ---------- quote ---------- */
+blockquote{font:400 clamp(28px,3.6vw,40px)/1.22 var(--serif);color:#FAF9F5;margin:0 0 40px;letter-spacing:-.01em}
+blockquote em{color:var(--clay)}
+.dark .stat{color:#FAF9F5}
+.dark .stat.clay{color:var(--clay)}
+.dark p,.dark .caption{color:#C9C7BD}
+
+/* ---------- faq ---------- */
+.qa{border-top:1px solid var(--line);padding:22px 0}
+.qa:last-child{border-bottom:1px solid var(--line)}
+.qa .q{font:400 21px/1.3 var(--serif);color:var(--slate);margin-bottom:8px}
+.qa p{font-size:16px;margin:0 0 10px}
+.fill{border:1.5px dashed var(--kraft);background:var(--kraft-tint);color:#7A5232;border-radius:12px;padding:12px 14px;font-size:14.5px}
+
+/* ---------- sources & footer ---------- */
+ol.src{font-size:13.5px;color:var(--muted);padding-left:20px}
+ol.src li{margin-bottom:6px}
+footer{padding:40px 0 60px;border-top:1px solid var(--cloud);font-size:13.5px;color:var(--muted)}
+
+@media (max-width:860px){
+  .shot,.grid3,.grid4{grid-template-columns:1fr}
+  .pane+.pane{border-left:0;border-top:1px solid var(--cloud)}
+  .party:not(:last-child)::after{display:none}
+  nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wide">
+  <a class="mark" href="#">Leth<i>e</i></a>
+  <nav>
+    <a href="#problem">Problem</a><a href="#product">Product</a><a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a><a href="#brief">In brief</a>
+  </nav>
+</div></header>
+
+<!-- ================================================================ hero -->
+<section style="padding-top:72px;padding-bottom:64px">
+  <div class="wrap">
+    <div class="eyebrow"><b>Proposal</b> · October 2026</div>
+    <h1>Introducing Lethe</h1>
+    <p class="sub">Use every frontier model. Stay a stranger to all of them.</p>
+    <p class="lead">Lethe is a desktop app for GPT, Claude and Gemini. Your memory lives on your laptop, where you can see it and ask it questions. Each provider gets a stranger: no account it can tie to you, no payment it can trace, no address it can see. What you write still reaches the model, and Lethe shows you what that text gives away before you send it.</p>
+    <div class="byline">Pranjal Joshi · Prashil Bulbule</div>
+  </div>
+
+  <div class="wide">
+    <div class="shot" role="img" aria-label="Product illustration. Left, what you see: a chat with memory on your laptop. Right, what the provider receives: no account, a relay address, an unlinkable payment and a fictional name.">
+      <div class="pane">
+        <div class="pane-h"><span>What you see</span>
+          <div class="models"><span class="on">Claude</span><span>GPT</span><span>Gemini</span></div></div>
+        <div class="msg you">Sarah and I paid $18,400 in mortgage interest on the Seattle house this year. Should we itemize?</div>
+        <div class="msg ai">Michael, yes. With $18,400 of interest plus Washington's sales-tax deduction, itemizing beats the standard deduction for you and Sarah. Here is the Schedule A math…</div>
+        <div class="mem"><small>Memory · on this laptop only</small>
+          <span class="chip">Boeing</span><span class="chip">Seattle</span><span class="chip">Sarah</span><span class="chip">mortgage</span><span class="chip">2025 return</span></div>
+        <div class="risk"><span>●</span><span><b>Before you send.</b> This message names your city and a dollar figure. Your name and address were replaced. Remaining risk: low.</span></div>
+      </div>
+      <div class="pane">
+        <div class="pane-h"><span>What the provider receives</span></div>
+        <div class="log">
+          <div><span>account</span><span class="ok">none · single-use token</span></div>
+          <div><span>address</span><span class="ok">a relay, not yours</span></div>
+          <div><span>payment</span><span class="ok">cannot be linked</span></div>
+          <div><span>other models</span><span class="ok">a different relay each</span></div>
+          <div><span>name</span><span class="sur">Daniel Whitaker</span></div>
+          <div><span>prompt</span><span class="txt">“Laura and I paid $18,400 in mortgage interest on a house in Seattle, WA this year. Should we itemize?”</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="caption" style="margin-left:auto;margin-right:auto">Illustration of the product. The answer is the same. The provider is left holding a coherent conversation about someone who does not exist.</p>
+  </div>
+</section>
+
+<!-- ================================================================ problem -->
+<section class="alt" id="problem">
+  <div class="wrap">
+    <div class="tag">Why now</div>
+    <h2>Your AI history is becoming a profile, and the profile is becoming a product.</h2>
+    <p>Three things changed in 2026. In February, ChatGPT began showing ads targeted on what you discuss and what you have discussed before.<sup><a href="#s1">1</a></sup> In June it introduced <em>Dreaming</em>, which consolidates your conversations into a running portrait of your life between sessions.<sup><a href="#s2">2</a></sup> Memory is no longer a convenience feature. It is a revenue line, and it will get better at its job.</p>
+    <p>On 18 September we checked who answers when you call the major model APIs. OpenAI, Anthropic, Mistral, xAI, Together, Groq and OpenRouter all reply through the same edge network.<sup><a href="#s3">3</a></sup> Joining one person's activity across seven providers does not need a data broker. It needs one company's logs. And a cruder version is already running: eight browser extensions from one publisher, more than eight million installs, have been capturing conversations from ChatGPT, Claude, Gemini and others before they render.<sup><a href="#s4">4</a></sup></p>
+  </div>
+  <div class="wide">
+    <figure class="frame">
+      <svg viewBox="0 0 1000 520" width="100%" role="img" aria-label="A graph centred on Michael Reyes, connected to eight facts learned by three different AI providers over one week.">
+        <g stroke-width="2" fill="none">
+          <line x1="500" y1="260" x2="230" y2="120" stroke="#D97757"/>
+          <line x1="500" y1="260" x2="500" y2="70" stroke="#788C5D"/>
+          <line x1="500" y1="260" x2="770" y2="120" stroke="#6A9BCC"/>
+          <line x1="500" y1="260" x2="875" y2="260" stroke="#6A9BCC"/>
+          <line x1="500" y1="260" x2="770" y2="400" stroke="#D97757"/>
+          <line x1="500" y1="260" x2="500" y2="450" stroke="#788C5D"/>
+          <line x1="500" y1="260" x2="230" y2="400" stroke="#6A9BCC"/>
+          <line x1="500" y1="260" x2="125" y2="260" stroke="#788C5D"/>
+          <path d="M770 120 Q 860 175 875 260" stroke="#C9C7BD" stroke-dasharray="4 5"/>
+          <path d="M230 120 Q 140 175 125 260" stroke="#C9C7BD" stroke-dasharray="4 5"/>
+        </g>
+        <g font-family="ui-sans-serif,-apple-system,Helvetica Neue,Arial" text-anchor="middle">
+          <g><rect x="130" y="94" width="200" height="52" rx="26" fill="#F7E4DA" stroke="#D97757"/><text x="230" y="117" font-size="15" font-weight="600" fill="#141413">Boeing</text><text x="230" y="135" font-size="12" fill="#B85C3E">employer · from GPT</text></g>
+          <g><rect x="400" y="44" width="200" height="52" rx="26" fill="#E8EDDE" stroke="#788C5D"/><text x="500" y="67" font-size="15" font-weight="600" fill="#141413">Seattle</text><text x="500" y="85" font-size="12" fill="#55663F">home city · from Gemini</text></g>
+          <g><rect x="670" y="94" width="200" height="52" rx="26" fill="#E2EDF7" stroke="#6A9BCC"/><text x="770" y="117" font-size="15" font-weight="600" fill="#141413">Sarah</text><text x="770" y="135" font-size="12" fill="#3F6F9E">spouse · from Claude</text></g>
+          <g><rect x="775" y="234" width="200" height="52" rx="26" fill="#E2EDF7" stroke="#6A9BCC"/><text x="875" y="257" font-size="15" font-weight="600" fill="#141413">Roosevelt High</text><text x="875" y="275" font-size="12" fill="#3F6F9E">Sarah's school · Claude</text></g>
+          <g><rect x="670" y="374" width="200" height="52" rx="26" fill="#F7E4DA" stroke="#D97757"/><text x="770" y="397" font-size="15" font-weight="600" fill="#141413">$148,000</text><text x="770" y="415" font-size="12" fill="#B85C3E">salary · from GPT</text></g>
+          <g><rect x="400" y="424" width="200" height="52" rx="26" fill="#E8EDDE" stroke="#788C5D"/><text x="500" y="447" font-size="15" font-weight="600" fill="#141413">1420 NE 60th St</text><text x="500" y="465" font-size="12" fill="#55663F">home · from Gemini</text></g>
+          <g><rect x="130" y="374" width="200" height="52" rx="26" fill="#E2EDF7" stroke="#6A9BCC"/><text x="230" y="397" font-size="15" font-weight="600" fill="#141413">"a mole on my arm"</text><text x="230" y="415" font-size="12" fill="#3F6F9E">health · from Claude</text></g>
+          <g><rect x="25" y="234" width="200" height="52" rx="26" fill="#E8EDDE" stroke="#788C5D"/><text x="125" y="257" font-size="15" font-weight="600" fill="#141413">Lisbon in May</text><text x="125" y="275" font-size="12" fill="#55663F">travel · from Gemini</text></g>
+          <circle cx="500" cy="260" r="62" fill="#141413"/>
+          <text x="500" y="256" font-family="ui-serif,Iowan Old Style,Charter,Georgia" font-size="19" fill="#FAF9F5">Michael</text>
+          <text x="500" y="279" font-family="ui-serif,Iowan Old Style,Charter,Georgia" font-size="19" fill="#FAF9F5">Reyes</text>
+        </g>
+        <g font-family="ui-sans-serif,-apple-system,Helvetica Neue,Arial" font-size="13" fill="#73726C">
+          <circle cx="40" cy="505" r="6" fill="#D97757"/><text x="54" y="510">learned by GPT</text>
+          <circle cx="180" cy="505" r="6" fill="#6A9BCC"/><text x="194" y="510">learned by Claude</text>
+          <circle cx="335" cy="505" r="6" fill="#788C5D"/><text x="349" y="510">learned by Gemini</text>
+          <text x="980" y="510" text-anchor="end">dashed: inferred by joining them</text>
+        </g>
+      </svg>
+    </figure>
+    <p class="caption" style="margin:14px auto 0">What three providers could assemble from one week of ordinary use. Each learned a little. One edge network sits in front of all three.</p>
+  </div>
+</section>
+
+<!-- ================================================================ product -->
+<section id="product">
+  <div class="wrap">
+    <div class="tag">What we are making</div>
+    <h2>The memory stays with you. The provider meets a stranger.</h2>
+    <p>Privacy products usually take something away. Lethe gives you something first: one app for every frontier model, with a memory that follows you from GPT to Claude to Gemini and never leaves your laptop. Privacy is the reason it can exist. Memory is the reason you open it every day.</p>
+  </div>
+  <div class="wide" style="margin-top:36px">
+    <div class="grid3">
+      <div class="card"><div class="num">1</div><h3>Every model, one place</h3><p>Switch between GPT, Claude and Gemini in the middle of a conversation. Your context comes with you; no provider gets the whole of it.</p></div>
+      <div class="card"><div class="num">2</div><h3>A memory you own</h3><p>What matters to you becomes a graph, encrypted on your laptop. You can see it, correct it and ask it questions. Nobody sells ads against it.</p></div>
+      <div class="card"><div class="num">3</div><h3>A stranger to every provider</h3><p>A single-use token instead of an account. A different relay for each provider. A prepaid plan nobody can trace back to your card.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ demo -->
+<section class="alt">
+  <div class="wrap">
+    <div class="tag">The demo</div>
+    <h2>Three minutes, three beats.</h2>
+    <p>When privacy works, nothing visible happens. So the demo starts by showing what would have happened.</p>
+  </div>
+  <div class="wide" style="margin-top:30px">
+    <div class="grid3">
+      <div class="card" style="border-top:4px solid var(--clay)"><div class="eyebrow" style="margin-bottom:8px">45 seconds</div><h3>1 · The dossier</h3><p>One week of ordinary questions to three providers, drawn as the single graph of a life that they could join together.</p></div>
+      <div class="card" style="border-top:4px solid var(--olive)"><div class="eyebrow" style="margin-bottom:8px">60 seconds</div><h3>2 · The switch</h3><p>The same questions through Lethe. The same answers. Each provider now sees a stranger, and the graph lives only on your laptop, where it answers to you.</p></div>
+      <div class="card" style="border-top:4px solid var(--sky)"><div class="eyebrow" style="margin-bottom:8px">30 seconds</div><h3>3 · The proof</h3><p>Tokens unchanged, answer quality unchanged, and the measured added latency. The dashboard shows timings only and never sees a prompt.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ how -->
+<section id="how">
+  <div class="wrap">
+    <div class="tag">How it works</div>
+    <h2>No single party can both identify you and read you.</h2>
+    <p>Apple and Meta already run this split in production for their own AI features, at hundreds of millions of users.<sup><a href="#s6">6</a></sup> Every piece is a published standard,<sup><a href="#s7">7</a></sup> and Kagi already uses the same tokens for paid search.<sup><a href="#s5">5</a></sup> What nobody has done is put it in front of the frontier models people actually use.</p>
+  </div>
+  <div class="wide" style="margin-top:32px">
+    <div class="grid4">
+      <div class="card party"><div class="who">The issuer</div><p>Sells a prepaid plan and signs single-use tokens without seeing them.</p>
+        <div class="sees"><span class="lbl">Sees</span>that you paid</div><div class="never"><span class="lbl">Never sees</span>any request, or which token you spend</div></div>
+      <div class="card party"><div class="who">Your laptop</div><p>Holds memory, keys and the risk check. Pads the stream so its shape gives nothing away.</p>
+        <div class="sees"><span class="lbl">Sees</span>everything</div><div class="never"><span class="lbl">Never sends</span>your account, card or address</div></div>
+      <div class="card party"><div class="who">The relay</div><p>Oblivious HTTP. A different relay for each provider, never the provider's own edge.</p>
+        <div class="sees"><span class="lbl">Sees</span>your address</div><div class="never"><span class="lbl">Never sees</span>the request, or where it is going</div></div>
+      <div class="card party"><div class="who">The model</div><p>Checks the token is valid and answers at full capability.</p>
+        <div class="sees"><span class="lbl">Sees</span>the prompt</div><div class="never"><span class="lbl">Never learns</span>who sent it, or what else they asked elsewhere</div></div>
+    </div>
+  </div>
+  <div class="wide" style="margin-top:56px">
+    <table class="cmp">
+      <thead><tr><th>What a provider can learn about you</th><th>Direct API</th><th>Chat app with memory</th><th>Redaction proxy</th><th class="us">Lethe</th></tr></thead>
+      <tbody>
+        <tr><td>Who you are, from your account</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="us">No</td></tr>
+        <tr><td>Your card, tied to what you asked</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="us">No</td></tr>
+        <tr><td>Your address and device</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="us">No</td></tr>
+        <tr><td>Your use of other providers, joined at the edge</td><td class="y">Joinable</td><td class="y">Joinable</td><td class="y">Joinable</td><td class="us">No</td></tr>
+        <tr><td>A standing profile of your life</td><td class="m">Possible</td><td class="y">Yes, by design</td><td class="m">Possible</td><td class="us">No. Memory is on your laptop</td></tr>
+        <tr><td>Names and identifiers in the prompt</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">Mostly hidden</td><td class="us">Mostly hidden, and shown to you</td></tr>
+        <tr><td>What you are asking about</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="us">Yes. The model must read it</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">The last row is deliberate. A hosted model has to read the question to answer it. Anyone who tells you otherwise is selling a feeling.</p>
+  </div>
+</section>
+
+<!-- ================================================================ why us -->
+<section class="dark">
+  <div class="wrap">
+    <div class="tag" style="background:#2A2A27;color:var(--clay)">Why the platforms cannot build this</div>
+    <blockquote>A claim by the watched about the watcher is not <em>evidence</em>.</blockquote>
+    <p>A frontier lab can add redaction next quarter, and probably will. It cannot promise that a competitor will be unable to link you, and it cannot prove what it never received, because both are claims against itself. They can only be made by something it does not control.</p>
+    <p>There is a number for what that difference is worth. Between 2017 and 2025, Proton complied with most legal orders for its email service, and with none for its VPN, because there it is unable to.<sup><a href="#s8">8</a></sup></p>
+  </div>
+  <div class="wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px">
+    <div><div class="stat">88.4%</div><p class="caption" style="margin-top:10px">of orders against Proton Mail complied with. <em>Will not</em>.</p></div>
+    <div><div class="stat clay">410 of 410</div><p class="caption" style="margin-top:10px">orders against Proton VPN refused. <em>Cannot</em>.</p></div>
+  </div>
+</section>
+
+<!-- ================================================================ channels -->
+<section class="alt">
+  <div class="wrap">
+    <div class="tag">Scope</div>
+    <h2>Ten ways a profile gets built. We close seven and measure three.</h2>
+    <p>The first group closes with cryptography and costs nothing in answer quality. That is the reverse of every redaction product, which spends all its effort on the last group.</p>
+  </div>
+  <div class="wide" style="margin-top:28px">
+    <div class="band b1"><h3>Closed by cryptography · free</h3><div class="row">
+      <div class="c"><b>Account</b><span>blind-signature tokens</span></div>
+      <div class="c"><b>Payment</b><span>prepaid, unlinkable</span></div>
+      <div class="c"><b>Address</b><span>oblivious relay</span></div>
+      <div class="c"><b>Cross-provider</b><span>a relay per provider</span></div>
+      <div class="c"><b>Device</b><span>native app, one fingerprint</span></div></div></div>
+    <div class="band b2"><h3>Closed by default · cheap</h3><div class="row">
+      <div class="c"><b>Memory</b><span>kept on your laptop</span></div>
+      <div class="c"><b>Timing</b><span>padding and jitter</span></div></div></div>
+    <div class="band b3"><h3>Measured, never promised · the model reads the prompt</h3><div class="row">
+      <div class="c"><b>Names and IDs</b><span>replaced, restored locally</span></div>
+      <div class="c"><b>Telling details</b><span>scored before sending</span></div>
+      <div class="c"><b>Writing style</b><span>optional, costly</span></div></div></div>
+  </div>
+</section>
+
+<!-- ================================================================ landscape -->
+<section>
+  <div class="wrap">
+    <div class="tag">Who else is here</div>
+    <h2>Everyone owns a piece. Nobody owns the stranger.</h2>
+    <p><b>Redaction tools</b> such as Skyflow, Protecto and a dozen open-source proxies hide names in the prompt, but you still log in with your own account, pay with your own card and connect from your own address. Detection itself is now free.</p>
+    <p><b>Private-inference services</b> such as Tinfoil, Confer and Apple's Private Cloud Compute make a stronger promise on content, but only for open-weight models, not GPT, Claude or Gemini.</p>
+    <p><b>Private chat apps</b> such as Venice show people will pay: about $70M a year, profitable, on a no-logging pitch.<sup><a href="#s9">9</a></sup> Paid AI privacy sells at the twenty-dollar AI price, not the five-dollar privacy price.</p>
+    <p><b>Fast cloud classifiers</b> such as TypeSafe's Jev make it cheap to decide what is sensitive.<sup><a href="#s10">10</a></sup> They also require sending the text to a fourth company to decide whether it was private. We run that class of model on the laptop.</p>
+    <p><b>Memory apps</b> make your context portable. Lethe makes it portable and makes you unprofilable.</p>
+  </div>
+</section>
+
+<!-- ================================================================ pricing -->
+<section class="alt" id="pricing">
+  <div class="wrap">
+    <div class="tag">Availability and pricing</div>
+    <h2>Priced like AI, not like a VPN.</h2>
+    <p>Lethe is in development. The desktop client comes first, for people who already use more than one model. The client is open source, because "your keys never leave your laptop" means nothing if you cannot read the code.</p>
+  </div>
+  <div class="wide" style="margin-top:28px">
+    <div class="grid3">
+      <div class="card"><div class="stat" style="font-size:40px">$20–30</div><p style="margin-top:12px">a month for access to the frontier models through Lethe, with usage limits built into the tokens themselves.</p></div>
+      <div class="card"><div class="stat" style="font-size:40px">Teams</div><p style="margin-top:12px">bring your own provider contract. Shared policy and memory controls, deployed inside your network.</p></div>
+      <div class="card"><div class="stat" style="font-size:40px">$0</div><p style="margin-top:12px">for the client and the code. Anyone can check the claim instead of trusting it.</p></div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:36px">
+    <p><b>How big, honestly.</b> Sold as a security tool, the median contract in this category is about $25,000 a year, and the closest comparable exit sold for $117M. That argues for staying lean. Sold as a consumer subscription, Venice is the proof the ceiling is far higher. We do not yet have evidence we reach it, and we would rather say so than model it.</p>
+  </div>
+</section>
+
+<!-- ================================================================ limits -->
+<section>
+  <div class="wrap">
+    <div class="tag">What we do not claim</div>
+    <h2>The honest part.</h2>
+    <p><b>The model reads the prompt.</b> Content can still identify you, and writing can link your sessions: recent work links a person's anonymous profiles across a year-long gap with 90% precision.<sup><a href="#s11">11</a></sup> We measure that and show it to you. We never claim zero.</p>
+    <p><b>The crowd is the protection.</b> An anonymous token is only as anonymous as the number of people holding one. Below a few thousand users the guarantee is thin, and we will say so on the page.</p>
+    <p><b>We changed our minds once already.</b> We began by building reversible redaction. The mechanism had been published and patented, and swapping a fake name does not stop linking.<sup><a href="#s12">12</a></sup> We kept it as a feature and built the company around what it could not fix.</p>
+  </div>
+</section>
+
+<!-- ================================================================ in brief -->
+<section class="alt" id="brief">
+  <div class="wrap">
+    <div class="tag">In brief</div>
+    <h2>The five questions.</h2>
+    <div class="qa"><div class="q">What are you making?</div><p>A desktop app for every frontier model, where your memory lives on your laptop and each provider meets a stranger.</p></div>
+    <div class="qa"><div class="q">Why you, and how do you know people need it?</div>
+      <div class="fill"><b>To fill:</b> the specific moment one of us had real data, a model that would have answered it well, and no safe way to combine them. Name the data and the workaround.</div>
+      <p style="margin-top:12px">Practitioners keep building this for themselves: open-source privacy proxies have hundreds of stars, Venice reached about $70M a year, and enterprise AI traffic carrying sensitive data rose from 10.7% to 39.7% in two years.</p></div>
+    <div class="qa"><div class="q">Who are your competitors, and what do you understand that they don't?</div><p>Redaction tools, private-inference services and private chat apps. What they miss: hiding a name does not stop profiling, the cheapest channels to close are the ones nobody closed, and a privacy promise against a provider can only come from outside it.</p></div>
+    <div class="qa"><div class="q">How will you make money?</div><p>A subscription at the AI price, plus team deployments. Stay lean on capital, because exits in this category track capital raised.</p></div>
+    <div class="qa"><div class="q">What is the stack?</div><p>A native client in Rust. Published standards for the privacy pieces: Privacy Pass tokens and Oblivious HTTP. Small models running on the laptop for the risk check, so nothing private is sent anywhere to decide whether it was private. Built with Claude Code.</p></div>
+  </div>
+</section>
+
+<!-- ================================================================ name -->
+<section>
+  <div class="wrap">
+    <h2 style="font-size:30px">Why “Lethe”</h2>
+    <p><em>Lethe: the river in Hades whose water erases memory. Mnemosyne: the pool that restores it.</em> Initiates were told to avoid the first and drink from the second. The point was never that the model forgets. It is that there was nothing to remember, because it never learned who was asking.</p>
+  </div>
+</section>
+
+<!-- ================================================================ sources -->
+<section class="alt" style="padding:56px 0">
+  <div class="wrap">
+    <h3 style="margin-bottom:12px">Sources</h3>
+    <ol class="src">
+      <li id="s1">OpenAI, advertising on free and Go tiers, February 2026; EU advertising policy, August 2026.</li>
+      <li id="s2">OpenAI, <a href="https://openai.com/index/chatgpt-memory-dreaming/">Dreaming: better memory for a more helpful ChatGPT</a>, June 2026.</li>
+      <li id="s3">Response headers from each provider's API endpoint, measured 18 September 2026.</li>
+      <li id="s4">Koi Security, extensions intercepting AI conversations, 2026.</li>
+      <li id="s5">Kagi, Privacy Pass for paid search, February 2025.</li>
+      <li id="s6">Apple, <a href="https://security.apple.com/blog/private-cloud-compute/">Private Cloud Compute</a>; Meta, WhatsApp Private Processing, 2026.</li>
+      <li id="s7"><a href="https://www.rfc-editor.org/rfc/rfc9458">RFC 9458, Oblivious HTTP</a>; <a href="https://www.rfc-editor.org/rfc/rfc9576">RFC 9576, Privacy Pass</a>.</li>
+      <li id="s8">Proton, <a href="https://proton.me/legal/transparency">transparency report</a>, 2017–2025.</li>
+      <li id="s9"><a href="https://techcrunch.com/2026/07/01/venice-ai-becomes-a-unicorn-with-65m-series-a-as-its-privacy-first-ai-platform-takes-off/">Venice.ai Series A</a>, July 2026.</li>
+      <li id="s10"><a href="https://techcrunch.com/2026/09/18/a-new-kind-of-ai-model-from-a-chatgpt-inventor-is-thrilling-developers/">TypeSafe AI launches Jev</a>, September 2026.</li>
+      <li id="s11">Lermen et al., <a href="https://arxiv.org/abs/2602.16800">Large-scale online deanonymization with LLMs</a>, USENIX Security 2026.</li>
+      <li id="s12">Jathanna, <a href="https://arxiv.org/abs/2606.29567">SurrogateShield</a>, 2026; Anonos, US12417317, granted September 2025.</li>
+    </ol>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  Pranjal Joshi · Prashil Bulbule · October 2026<br>
+  This page loads nothing from the network. No fonts, no scripts, no analytics.
+</div></footer>
+
+</body>
+</html>

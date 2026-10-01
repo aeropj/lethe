@@ -236,9 +236,16 @@ an exit risk here, not a milestone.
 
 ## 9. The two things that decide whether this is a company
 
-**Reseller terms.** Anthropic's commercial terms forbid reselling except as expressly approved. A
-pooled-account intermediary is a partnership negotiation, not a clever proxy. **Test this in week one.**
-If the answer is no, the fallback is the enterprise shape where the customer holds the provider contract.
+**Accountability for anonymous users.** An earlier draft of this document called reseller terms the
+go/no-go. That was wrong for the shape we are building. Anthropic's commercial terms explicitly permit
+using the API "to power products and services Customer makes available to its own customers and end
+users" (clause A.1). What they restrict is reselling the Services themselves except as expressly approved
+(clause D.4). So an app serving our own subscribers is permitted; selling anonymous raw API access to
+developers would look like resale and needs approval. The real constraint is that we stay responsible for
+our users' compliance with the usage policy, and anonymous users make abuse prevention our problem. The
+answer is the one Apple, Meta and Kagi already use: credentials that are rate-limited by construction, so
+each one is good for a finite number of requests. We have read Anthropic's terms; OpenAI's and Google's
+still need the same read.
 
 **The anonymity set is the subscriber base.** A blind signature is only as anonymous as the crowd holding
 one. The privacy story and the growth story are therefore the same story, which is unusual and worth
@@ -270,7 +277,8 @@ prior art becomes available.
 
 ## 11. Next thirty days
 
-1. Get a written answer from Anthropic and OpenAI on pooled-account access. Everything else is contingent.
+1. Read OpenAI's and Google's commercial terms the way we read Anthropic's, confirm the app shape is
+   permitted, and design abuse controls around rate-limited anonymous credentials before launch.
 2. Stand up blind-signature tokens plus OHTTP against one provider and measure added latency end to end.
 3. Run the paired capability benchmark nobody has run. The paper everyone cites for "anonymisation makes
    models dumber" (Deußer et al. 2026) measured bracketed tags, not realistic surrogates, and its own

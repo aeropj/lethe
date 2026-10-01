@@ -15,6 +15,8 @@ what that text carries before it leaves rather than pretending we removed it.
 
 ## Layout
 
+- `proposal/index.html` — **the proposal as a launch page.** Open it in any browser; it loads nothing from the network.
+
 - `LETHE.md` — the single source of truth.
 - `research/` — ten research files behind it: source study of the nearest open-source implementation,
   the academic frontier, the startup and YC sweeps, the profiling-channel enumeration, and the patent
