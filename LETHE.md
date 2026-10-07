@@ -2,7 +2,7 @@
 
 **The private pool for frontier AI.**
 
-Pranjal Joshi · Prashil Bulbule · 18 September 2026
+Pranjal Joshi · Prashil Bulbule · Vaibhav · 18 September 2026
 
 This is the complete document. It supersedes `paper/`, `yc-application.md` and `STRATEGY.md`, all of
 which describe an earlier plan that the evidence did not support. Sources are in `research/`.

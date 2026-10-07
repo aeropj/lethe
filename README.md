@@ -2,7 +2,7 @@
 
 **Anonymous access to frontier AI models.**
 
-Pranjal Joshi · Prashil Bulbule
+Pranjal Joshi · Prashil Bulbule · Vaibhav
 
 You use GPT, Claude and Gemini at full capability. No provider knows who you are, because your credential
 is a blind signature rather than an account. No provider can link your payment to your usage. No edge
