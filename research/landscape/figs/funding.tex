@@ -1,51 +1,125 @@
-% Disclosed rounds and valuations, as reported in the press and company
-% sources cited in the text. Bar length = round size; colour = the shape of
-% company (consumer, enterprise confidential AI, enterprise gateway,
-% privacy sold to developers, neutral gateway).
+% Disclosed rounds, valuations and acquisition prices, as reported in the
+% sources the report and its research notes cite. Log-scale axis. Bar = round
+% raised (hatched bar = acquisition price); diamond = valuation at that round.
+% Colour = the four company shapes the report names, plus neighbouring cases.
+\linespread{1}\selectfont% layouts assume single line spread; the document uses 1.18
 \begin{tikzpicture}[x=1cm, y=1cm, font=\sffamily,
-  nm/.style={font=\sffamily\bfseries\fontsize{7.8}{9}\selectfont, text=ink, anchor=east, align=right, inner sep=0pt},
-  tag/.style={font=\sffamily\fontsize{6.6}{8}\selectfont, text=#1!55!black},
-  val/.style={font=\sffamily\fontsize{7.4}{8.8}\selectfont, text=ink!85, anchor=west, align=left, inner sep=1.5pt, fill=white},
-  tick/.style={font=\sffamily\fontsize{6.8}{8}\selectfont, text=ink!60}]
-  \def\s{0.065}   % cm per US$ million
-  \def\bh{0.21}   % half bar height
+  nm/.style={font=\sffamily\bfseries\fontsize{7.6}{8.8}\selectfont, text=ink, anchor=east, inner sep=0pt},
+  tag/.style={font=\sffamily\fontsize{6.3}{7.4}\selectfont, text=#1!65!black, anchor=east, inner sep=0pt},
+  rd/.style={font=\sffamily\bfseries\fontsize{7.1}{8.3}\selectfont, text=ink!88, anchor=west, inner sep=0pt},
+  tr/.style={font=\sffamily\fontsize{6.7}{7.8}\selectfont\nohyph, text=ink!66, anchor=west, inner sep=0pt},
+  tick/.style={font=\sffamily\fontsize{7}{8.4}\selectfont, text=ink!60},
+  val/.style={diamond, draw=#1!80!black, fill=white, line width=0.7pt, inner sep=0pt, minimum size=6.6pt},
+  unk/.style={font=\sffamily\bfseries\fontsize{8}{9}\selectfont, text=ink!42, inner sep=0pt}]
+  \def\dx{1.22}   % cm per decade
+  \def\bh{0.12}   % half bar height
+  \def\rh{0.66}    % row pitch
+  \def\tx{6.78}   % left edge of the text column
+  \newcommand{\lx}[1]{(log10(#1)+1)*\dx}% x of a US$ figure given in $M
 
-  % ---- grid
-  \foreach \v in {0,25,50,75,100} {
-    \draw[slate!22, line width=0.35pt] (\v*\s,0.55) -- (\v*\s,-6.35);
-    \node[tick, anchor=north] at (\v*\s,-6.4) {\ifnum\v=0 \$0\else \$\v M\fi};
-  }
-  \node[font=\sffamily\bfseries\fontsize{7.4}{9}\selectfont, text=ink!75, anchor=north]
-    at (50*\s,-6.78) {Round size, US\$ millions, as reported};
-
-  % ---- rows: \frow{y}{amount}{colour}{name}{tag}{label}
+  % \frow{row}{colour}{name}{tag}{round}{traction}
   \newcommand{\frow}[6]{%
-    \fill[#3] (0,{#1-\bh}) rectangle ({#2*\s},{#1+\bh});
-    \node[nm] at (-0.22,{#1+0.09}) {#4};
-    \node[tag=#3, anchor=east] at (-0.22,{#1-0.2}) {#5};
-    \node[val] at ({#2*\s+0.1},#1) {#6};}
+    \pgfmathsetmacro{\yy}{-#1*\rh}%
+    \node[nm] at (-0.18,\yy+0.09) {#3};
+    \node[tag=#2] at (-0.18,\yy-0.17) {#4};
+    \node[rd] at (\tx,\yy+0.1) {#5};
+    \node[tr] at (\tx,\yy-0.16) {#6};}
+  \newcommand{\fbar}[3]{% {row}{colour}{US$M}
+    \pgfmathsetmacro{\yy}{-#1*\rh}\pgfmathsetmacro{\xe}{\lx{#3}}%
+    \fill[#2] (0,\yy-\bh) rectangle (\xe,\yy+\bh);}
+  \newcommand{\fval}[3]{% {row}{colour}{US$M}
+    \pgfmathsetmacro{\yy}{-#1*\rh}\pgfmathsetmacro{\xe}{\lx{#3}}%
+    \draw[#2!55, line width=0.5pt, dash pattern=on 1pt off 1pt] (0,\yy) -- (\xe,\yy);
+    \node[val=#2] at (\xe,\yy) {};}
 
-  \frow{0}{113}{plum}{OpenRouter}{neutral gateway}
-    {\textbf{\$113M at \$1.3B}, May 2026\\then a reported Stripe acquisition above \$7B}
-  \frow{-1}{65}{amber}{Venice}{consumer private AI}
-    {\textbf{\$65M Series A at \$1B}, July 2026}
-  \frow{-2}{58}{indigo}{WitnessAI}{enterprise data-leak gateway}
-    {\textbf{\$58M Series B}}
-  \frow{-3}{24}{teal}{Opaque}{enterprise confidential AI}
-    {\textbf{\$24M Series B at \$300M}, February 2026}
-  \frow{-4}{4.8}{slate}{Credal}{privacy to developers}
-    {\textbf{\$4.8M seed}, before it pivoted}
-  % Confident Security: $4.2M seed, which a later release puts at $5M
-  \fill[slate] (0,{-5-\bh}) rectangle ({4.2*\s},{-5+\bh});
-  \fill[slate!35] ({4.2*\s},{-5-\bh}) rectangle ({5*\s},{-5+\bh});
-  \node[nm] at (-0.22,{-5+0.09}) {Confident Security};
-  \node[tag=slate, anchor=east] at (-0.22,{-5-0.2}) {privacy to developers};
-  \node[val] at ({5*\s+0.1},-5) {\textbf{\$4.2M seed}; a later release says \$5M};
-  \frow{-6}{4}{slate}{Unbound}{privacy to developers}
-    {\textbf{\$4M seed}}
+  % ---- grid and axis (log scale)
+  \foreach \v/\t in {0.1/\$0.1M, 1/\$1M, 10/\$10M, 100/\$100M, 1000/\$1B, 10000/\$10B} {
+    \pgfmathsetmacro{\gx}{\lx{\v}}
+    \draw[slate!22, line width=0.35pt] (\gx,0.42) -- (\gx,{-13*\rh-0.36});
+    \node[tick, anchor=north] at (\gx,{-13*\rh-0.4}) {\t};
+  }
+  \foreach \d in {0,...,4} { \foreach \m in {2,...,9} {
+    \pgfmathsetmacro{\gx}{(\d+log10(\m))*\dx}
+    \draw[slate!22, line width=0.3pt] (\gx,{-13*\rh-0.36}) -- (\gx,{-13*\rh-0.29});
+  }}
+  \draw[slate!55, line width=0.4pt] (0,{-13*\rh-0.36}) -- ({\lx{16000}},{-13*\rh-0.36});
+  \node[font=\sffamily\bfseries\fontsize{7.2}{9}\selectfont, text=ink!75, anchor=north] at ({\lx{100}},{-13*\rh-0.72})
+    {US\$, log scale: each gridline is ten times the last};
+  \node[rd, anchor=south west, text=ink!60] at (\tx,0.3) {Round or deal, and traction at the time};
 
-  % ---- bracket for the stalled group
-  \draw[slate!70!black, line width=0.5pt] (5.55,-3.75) -- (5.67,-3.75) -- (5.67,-6.25) -- (5.55,-6.25);
-  \node[font=\sffamily\fontsize{7}{8.6}\selectfont, text=slate!65!black, anchor=west, align=left, fill=white, inner sep=1.5pt]
-    at (5.8,-5.0) {Privacy sold to developers as a\\cryptographic property\\stalled at seed or died};
+  % ---- consumer private AI with revenue (amber)
+  \fbar{0}{amber}{65}\fval{0}{amber}{1000}
+  \frow{0}{amber}{Venice}{consumer private AI}{\$65M Series A at \$1B\enspace·\enspace Jul 2026}
+    {$>$\$70M ARR, profitable since Q1 2026, $\sim$3M users}
+  % ---- enterprise confidential-AI platform (teal)
+  \fbar{1}{teal}{24}\fval{1}{teal}{300}
+  \frow{1}{teal}{Opaque}{enterprise confidential AI}{\$24M Series B at \$300M\enspace·\enspace Feb 2026}
+    {names ServiceNow, Anthropic, Accenture; no ARR disclosed}
+  % ---- CISO data-leak gateways (indigo)
+  \fbar{2}{indigo}{58}
+  \frow{2}{indigo}{WitnessAI}{CISO data-leak gateway}{\$58M Series B\enspace·\enspace Jan 2026}
+    {ARR up more than 500\%, headcount up 5x}
+  \fbar{3}{indigo}{17.5}
+  \frow{3}{indigo}{Harmonic Security}{CISO data-leak gateway}{\$17.5M Series A\enspace·\enspace Oct 2024}
+    {enterprise customers ``in double figures''}
+  \pgfmathsetmacro{\xp}{\lx{133.6}}
+  \fill[pattern={Lines[angle=45,distance=2.2pt,line width=0.9pt]}, pattern color=indigo] (0,{-4*\rh-\bh}) rectangle (\xp,{-4*\rh+\bh});
+  \draw[indigo, line width=0.5pt] (0,{-4*\rh-\bh}) rectangle (\xp,{-4*\rh+\bh});
+  \draw[-{Stealth[length=3.5pt,width=3pt]}, indigo!80!black, line width=0.6pt] (\xp+0.05,{-4*\rh}) -- (\xp+0.42,{-4*\rh});
+  \node[font=\sffamily\fontsize{6.3}{7.4}\selectfont, text=indigo!70!black, anchor=west, inner sep=1pt] at (\xp+0.44,{-4*\rh}) {+ stock};
+  \frow{4}{indigo}{Prompt Security}{CISO gateway, acquired}{Bought by SentinelOne\enspace·\enspace closed Sep 2025}
+    {about \$133.6M cash plus stock (SEC 10-Q)}
+  \node[unk] at (0.25,{-5*\rh}) {?};
+  \node[font=\sffamily\itshape\fontsize{6.3}{7.4}\selectfont, text=ink!50, anchor=west, inner sep=0pt] at (0.42,{-5*\rh}) {price not disclosed};
+  \frow{5}{indigo}{Aim Security}{CISO gateway, acquired}{Bought by Cato Networks\enspace·\enspace Sep 2025}
+    {price and traction not disclosed}
+  % ---- developer privacy infrastructure (slate)
+  \fbar{6}{slate}{4.8}
+  \frow{6}{slate}{Credal}{developer privacy infra}{\$4.8M seed\enspace·\enspace Oct 2023}
+    {11 customers at the raise; since pivoted to agents}
+  \fill[slate!35] ({\lx{4.2}},{-7*\rh-\bh}) rectangle ({\lx{5}},{-7*\rh+\bh});
+  \fbar{7}{slate}{4.2}
+  \frow{7}{slate}{Confident Security}{developer privacy infra}{\$4.2M seed\enspace·\enspace Jul 2025 (a later release says \$5M)}
+    {none disclosed: came out of stealth with the round}
+  \fbar{8}{slate}{4}
+  \frow{8}{slate}{Unbound}{developer privacy infra}{\$4M seed\enspace·\enspace May 2025}
+    {none disclosed; since repositioned toward agent access}
+  \fbar{9}{slate}{5}
+  \frow{9}{slate}{Edgeless Systems}{developer privacy infra}{\$5M seed\enspace·\enspace Mar 2023}
+    {no round disclosed since; Privatemode keeps shipping}
+  \fbar{10}{slate}{0.125}
+  \node[unk] at ({\lx{0.125}+0.22},{-10*\rh}) {?};
+  \node[font=\sffamily\itshape\fontsize{6.3}{7.4}\selectfont, text=ink!50, anchor=west, inner sep=0pt] at ({\lx{0.125}+0.38},{-10*\rh}) {+ an undisclosed May 2026 round};
+  \frow{10}{slate}{Tinfoil}{developer privacy infra}{\$125K from YC\enspace·\enspace May 2025}
+    {no revenue or customer counts public}
+  \fbar{11}{slate}{0.5}
+  \frow{11}{slate}{Blyss}{developer privacy infra}{\$500K from YC\enspace·\enspace Feb 2023}
+    {now inactive}
+  % ---- neighbouring cases, for scale (plum)
+  \draw[ink!30, line width=0.4pt, dash pattern=on 2pt off 1.5pt] (-3.1,{-11.5*\rh}) -- (13.2,{-11.5*\rh});
+  \fbar{12}{plum}{113}\fval{12}{plum}{1300}
+  \pgfmathsetmacro{\xa}{\lx{1300}}\pgfmathsetmacro{\xb}{\lx{7000}}
+  \draw[-{Stealth[length=3.5pt,width=3pt]}, plum!80!black, line width=0.6pt, dash pattern=on 1.6pt off 1.2pt] (\xa+0.14,{-12*\rh}) -- (\xb-0.1,{-12*\rh});
+  \node[star, star points=5, star point ratio=2.3, fill=plum, inner sep=0pt, minimum size=7.5pt] at (\xb,{-12*\rh}) {};
+  \frow{12}{plum}{OpenRouter}{neutral gateway, for scale}{\$113M at \$1.3B\enspace·\enspace May 2026}
+    {\$40M at $\sim$\$500M a year earlier; Stripe deal $>$\$7B reported}
+  \fbar{13}{plum}{550}\fval{13}{plum}{15500}
+  \frow{13}{plum}{Harvey}{vertical app, for scale}{\$550M at \$15.5bn\enspace·\enspace Sep 2026}
+    {\$400M+ ARR; used by about 80\% of the Am Law 100}
+
+  % ---- legend, below the axis (entries chained so they never collide)
+  \begin{scope}[every node/.style={font=\sffamily\fontsize{7}{8.4}\selectfont, text=ink!78, anchor=west, inner sep=0pt}]
+    \pgfmathsetmacro{\ly}{-13*\rh-1.55}
+    \node (l1) at (-3.1,\ly) {\chip{amber}{\fontsize{7}{8.4}\selectfont Consumer private AI with revenue}};
+    \node (l2) at ([xshift=0.5cm]l1.east) {\chip{teal}{\fontsize{7}{8.4}\selectfont Enterprise confidential-AI platform}};
+    \node (l3) at ([xshift=0.5cm]l2.east) {\chip{indigo}{\fontsize{7}{8.4}\selectfont CISO data-leak gateway}};
+    \node (m1) at (-3.1,\ly-0.38) {\chip{slate}{\fontsize{7}{8.4}\selectfont Developer privacy infrastructure, stalled at seed or died}};
+    \node (m2) at ([xshift=0.5cm]m1.east) {\chip{plum}{\fontsize{7}{8.4}\selectfont Neighbouring cases, for scale}};
+    \node (n1) at (-3.1,\ly-0.76) {\tikz[baseline=-0.5ex]\fill[slate] (0,-0.08) rectangle (0.42,0.08);\enspace round raised};
+    \node (n2) at ([xshift=0.5cm]n1.east) {\tikz[baseline=-0.5ex]\node[val=slate]{};\enspace valuation at that round};
+    \node (n3) at ([xshift=0.5cm]n2.east) {\tikz[baseline=-0.5ex]{\fill[pattern={Lines[angle=45,distance=2.2pt,line width=0.9pt]}, pattern color=slate] (0,-0.08) rectangle (0.42,0.08);
+      \draw[slate, line width=0.4pt] (0,-0.08) rectangle (0.42,0.08);}\enspace acquisition price};
+    \node (n4) at ([xshift=0.5cm]n3.east) {\tikz[baseline=-0.5ex]\node[star, star points=5, star point ratio=2.3, fill=slate, inner sep=0pt, minimum size=7pt]{};\enspace reported deal};
+    \node (n5) at ([xshift=0.5cm]n4.east) {{\bfseries\color{ink!42}?}\enspace not disclosed};
+  \end{scope}
 \end{tikzpicture}

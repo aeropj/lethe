@@ -1,0 +1,116 @@
+% Capability matrix: 18 products and Lethe's target against eight properties,
+% grouped as models, identity, network, payment, trust and accountability.
+% Every cell is judged from the report and its research notes:
+%   F = yes, H = partial (or only in some modes), E = no or not found,
+%   U = not stated in the sources, N = not applicable (open-weight only, or no payment).
+\linespread{1}\selectfont% layouts assume single line spread; the document uses 1.18
+\begin{tikzpicture}[x=1cm, y=1cm, font=\sffamily,
+  hd/.style={font=\sffamily\fontsize{5.7}{6.75}\selectfont\nohyph, text=ink!80, align=center, anchor=south, inner sep=0pt},
+  grp/.style={font=\sffamily\bfseries\fontsize{5.2}{6.2}\selectfont, text=white, inner sep=0pt},
+  rn/.style={font=\sffamily\fontsize{6.9}{8}\selectfont, text=ink, anchor=west, inner sep=0pt},
+  cv/.style={font=\sffamily\fontsize{6.1}{7.2}\selectfont\nohyph, text=ink!72, anchor=west, inner sep=0pt, text width=5.75cm, align=left},
+  catdot/.style={circle, fill=#1, inner sep=0pt, minimum size=4.2pt}]
+  \def\cw{1.04}   % glyph column width
+  \def\gx{3.35}   % left edge of the glyph block
+  \def\rh{0.405}  % row height
+  \def\ry{-1.55}  % centre of the first row
+  \def\cx{11.82}  % left edge of the caveat column
+  \def\gr{0.092}  % glyph radius
+
+  % column colours: models, identity, network, payment, trust, accountability x3
+  \def\colof#1{\ifcase#1 slate\or indigo\or river\or amber\or teal\or coral\or coral\or coral\fi}
+
+  % ---- column tints and group bars
+  \foreach \k in {0,...,7} {
+    \edef\cc{\colof{\k}}
+    \fill[\cc!7] ({\gx+\k*\cw+0.03},-1.3) rectangle ({\gx+(\k+1)*\cw-0.03},{\ry-18*\rh-0.25});
+  }
+  \foreach \a/\b/\c/\t in {0/0/slate/MODELS, 1/1/indigo/IDENTITY, 2/2/river/NETWORK, 3/3/amber/PAYMENT,
+                           4/4/teal/TRUST, 5/7/coral/ACCOUNTABILITY} {
+    \fill[\c, rounded corners=1.5pt] ({\gx+\a*\cw+0.03},0.12) rectangle ({\gx+(\b+1)*\cw-0.03},0.4);
+    \node[grp] at ({\gx+(\a+\b+1)*\cw/2},0.26) {\t};
+  }
+  % ---- column heads
+  \foreach \k/\t in {0/{Closed\\frontier\\models}, 1/{Operator\\cannot\\link users\\(crypto-\\graphic)},
+                     2/{IP hidden\\from\\operator}, 3/{Payment\\unlinkable\\from usage},
+                     4/{``We don't\\log'' is\\attested}, 5/{Provider-\\approved\\anonymous\\tier},
+                     6/{Abuse\\control\\without\\identity}, 7/{Published\\anonymity-\\set size}} {
+    \node[hd] at ({\gx+(\k+0.5)*\cw},-1.25) {\t};
+  }
+  \node[rn, anchor=south west, font=\sffamily\bfseries\fontsize{6.6}{8}\selectfont, text=ink!70] at (0,-1.25) {Product};
+  \node[rn, anchor=south west, font=\sffamily\bfseries\fontsize{6.6}{8}\selectfont, text=ink!70] at (\cx,-1.25) {What limits it (from the report)};
+  \draw[ink!45, line width=0.5pt] (0,-1.3) -- (17.6,-1.3);
+
+  % ---- one glyph
+  \newcommand{\gl}[4]{% {colour}{x}{y}{F|H|E|U|N}
+    \if#4F\fill[#1!85!black] ({#2},{#3}) circle (\gr);\fi
+    \if#4H\draw[#1!85!black, line width=0.6pt] ({#2},{#3}) circle (\gr);
+           \fill[#1!85!black] ({#2},{#3}) -- ++(0,\gr) arc (90:270:\gr) -- cycle;\fi
+    \if#4E\draw[#1!85!black, line width=0.6pt] ({#2},{#3}) circle (\gr);\fi
+    \if#4U\node[font=\sffamily\bfseries\fontsize{7}{8}\selectfont, text=ink!40, inner sep=0pt] at ({#2},{#3}) {?};\fi
+    \if#4N\node[font=\sffamily\fontsize{7}{8}\selectfont, text=ink!30, inner sep=0pt] at ({#2},{#3}) {--};\fi}
+
+  % ---- one row: \crow{index}{category colour}{name}{c1}{c2}{c3}{c4}{c5}{c6}{c7}{c8}{caveat}
+  \newcommand{\crow}[5]{%
+    \pgfmathsetmacro{\yy}{\ry-#1*\rh}%
+    \ifodd#1\fill[slate!5] (0,{\yy-\rh/2}) rectangle (\gx,{\yy+\rh/2});
+            \fill[slate!5] (\gx+8*\cw,{\yy-\rh/2}) rectangle (17.6,{\yy+\rh/2});\fi
+    \node[catdot=#2] at (0.1,\yy) {};
+    \node[rn] at (0.24,\yy) {#3};
+    \node[cv] at (\cx,\yy) {#5};
+    \def\vals{#4}%
+    \foreach \v [count=\k from 0] in \vals {
+      \edef\cc{\colof{\k}}
+      \gl{\cc}{\gx+(\k+0.5)*\cw}{\yy}{\v}
+    }}
+
+  \crow{0}{indigo}{OpenAnonymity}{F,F,H,F,H,E,U,E}{Privacy Pass tickets; CLI and billing expose IP}
+  \crow{1}{indigo}{LLMTor}{F,F,F,F,U,E,H,E}{Blind RSA over Tor; bans need a per-user token}
+  \crow{2}{indigo}{zkAPI}{H,F,E,F,U,E,U,E}{ZK-proven deposit; no network anonymity; models vary}
+  \crow{3}{river}{Duck.ai}{F,E,E,U,E,F,U,E}{Contracts with all providers; no Covered Models}
+  \crow{4}{river}{Brave Leo}{F,E,H,H,H,U,U,E}{Payment tokens undocumented; IP proxy is policy}
+  \crow{5}{river}{Kagi Assistant}{F,E,E,E,E,U,E,E}{Account-based; Privacy Pass covers Search only}
+  \crow{6}{amber}{Venice (Anonymous mode)}{F,E,E,E,E,U,E,E}{Processes account, IP, timestamps; provider may store}
+  \crow{7}{amber}{1Privacy}{F,E,E,E,E,U,U,E}{Rotates keys, but the relay knows each customer}
+  \crow{8}{amber}{nullsink}{F,E,E,H,E,U,U,E}{No account, Monero; ``you trust the nullsink operator''}
+  \crow{9}{river}{Apple ChatGPT extension}{F,E,U,N,E,F,U,E}{Free, signed out; still sends time zone, country, device}
+  \crow{10}{teal}{Tinfoil}{E,E,E,E,H,N,H,E}{Content path attested; logs email, Stripe billing, IP}
+  \crow{11}{teal}{Confer}{E,E,E,E,H,N,U,E}{Strictest attestation; no anonymous payment found}
+  \crow{12}{teal}{Privatemode}{E,E,E,E,H,N,E,E}{EU-hosted; account and API key}
+  \crow{13}{teal}{Confident Security}{E,H,F,E,H,N,E,E}{OHTTP relay hides IPs from compute; business billing}
+  \crow{14}{teal}{Maple}{E,E,E,H,H,N,U,E}{No-email sign-up and Bitcoin, but sees IP addresses}
+  \crow{15}{plum}{NEAR AI}{E,E,E,H,H,N,E,E}{Staking links a wallet to usage; private USDC for agents}
+  \crow{16}{plum}{Phala / RedPill}{F,E,E,U,F,E,E,E}{Attested proxy to GPT, Claude, Gemini; the lab is not}
+  \crow{17}{river}{Proton Lumo}{E,E,E,U,E,N,U,E}{Zero-access history; open-weight models only}
+
+  % ---- Lethe's target row
+  \pgfmathsetmacro{\yl}{\ry-18*\rh-0.06}
+  \fill[coral!9, rounded corners=2pt] (-0.05,{\yl-\rh/2-0.02}) rectangle (17.65,{\yl+\rh/2+0.02});
+  \draw[coral, line width=0.7pt, rounded corners=2pt] (-0.05,{\yl-\rh/2-0.02}) rectangle (17.65,{\yl+\rh/2+0.02});
+  \node[catdot=coral] at (0.1,\yl) {};
+  \node[rn, font=\sffamily\bfseries\fontsize{6.9}{8}\selectfont, text=coral!60!black] at (0.24,\yl) {Lethe (target)};
+  \foreach \k in {0,...,7} {
+    \edef\cc{\colof{\k}}
+    \gl{\cc}{\gx+(\k+0.5)*\cw}{\yl}{F}
+  }
+  \node[cv, text=coral!55!black] at (\cx,\yl) {All eight at once, under a contract a lab has signed};
+
+  % ---- count of full marks per column (the 18 products, Lethe excluded)
+  \pgfmathsetmacro{\yc}{\yl-0.48}
+  \draw[ink!45, line width=0.5pt] (0,{\yc+0.22}) -- (17.6,{\yc+0.22});
+  \node[rn, font=\sffamily\bfseries\fontsize{6.4}{7.6}\selectfont, text=ink!70] at (0,\yc) {Products with a full mark};
+  \foreach \n [count=\k from 0] in {10,3,2,3,1,2,0,0} {
+    \edef\cc{\colof{\k}}
+    \node[font=\sffamily\bfseries\fontsize{7.4}{8.6}\selectfont, text=\cc!75!black] at ({\gx+(\k+0.5)*\cw},\yc) {\n};
+  }
+  \node[cv, text=coral!55!black, font=\sffamily\itshape\fontsize{6.1}{7.2}\selectfont] at (\cx,\yc) {No product fills the accountability group};
+
+  % ---- legend
+  \begin{scope}[shift={(0,{\yc-0.48})}, every node/.style={font=\sffamily\fontsize{6.4}{7.6}\selectfont, text=ink!72, anchor=west, inner sep=0pt}]
+    \gl{ink}{0.1}{0}{F}  \node at (0.28,0) {yes};
+    \gl{ink}{1.0}{0}{H}  \node at (1.18,0) {partial, by policy, or in some modes only};
+    \gl{ink}{5.85}{0}{E}  \node at (6.03,0) {no, or the sources found none};
+    \gl{ink}{9.45}{0}{U} \node at (9.63,0) {not stated in the sources};
+    \gl{ink}{12.5}{0}{N} \node at (12.7,0) {not applicable: open-weight only, or free};
+  \end{scope}
+\end{tikzpicture}
