@@ -1,0 +1,32 @@
+% Accountable anonymity: the lab gets its cross-session safety signal from a
+% gateway that never learns who is asking.
+\begin{tikzpicture}[x=1cm, y=1cm, font=\sffamily,
+  st/.style={draw=#1!55!black, fill=#1!12, rounded corners=3pt, line width=0.5pt,
+    minimum width=2.9cm, minimum height=0.95cm, align=center, inner sep=3pt,
+    font=\sffamily\bfseries\fontsize{8.4}{10}\selectfont\nohyph, text=#1!45!black},
+  cp/.style={text width=3.1cm, align=center, anchor=north, inner sep=0pt,
+    font=\sffamily\fontsize{7.4}{9}\selectfont\nohyph, text=ink!72},
+  fl/.style={-{Stealth[length=5pt,width=4pt]}, line width=0.8pt, ink!55}]
+
+  \node[st=river]  (u) at (0,0)     {User};
+  \node[st=teal]   (c) at (3.55,0)  {Anonymous\\rate-limited credential};
+  \node[st=slate]  (r) at (7.1,0)   {Independent\\relay};
+  \node[st=indigo] (g) at (10.65,0) {Attested\\gateway};
+  \node[st=violet] (l) at (14.2,0)  {Frontier\\lab};
+
+  \draw[fl] (u) -- (c);
+  \draw[fl] (c) -- (r);
+  \draw[fl] (r) -- (g);
+  \draw[fl] (g) -- (l);
+
+  \node[cp] at (0,-0.68)     {memory stays on the device};
+  \node[cp] at (3.55,-0.68)  {blind-signature or ARC; each allows a fixed number of requests; a handle that can be suspended but not traced to a person};
+  \node[cp] at (7.1,-0.68)   {OHTTP, run by an independent operator};
+  \node[cp] at (10.65,-0.68) {runs misuse monitoring under its own keys, without learning who each user is; ``we don't log'' can be checked};
+  \node[cp] at (14.2,-0.68)  {gets the cross-session safety signal, not identity};
+
+  % the layer Lethe would own
+  \draw[indigo!70, line width=0.5pt] (2.1,0.72) -- (2.1,0.85) -- (12.1,0.85) -- (12.1,0.72);
+  \node[font=\sffamily\bfseries\fontsize{7.4}{9}\selectfont, text=indigo!75!black, anchor=south, fill=white, inner sep=2pt]
+    at (7.1,0.85) {THE ACCOUNTABLE-ANONYMITY LAYER};
+\end{tikzpicture}

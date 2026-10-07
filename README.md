@@ -15,6 +15,8 @@ what that text carries before it leaves rather than pretending we removed it.
 
 ## Layout
 
+- `research/landscape/landscape.pdf` — **competitive landscape and verdict, October 2026.** Read before pitching anything. Long form: `reports/Private AI access competitive landscape.md`.
+
 - `proposal/index.html` — **the proposal as a launch page.** Open it in any browser; it loads nothing from the network.
 
 - `LETHE.md` — the single source of truth.

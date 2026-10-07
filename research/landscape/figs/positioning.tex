@@ -1,0 +1,80 @@
+% Positioning map: which models each product serves (x) against what its
+% operator can still learn about its users (y). Positions are qualitative,
+% read from the report's text; colour marks the kind of company.
+\begin{tikzpicture}[x=1cm, y=1cm, font=\sffamily,
+  dot/.style={circle, fill=#1, draw=#1!55!black, line width=0.4pt, inner sep=0pt, minimum size=5.4pt},
+  nm/.style={font=\sffamily\fontsize{7.6}{9}\selectfont, text=#1!50!black, inner sep=2pt},
+  bandlab/.style={font=\sffamily\bfseries\fontsize{7.4}{8.8}\selectfont, text=ink!72, align=right, anchor=east},
+  half/.style={font=\sffamily\fontsize{7.6}{9}\selectfont, text=ink!70},
+  axt/.style={font=\sffamily\bfseries\fontsize{8}{10}\selectfont, text=ink},
+  ax/.style={-{Stealth[length=5pt,width=4pt]}, line width=0.6pt, ink!55}]
+
+  % ---- bands (bottom: operator knows you; top: it cannot tell users apart)
+  \fill[slate!9]  (0,0)   rectangle (14,2.8);
+  \fill[slate!4]  (0,2.8) rectangle (14,5.6);
+  \fill[white]    (0,5.6) rectangle (14,8.4);
+  \draw[slate!30, line width=0.4pt] (0,2.8) -- (14,2.8) (0,5.6) -- (14,5.6);
+  \draw[slate!35, line width=0.4pt] (0,0) rectangle (14,8.4);
+  \draw[ink!35, dashed, line width=0.5pt] (7,0) -- (7,8.4);
+
+  % ---- axes
+  \draw[ax] (0,-0.02) -- (14.45,-0.02);
+  \draw[ax] (-0.02,0) -- (-0.02,8.85);
+  \node[half] at (3.5,-0.32) {open-weight only};
+  \node[half] at (10.5,-0.32) {closed frontier (GPT, Claude, Gemini)};
+  \node[axt] at (7,-0.78) {Models served};
+  \node[bandlab] at (-0.2,1.4) {account, card\\and IP known};
+  \node[bandlab] at (-0.2,4.2) {policy\\promise only};
+  \node[bandlab] at (-0.2,7.0) {cryptographically\\unlinkable};
+  \node[axt, rotate=90] at (-2.75,4.2) {Who the operator can identify};
+
+  % ---- Lethe's opening (empty today)
+  \draw[coral, dashed, line width=0.8pt, fill=coral!7, rounded corners=4pt]
+    (11.15,5.9) rectangle (13.85,8.25);
+  \node[align=center, text width=2.5cm, font=\sffamily\fontsize{6.9}{8.3}\selectfont\nohyph, text=coral!55!black]
+    at (12.5,7.075)
+    {{\fontsize{7.8}{9.4}\selectfont\bfseries Lethe's opening}\\[2pt]
+     accountable anonymity at commercial quality, provider-approved\\[2pt]
+     {\itshape empty today}};
+
+  % ---- open-weight half: enclave startups (teal), crypto networks (violet), big brands (river)
+  \node[dot=teal] (tin) at (0.8,0.85) {};  \node[nm=teal, anchor=west]   at (tin.east) {Tinfoil};
+  \node[dot=teal] (pm)  at (2.75,1.45) {}; \node[nm=teal, anchor=west]   at (pm.east) {Privatemode};
+  \node[dot=teal] (cf)  at (1.05,2.15) {}; \node[nm=teal, anchor=west]   at (cf.east) {Confer};
+  \node[dot=plum] (nil) at (4.75,0.7) {};  \node[nm=plum, anchor=west] at (nil.east) {Nillion};
+  \node[dot=plum] (near) at (3.85,2.3) {}; \node[nm=plum, anchor=west] at (near.east) {NEAR AI};
+  \node[dot=plum] (ph) at (5.55,1.7) {};   \node[nm=plum, anchor=west] at (ph.east) {Phala};
+  \node[dot=teal] (mp)  at (1.15,3.55) {}; \node[nm=teal, anchor=west]   at (mp.east) {Maple};
+  \node[dot=river] (lumo) at (3.6,3.35) {}; \node[nm=river, anchor=west] at (lumo.east) {Proton Lumo};
+  \node[dot=teal] (cs)  at (2.2,4.85) {};  \node[nm=teal, anchor=west]   at (cs.east) {Confident Security};
+
+  % ---- frontier half: big brands (river), paid proxies (amber)
+  \node[dot=river] (kagi) at (7.55,3.1) {};  \node[nm=river, anchor=west] at (kagi.east) {Kagi};
+  \node[dot=amber] (ven)  at (9.25,3.2) {};  \node[nm=amber, anchor=west] at (ven.east) {Venice (Anonymous mode)};
+  \node[dot=river] (apl)  at (7.75,4.25) {}; \node[nm=river, anchor=west] at (apl.east) {Apple ChatGPT extension};
+  \node[dot=river] (duck) at (12.35,3.95) {};\node[nm=river, anchor=west] at (duck.east) {Duck.ai};
+  \node[dot=amber] (onep) at (11.85,4.75) {};\node[nm=amber, anchor=west] at (onep.east) {1Privacy};
+  \node[dot=river] (leo)  at (7.95,5.15) {}; \node[nm=river, anchor=west] at (leo.east) {Brave Leo};
+  \node[dot=amber] (null) at (10.1,5.0) {};  \node[nm=amber, anchor=west] at (null.east) {nullsink};
+
+  % ---- frontier half, cryptographic: research systems (indigo)
+  \node[dot=indigo] (tor) at (7.6,6.1) {};  \node[nm=indigo, anchor=west] at (tor.east) {LLMTor};
+  \node[dot=indigo] (zk)  at (8.1,7.7) {}; \node[nm=indigo, anchor=west] at (zk.east) {zkAPI};
+  \node[dot=indigo, minimum size=6.6pt] (oa) at (10.3,7.0) {};
+  \node[nm=indigo, anchor=east, font=\sffamily\bfseries\fontsize{7.6}{9}\selectfont] at (oa.west) {OpenAnonymity};
+  \draw[-{Stealth[length=4pt,width=3.5pt]}, coral!80!black, line width=0.6pt, dashed]
+    (oa.east) -- (11.1,7.0);
+  \node[font=\sffamily\itshape\fontsize{6.6}{8}\selectfont, text=coral!60!black, anchor=north east, inner sep=1pt]
+    at ($(oa.west)+(-0.02,-0.16)$) {closest: academic, free};
+
+  % ---- legend
+  \begin{scope}[shift={(0,-1.45)}]
+    \foreach \c/\t/\x in {river/Big brands/0, amber/Paid proxies/2.05, teal/Enclave startups/4.3,
+                          plum/Crypto networks/6.95, indigo/Research systems/9.6} {
+      \node[dot=\c] at (\x+0.1,0) {};
+      \node[nm=\c, anchor=west] at (\x+0.22,0) {\t};
+    }
+    \draw[coral, dashed, line width=0.7pt, fill=coral!7, rounded corners=1.5pt] (12.3,-0.11) rectangle (12.65,0.11);
+    \node[nm=coral, anchor=west] at (12.7,0) {Lethe's opening};
+  \end{scope}
+\end{tikzpicture}

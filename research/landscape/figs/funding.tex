@@ -1,0 +1,51 @@
+% Disclosed rounds and valuations, as reported in the press and company
+% sources cited in the text. Bar length = round size; colour = the shape of
+% company (consumer, enterprise confidential AI, enterprise gateway,
+% privacy sold to developers, neutral gateway).
+\begin{tikzpicture}[x=1cm, y=1cm, font=\sffamily,
+  nm/.style={font=\sffamily\bfseries\fontsize{7.8}{9}\selectfont, text=ink, anchor=east, align=right, inner sep=0pt},
+  tag/.style={font=\sffamily\fontsize{6.6}{8}\selectfont, text=#1!55!black},
+  val/.style={font=\sffamily\fontsize{7.4}{8.8}\selectfont, text=ink!85, anchor=west, align=left, inner sep=1.5pt, fill=white},
+  tick/.style={font=\sffamily\fontsize{6.8}{8}\selectfont, text=ink!60}]
+  \def\s{0.065}   % cm per US$ million
+  \def\bh{0.21}   % half bar height
+
+  % ---- grid
+  \foreach \v in {0,25,50,75,100} {
+    \draw[slate!22, line width=0.35pt] (\v*\s,0.55) -- (\v*\s,-6.35);
+    \node[tick, anchor=north] at (\v*\s,-6.4) {\ifnum\v=0 \$0\else \$\v M\fi};
+  }
+  \node[font=\sffamily\bfseries\fontsize{7.4}{9}\selectfont, text=ink!75, anchor=north]
+    at (50*\s,-6.78) {Round size, US\$ millions, as reported};
+
+  % ---- rows: \frow{y}{amount}{colour}{name}{tag}{label}
+  \newcommand{\frow}[6]{%
+    \fill[#3] (0,{#1-\bh}) rectangle ({#2*\s},{#1+\bh});
+    \node[nm] at (-0.22,{#1+0.09}) {#4};
+    \node[tag=#3, anchor=east] at (-0.22,{#1-0.2}) {#5};
+    \node[val] at ({#2*\s+0.1},#1) {#6};}
+
+  \frow{0}{113}{plum}{OpenRouter}{neutral gateway}
+    {\textbf{\$113M at \$1.3B}, May 2026\\then a reported Stripe acquisition above \$7B}
+  \frow{-1}{65}{amber}{Venice}{consumer private AI}
+    {\textbf{\$65M Series A at \$1B}, July 2026}
+  \frow{-2}{58}{indigo}{WitnessAI}{enterprise data-leak gateway}
+    {\textbf{\$58M Series B}}
+  \frow{-3}{24}{teal}{Opaque}{enterprise confidential AI}
+    {\textbf{\$24M Series B at \$300M}, February 2026}
+  \frow{-4}{4.8}{slate}{Credal}{privacy to developers}
+    {\textbf{\$4.8M seed}, before it pivoted}
+  % Confident Security: $4.2M seed, which a later release puts at $5M
+  \fill[slate] (0,{-5-\bh}) rectangle ({4.2*\s},{-5+\bh});
+  \fill[slate!35] ({4.2*\s},{-5-\bh}) rectangle ({5*\s},{-5+\bh});
+  \node[nm] at (-0.22,{-5+0.09}) {Confident Security};
+  \node[tag=slate, anchor=east] at (-0.22,{-5-0.2}) {privacy to developers};
+  \node[val] at ({5*\s+0.1},-5) {\textbf{\$4.2M seed}; a later release says \$5M};
+  \frow{-6}{4}{slate}{Unbound}{privacy to developers}
+    {\textbf{\$4M seed}}
+
+  % ---- bracket for the stalled group
+  \draw[slate!70!black, line width=0.5pt] (5.55,-3.75) -- (5.67,-3.75) -- (5.67,-6.25) -- (5.55,-6.25);
+  \node[font=\sffamily\fontsize{7}{8.6}\selectfont, text=slate!65!black, anchor=west, align=left, fill=white, inner sep=1.5pt]
+    at (5.8,-5.0) {Privacy sold to developers as a\\cryptographic property\\stalled at seed or died};
+\end{tikzpicture}

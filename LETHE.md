@@ -9,6 +9,58 @@ which describe an earlier plan that the evidence did not support. Sources are in
 
 ---
 
+## 0. Read this first: the October 2026 research verdict
+
+A full competitive study (`research/landscape/landscape.pdf`, 18 pages; long-form report in
+`reports/Private AI access competitive landscape.md`) tested the strategy below against every company in
+the space. **Its verdict: as pitched in sections 1, 5 and 8, Lethe would not be funded by a seed investor
+or YC.** Sections 1 to 13 are kept as written so the team can see what changed; where a claim has been
+disproved it is marked *Corrected*.
+
+**What the study found**
+
+- **Pooling is not new.** More than a dozen products already put many users behind one provider account
+  in front of GPT, Claude and Gemini: Duck.ai, Brave Leo, Kagi, Venice's Anonymous mode, 1Privacy,
+  nullsink, Apple's signed-out ChatGPT extension.
+- **The core primitive already ships.** OpenAnonymity (Stanford and Michigan PhD students) puts Privacy
+  Pass blind signatures in front of GPT, Claude and Gemini through shared OpenRouter accounts, free, and
+  is building a local memory "secretary". LLMTor and the Ethereum Foundation's zkAPI ship other pieces.
+- **Consumer demand is proven; institutional demand is not.** Venice is profitable at more than $70M ARR
+  and was valued at $1B in July 2026. No bank, fund or law firm on record wants to hide its identity
+  from the lab. JPMorgan, Goldman, Morgan Stanley, Balyasny and Freshfields already use frontier models,
+  often through Bedrock or Azure where the lab cannot see their data. When Anthropic imposed 30-day
+  retention, the big banks negotiated **custody** of the monitoring logs, not anonymity.
+- **The labs' safety rules work against an anonymous pool.** Top models now require misuse detection
+  across sessions, and the newest are limited to approved partners. Mixing firms and anonymous
+  consumers in one account is the pattern those rules target.
+- **The unclaimed gap is accountable anonymity:** giving a lab the cross-session safety signal it now
+  insists on without giving it identity. Nobody offers that at commercial quality, with a provider's
+  approval.
+
+**The reshaped strategy, ranked by the study**
+
+1. **Accountable anonymity as a paid consumer and prosumer product**, at the $15 to $20 a month that
+   Venice and Duck.ai validated, with margin. Rate-limited anonymous credentials, an independent relay,
+   an attested gateway so "we don't log" is checkable, padding, a published anonymity-set size, memory
+   on the device, and Lethe as the accountable customer running misuse monitoring under its own keys
+   without learning identity. The pitch is "Duck.ai with proofs", not "a dark pool for AI".
+2. **License that layer** to intermediaries that already pool users (Kagi has not brought Privacy Pass to
+   its Assistant) and to apps in sensitive categories.
+3. **Provider-blind, firm-audited access for mid-size firms** that cannot get zero retention or
+   customer-held monitoring on their own, priced like a gateway, with anonymity as a feature.
+4. **Keep the institutional dark pool as an option with a trigger**, such as a lab launching a trading
+   or advisory business. Not a pitch today.
+
+**Stop:** leading with "dark pool for AI" and $100k to $500k memberships; claiming nobody does this;
+putting firms and consumers in one provider account; pricing the consumer app at break-even.
+
+**What would reverse the institutional verdict, testable in thirty days:** three funds signing letters
+of intent that name hiding their identity from the lab as the reason; one lab agreeing in writing to
+serve pooled anonymous institutional traffic; one regulated firm's risk team confirming it could onboard
+such a pool.
+
+---
+
 ## 1. The thesis in one paragraph
 
 Lethe is a shared anonymity pool in front of GPT, Claude and Gemini. Firms and people send their AI work
@@ -56,7 +108,9 @@ Compute and Meta's WhatsApp Private Processing both ship anonymous credentials p
 plus attested compute for LLM workloads, in production, at hundreds of millions of users. Kagi shipped
 blind-signature tokens for paid search in February 2025 and can no longer link a query to a subscriber.
 
-Every primitive exists. Nobody has assembled them in front of a frontier model.
+Every primitive exists. *Corrected October 2026:* pieces of this have already been assembled in front of
+frontier models (OpenAnonymity and LLMTor use blind tokens; Brave and zkAPI unlink payment). What nobody
+offers is the full stack, under a provider contract, at commercial quality.
 
 ---
 
@@ -231,9 +285,10 @@ me-too.
 trades in dark pools, and around 44% off-exchange in total, so that a large order does not move the market
 before it fills. Lethe is a dark pool for AI. The firms that pay are the ones whose questions are worth
 more than their answers: hedge funds, private equity, investment banks and corporate development, large
-law firms, pharmaceutical research. Today most of them either restrict frontier models (JPMorgan, Goldman
-Sachs, Citi, Deutsche Bank, Bank of America and Wells Fargo all did) or run weaker models in-house and
-give up capability to keep their name off the request.
+law firms, pharmaceutical research. *Corrected October 2026:* the 2023 restrictions are out of date. JPMorgan,
+Goldman Sachs, Morgan Stanley, Balyasny and Freshfields now use frontier models at scale, often through
+Bedrock or Azure where the lab cannot see their data, and no firm on record asks to hide its identity
+from the lab.
 
 Three revenue lines:
 
@@ -262,9 +317,9 @@ the median contract is about $25,000 and the closest exit, Portkey, sold for $11
 price, it is the crowd: a pool with one fund in it hides nobody. Capital discipline still applies; raise
 what the founding cohort needs, not more.
 
-**Nobody does this.** We searched for anyone selling anonymous frontier-model access to institutions as a
-shared pool and found no one. Everyone else hides what is in the prompt or sells answers; nobody hides who
-is asking.
+**Nobody does this.** *Corrected October 2026:* narrowly true for institutions, because no institution
+has asked for it. For individuals, pooled anonymous access to frontier models is already widespread; see
+section 0.
 ---
 
 ## 9. The two things that decide whether this is a company
