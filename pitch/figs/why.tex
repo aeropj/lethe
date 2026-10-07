@@ -1,0 +1,175 @@
+% LETHE · 1 · WHY & WHAT -- two mirrored isometric halves plus a "why now" strip.
+% Left: today one edge network fronts every lab; what the labs hold joins into a profile that sells ads back to you.
+% Right: the same person through Lethe; each lab holds a token and a prompt, so the profile stays empty.
+\begin{tikzpicture}[x=1cm, y=1cm, font=\sffamily\fs{7.5}{9}, text=ink]
+\path[use as bounding box] (0,0) rectangle (27.3,15.5);
+\tikzset{
+  pchip/.style={rounded corners=1.6pt, minimum width=3.0cm, minimum height=0.6cm, inner sep=0pt,
+    line width=0.5pt, font=\sffamily\bfseries\fs{8}{9.5}},
+  held/.style={pchip, fill=coral!13, draw=coral!50, text=coral!55!black},
+  okc/.style={pchip, fill=teal!12, draw=teal!50, text=teal!40!black},
+  noc/.style={pchip, fill=black!2, draw=black!20, text=ink!45},
+  evi/.style={tag=coral, text width=#1, align=left, font=\sffamily\fs{7.5}{9}\nohyph},
+  why/.style={draw=#1!50, fill=white, rounded corners=2.5pt, line width=0.5pt, inner xsep=6pt, inner ysep=5pt,
+    text width=5.75cm, minimum height=1.8cm, align=left, font=\sffamily\fs{7.5}{9.2}\nohyph, text=ink,
+    drop shadow={shadow xshift=0.4pt, shadow yshift=-0.9pt, opacity=0.10, fill=black}},
+  dossier/.style={rounded corners=2.5pt, line width=0.7pt, minimum width=4.9cm, minimum height=2.95cm},
+}
+% ---------- shared iso pieces  (scale 0.55: screen X = 0.476(x+y), Y = 0.275(y-x) + 0.55z)
+\def\youside#1{% #1 = colour of the cube on the person's desk
+  \isoplate{0}{0}{0}{4}{4}{sky}}
+\def\labpads{%
+  \isoplate{7.0}{13.4}{0}{2.6}{2.6}{violet}%
+  \isoplate{10.2}{10.2}{0}{2.6}{2.6}{violet}%
+  \isoplate{13.4}{7.0}{0}{2.6}{2.6}{violet}}
+\def\labboxes{%
+  \isobox{7.4}{13.8}{0}{1.8}{1.8}{0.9}{violet}{GPT}%
+  \isobox{10.6}{10.6}{0}{1.8}{1.8}{0.9}{violet}{Gemini}%
+  \isobox{13.8}{7.4}{0}{1.8}{1.8}{0.9}{violet}{Claude}}
+\def\you#1{%
+  \isobox{0.9}{0.9}{0}{2.2}{2.2}{1.0}{sky}{}%
+  \isocube{1.2}{2.3}{1.0}{0.5}{#1}%
+  \node[isolabel] at (2.4,1.5,1.0) {You};}
+% person silhouette: \persona{x}{y}{fill}{draw}
+\def\persona#1#2#3#4{%
+  \fill[#3, draw=#4, line width=0.5pt] (#1,#2) circle (0.21);
+  \fill[#3, draw=#4, line width=0.5pt] ($(#1,#2)+(-0.38,-0.72)$) arc[start angle=180, end angle=0, radius=0.38] -- cycle;}
+
+% ================================================================ half headers
+\node[pill=coral, anchor=west] (hl) at (0,15.2) {TODAY};
+\node[anchor=west, font=\sffamily\bfseries\fs{9.5}{11}, text=ink!80] at ([xshift=3mm]hl.east)
+  {one network, three labs, one profile};
+\node[pill=teal, anchor=west] (hr) at (14.1,15.2) {WITH LETHE};
+\node[anchor=west, font=\sffamily\bfseries\fs{9.5}{11}, text=ink!80] at ([xshift=3mm]hr.east)
+  {same labs, nothing to join, misuse still caught};
+\draw[ink!14, line width=0.6pt] (13.65,3.0) -- (13.65,15.45);
+
+% ================================================================ LEFT: today
+\begin{scope}[shift={(0.15,7.0)}, iso, scale=0.55]
+  \youside{coral}
+  \isoplate{4.5}{4.5}{0}{5.4}{5.4}{coral}
+  \labpads
+  \draw[flow, coral, line width=1.4pt] (3.2,3.2,0.5) -- (4.95,4.95,0.5);
+  \foreach \xx/\yy in {7.4/13.8, 10.6/10.6, 13.8/7.4} \draw[flow, coral, line width=1.1pt] (8.95,8.95,0.45) -- (\xx,\yy,0.45);
+  \you{coral}
+  \isocube{3.75}{3.75}{0.5}{0.42}{coral}
+  \isobox{5.0}{5.0}{0}{3.9}{3.9}{0.7}{coral}{}
+  \isostack{5.65}{5.65}{0.7}{2.6}{2.6}{3}{coral}
+  \labboxes
+  \coordinate (L-you)  at (2.0,0.9,0.5);
+  \coordinate (L-youtop) at (1.45,2.55,1.55);
+  \coordinate (L-edge) at (6.95,6.95,1.64);
+  \foreach \nm/\xx/\yy in {gpt/9.2/15.6, gem/12.4/12.4, cla/15.6/9.2} \coordinate (L-\nm r) at (\xx,\yy,0.45);
+  \coordinate (L-claf) at (15.6,8.3,0.3);
+\end{scope}
+
+% edge-network caption
+\draw[lead] (L-edge) -- ++(0,0.75) coordinate (L-edgecap);
+\node[anchor=south, align=center, inner sep=1pt] at (L-edgecap)
+  {{\fs{8.5}{10}\bfseries\color{coral!60!black}ONE EDGE NETWORK}\\
+   {\fs{7.5}{9}\color{ink!80}fronts 7 AI APIs}\\
+   {\fs{7}{8.4}\color{ink!55}measured 18 Sep 2026}};
+
+% what the labs hold: three lines collect on a bus and rise into the grid
+\node[head=coral!60!black, anchor=south west] at (7.1,13.72) {WHAT THE LABS HOLD};
+\node[held] (c1) at (8.6,13.25) {account};      \node[held] (c2) at (11.7,13.25) {card};
+\node[held] (c3) at (8.6,12.50) {IP};           \node[held] (c4) at (11.7,12.50) {device};
+\node[held] (c5) at (8.6,11.75) {chat history}; \node[held] (c6) at (11.7,11.75) {memory};
+\foreach \p in {L-gptr, L-gemr, L-clar} \draw[coral!70, dashed, line width=0.7pt] (\p) -- (\p -| 12.78,0);
+\draw[coral!70, dashed, line width=0.7pt, -{Stealth[length=4pt,width=3.5pt]}] (L-clar -| 12.78,0) -- (12.78,11.5);
+
+% dossier, assembled from the grid, sold back as ads
+\node[dossier, draw=coral!65, fill=white,
+  drop shadow={shadow xshift=0.5pt, shadow yshift=-1pt, opacity=0.12, fill=black}] (dosL) at (2.95,12.5) {};
+\fill[coral!65] ([xshift=3mm]dosL.north west) -- ++(0,0.22) -- ++(1.4,0) -- ++(0.16,-0.22) -- cycle;
+\node[anchor=north west, font=\sffamily\bfseries\fs{9}{10.5}, text=coral!60!black] at ([xshift=3.2mm,yshift=-2.4mm]dosL.north west) {YOUR PROFILE};
+\persona{1.25}{12.55}{coral!35}{coral!70!black}
+\foreach \yy/\ww in {12.72/2.85, 12.33/2.3, 11.94/2.6} \fill[coral!28, rounded corners=1pt] (2.0,\yy) rectangle ++(\ww,0.18);
+\node[anchor=south, font=\sffamily\fs{7.5}{9}, text=ink!70] at ([yshift=1.8mm]dosL.south) {joined across GPT · Gemini · Claude};
+\draw[flow, coral, line width=1.4pt] (7.02,12.5) -- node[above=1pt, font=\sffamily\bfseries\fs{8}{9.5}, text=coral!60!black] {joined} (5.5,12.5);
+\draw[flow, coral, line width=1.4pt] (dosL.south -| 1.95,0) -- ++(0,-0.4) node[pill=coral, anchor=north] (ads) {ADS};
+\draw[flow, coral, line width=1.4pt] (ads.south) -- (ads.south |- L-youtop);
+\node[evi=3.75cm, anchor=west] at ([xshift=2.5mm]ads.east) {\textbf{ChatGPT ads use your chats}\\\dimtext{OpenAI · Feb 2026}};
+
+% evidence under the scene
+\node[evi=4.1cm, anchor=north west] (e1) at (0.1,4.3) {\textbf{Extensions with 8M+ installs capture AI chats}\\\dimtext{Koi Security}};
+\draw[lead] (e1.north -| L-you) -- (L-you);
+\node[evi=4.1cm, anchor=north east] (e2) at (13.2,4.3) {\textbf{30-day retention on top Claude models}\\\dimtext{Anthropic · Jun 2026}};
+\draw[lead] (e2.north -| L-claf) -- (L-claf);
+
+% ================================================================ RIGHT: with Lethe
+\begin{scope}[shift={(14.25,7.0)}, iso, scale=0.55]
+  \youside{indigo}
+  \isoplate{4.3}{4.3}{0}{2.4}{2.4}{teal}
+  \isoplate{7.1}{7.1}{0}{2.6}{2.6}{indigo}
+  \labpads
+  \draw[flow, teal, line width=1.4pt] (3.2,3.2,0.5) -- (4.6,4.6,0.5);
+  \draw[flow, teal, line width=1.4pt] (6.4,6.4,0.5) -- (7.35,7.35,0.5);
+  \foreach \xx/\yy in {7.4/13.8, 10.6/10.6, 13.8/7.4} \draw[flow, teal, line width=1.1pt] (9.45,9.45,0.45) -- (\xx,\yy,0.45);
+  \you{indigo}
+  \isocube{3.68}{3.68}{0.5}{0.45}{amber}
+  \isobox{4.65}{4.65}{0}{1.7}{1.7}{1.1}{teal}{}
+  \isobox{7.4}{7.4}{0}{2.0}{2.0}{1.3}{indigo}{}
+  \labboxes
+  \coordinate (R-app)  at (1.45,2.55,1.5);
+  \coordinate (R-you)  at (2.0,0.9,0.5);
+  \coordinate (R-claf) at (15.6,8.3,0.3);
+  \coordinate (R-cred) at (3.9,3.9,0.5);
+  \coordinate (R-rel)  at (5.5,5.5,1.1);
+  \coordinate (R-gw)   at (8.4,8.4,1.3);
+  \coordinate (R-gwb)  at (9.7,7.1,0);
+  \coordinate (R-gptl) at (7.6,14.6,0.9);
+  \foreach \nm/\xx/\yy in {gpt/9.2/15.6, gem/12.4/12.4, cla/15.6/9.2} \coordinate (R-\nm r) at (\xx,\yy,0.45);
+\end{scope}
+
+% what changes, mirroring the evidence on the left
+\node[tag=teal, text width=4.1cm, anchor=north west, font=\sffamily\fs{7.5}{9}\nohyph] (g1) at (14.2,4.3)
+  {\textbf{Memory stays on your device}\\\dimtext{the app keeps history locally}};
+\draw[lead] (g1.north -| R-you) -- (R-you);
+\node[tag=teal, text width=4.1cm, anchor=north east, font=\sffamily\fs{7.5}{9}\nohyph] (g2) at (27.3,4.3)
+  {\textbf{Same models, full capability}\\\dimtext{under Lethe's lab contract}};
+\draw[lead] (g2.north -| R-claf) -- (R-claf);
+
+% stage captions
+\draw[lead] (R-app) -- ++(0,0.55) node[anchor=south, capb=indigo!80!black] {Lethe app};
+\draw[lead] (R-cred) -- ++(0,-1.05) node[anchor=north, capb=amber!70!black] {anonymous\\credential};
+\draw[lead] (R-rel) -- ++(0,0.95) node[anchor=south, capb=teal!60!black] {independent\\relay};
+\draw[lead] (R-gwb) -- ++(0,-0.35) node[anchor=north, align=center, inner sep=1pt]
+  {{\fs{8}{9.5}\bfseries\color{indigo!80!black}Lethe gateway}\\{\fs{7.5}{9}\color{ink!70}attested}};
+% safety signal: gateway -> labs, in its own colour
+\draw[flow, plum, line width=1.4pt] (R-gw) .. controls ++(0,2.0) and ++(-1.2,1.0) .. (R-gptl);
+\node[tag=plum, anchor=south, font=\sffamily\bfseries\fs{8}{9.5}, text=plum!60!black] at (21.55,10.0)
+  {safety signal \yes\quad identity \no};
+
+% what each lab holds
+\node[head=teal!55!black, anchor=south west] at (21.2,13.72) {WHAT EACH LAB HOLDS};
+\node[okc] (d1) at (22.7,13.25) {valid token \yes};   \node[okc] (d2) at (25.8,13.25) {prompt \yes};
+\node[noc] (d3) at (22.7,12.50) {account \no};        \node[noc] (d4) at (25.8,12.50) {card \no};
+\node[noc] (d5) at (22.7,11.75) {IP \no};             \node[noc, font=\sffamily\bfseries\fs{7.5}{9}] (d6) at (25.8,11.75) {your other providers \no};
+\foreach \p in {R-gptr, R-gemr, R-clar} \draw[violet!50, dotted, line width=0.9pt] (\p) -- (\p -| 26.88,0);
+\draw[violet!50, dotted, line width=0.9pt, -{Stealth[length=4pt,width=3.5pt]}] (R-clar -| 26.88,0) -- (26.88,11.5);
+
+% empty dossier
+\node[dossier, draw=black!28, dashed, fill=white] (dosR) at (17.05,12.5) {};
+\node[anchor=north west, font=\sffamily\bfseries\fs{9}{10.5}, text=ink!40] at ([xshift=3.2mm,yshift=-2.4mm]dosR.north west) {YOUR PROFILE};
+\persona{15.35}{12.55}{white}{black!22}
+\foreach \yy/\ww in {12.72/2.85, 12.33/2.3, 11.94/2.6} \draw[black!18, rounded corners=1pt] (16.1,\yy) rectangle ++(\ww,0.18);
+\node[anchor=south, font=\sffamily\bfseries\fs{8}{9.5}, text=ink!55] at ([yshift=1.8mm]dosR.south) {empty · nothing to join};
+\draw[black!30, dashed, line width=1.2pt] (21.12,12.5) -- (19.6,12.5);
+\node[circle, fill=white, inner sep=0.6pt, font=\fs{11}{11}] at (20.36,12.5) {\no};
+
+% ================================================================ why now · the gap
+\node[head=indigo, anchor=south west] at (0,2.08) {WHY NOW · THE GAP};
+\node[why=lime, anchor=north west] (w1) at (0,1.9)
+  {{\fs{8.5}{10}\bfseries\color{lime!45!black}Consumers pay}\\[2.5pt]{\fs{8}{9.5}Venice \textbf{>\$70M ARR}, \textbf{\$1B}}\\[1pt]\dimtext{Jul 2026}};
+\node[why=sky, anchor=north west] (w2) at ([xshift=0.6cm]w1.north east)
+  {{\fs{8.5}{10}\bfseries\color{sky!45!black}Crypto unlinkability exists, unfunded}\\[2.5pt]{\fs{8}{9.5}OpenAnonymity}\\[1pt]\dimtext{Stanford · free}};
+\node[why=violet, anchor=north west] (w3) at ([xshift=0.6cm]w2.north east)
+  {{\fs{8.5}{10}\bfseries\color{violet!65!black}Labs approve anonymous tiers}\\[2.5pt]{\fs{8}{9.5}Duck.ai}\\[1pt]\dimtext{policy only}};
+\node[font=\sffamily\bfseries\fs{13}{13}, text=ink!35] at ($(w1.east)!0.5!(w2.west)$) {+};
+\node[font=\sffamily\bfseries\fs{13}{13}, text=ink!35] at ($(w2.east)!0.5!(w3.west)$) {+};
+\node[fill=indigo, rounded corners=2.5pt, text=white, anchor=north east, inner xsep=7pt, inner ysep=5pt,
+  text width=6.0cm, minimum height=1.8cm, align=left, font=\sffamily\fs{7.5}{9.2}\nohyph] (gap) at (27.3,1.9)
+  {{\fs{8.5}{10}\bfseries\color{white!72!indigo}MISSING}\\[3pt]{\fs{11}{13}\bfseries anonymous \emph{and} accountable,\\at commercial quality}};
+\draw[flow, indigo, line width=1.5pt] ([xshift=1.5mm]w3.east) -- ([xshift=-1.5mm]gap.west);
+\end{tikzpicture}%
