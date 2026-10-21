@@ -13,3 +13,12 @@ build/
 paper/test-fig.*
 .DS_Store
 .claude/worktrees/
+
+# demo secrets and caches
+.env
+demo/.env
+__pycache__/
+# demo film: keep only the final cut and poster
+demo/video/out/*
+!demo/video/out/lethe-demo.mp4
+!demo/video/out/poster.png

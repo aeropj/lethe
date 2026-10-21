@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lethe · local demo</title>
+<style>
+:root{
+  --ink:#14161F; --ink2:#3d4150; --muted:#737889; --line:#e6e7ee; --bg:#f6f6f9; --card:#fff;
+  --indigo:#4F46E5; --violet:#7C3AED; --teal:#0D9488; --sky:#0EA5E9; --coral:#F43F5E;
+  --amber:#F59E0B; --lime:#65A30D; --plum:#A21CAF;
+  --mono: ui-monospace, "SF Mono", "IBM Plex Mono", Menlo, monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:14px/1.5 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color:var(--ink);
+  background:radial-gradient(1200px 500px at 85% -10%, #ece9ff 0, transparent 60%), var(--bg); min-height:100vh}
+header{display:flex; align-items:center; gap:18px; padding:14px 28px; background:rgba(255,255,255,.85);
+  backdrop-filter:blur(8px); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:10}
+.brand{font-weight:800; font-size:19px; letter-spacing:-.02em}
+.brand i{font-style:normal; color:var(--indigo)}
+.tag{color:var(--muted); font-size:13px}
+.grow{flex:1}
+@media (max-width:1000px){ header .tag{display:none} header{padding:12px 16px; flex-wrap:wrap} main{padding:16px} }
+.pill{display:inline-flex; align-items:center; gap:7px; padding:5px 11px; border-radius:999px; font-size:12px;
+  font-weight:600; border:1px solid var(--line); background:#fff; color:var(--ink2); white-space:nowrap}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--muted)}
+.ok .dot{background:var(--teal); box-shadow:0 0 0 3px #0d948822}
+.warn .dot{background:var(--amber); box-shadow:0 0 0 3px #f59e0b22}
+
+main{display:grid; grid-template-columns:minmax(400px, 5fr) 7fr; gap:22px; padding:22px 28px 40px;
+  max-width:1560px; margin:0 auto}
+@media (max-width:1050px){ main{grid-template-columns:1fr} }
+.col{display:flex; flex-direction:column; gap:16px; min-width:0}
+
+.card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px;
+  box-shadow:0 1px 2px rgba(20,22,31,.04), 0 10px 30px -18px rgba(20,22,31,.18); position:relative}
+.card h2{margin:0 0 2px; font-size:15px; letter-spacing:-.01em; display:flex; align-items:center; gap:9px}
+.card .hint{color:var(--muted); font-size:12.5px; margin:0 0 12px}
+.num{display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; color:#fff;
+  font-size:11.5px; font-weight:700; flex:none}
+.role{border-top:3px solid var(--c)}
+.role h2 .num{background:var(--c)}
+.role h2 small{font-weight:500; color:var(--muted); font-size:12.5px}
+
+textarea, input[type=text]{width:100%; font:inherit; color:var(--ink); border:1px solid var(--line);
+  border-radius:12px; padding:11px 13px; background:#fbfbfd; outline:none; transition:border .15s, box-shadow .15s}
+textarea{min-height:118px; resize:vertical; font-size:14.5px; line-height:1.55}
+textarea:focus, input[type=text]:focus{border-color:#c7c4ff; box-shadow:0 0 0 4px #4f46e514; background:#fff}
+label.k{display:block; font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--muted);
+  text-transform:uppercase; margin:12px 0 6px}
+.row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+button{font:inherit; font-weight:600; border-radius:11px; border:1px solid var(--line); background:#fff;
+  color:var(--ink2); padding:9px 14px; cursor:pointer; transition:transform .05s, background .15s, box-shadow .15s}
+button:hover{background:#f4f4f8}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--indigo); border-color:var(--indigo); color:#fff;
+  box-shadow:0 6px 16px -8px #4f46e5aa}
+button.primary:hover{background:#4338ca}
+button.small{padding:5px 10px; font-size:12.5px; border-radius:9px}
+button:disabled{opacity:.55; cursor:default}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:11px; padding:3px; background:#f4f4f8}
+.seg button{border:none; background:transparent; padding:6px 11px; border-radius:8px; font-size:13px}
+.seg button.on{background:#fff; color:var(--indigo); box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+.wallet{display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line)}
+.creds{display:flex; gap:5px; flex-wrap:wrap}
+.cred{width:16px; height:16px; border-radius:4px; background:linear-gradient(135deg,#fcd34d,#f59e0b);
+  box-shadow:inset 0 -2px 0 #0000001a}
+.cred.spent{background:#e5e7eb; box-shadow:none}
+
+.txt{font-size:14px; line-height:1.75; color:var(--ink2); white-space:pre-wrap; word-wrap:break-word}
+mark{border-radius:5px; padding:1px 4px; font-weight:600}
+mark.o{background:#ffe4e9; color:#be123c}
+mark.s{background:#ede9fe; color:#6d28d9}
+mark.g{background:#f1f0fb; color:#5b5f73}
+mark.restored{background:#ccfbf1; color:#0f766e}
+.arrowdown{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px; margin:8px 0}
+.arrowdown:before,.arrowdown:after{content:""; flex:1; height:1px; background:var(--line)}
+.legend{display:flex; gap:12px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); margin-top:10px}
+.legend span{display:inline-flex; gap:6px; align-items:center}
+.sw{width:10px; height:10px; border-radius:3px; display:inline-block}
+
+.answer{font-size:14.5px; line-height:1.65; color:var(--ink)}
+.answer p{margin:0 0 10px} .answer ul{margin:0 0 10px; padding-left:20px} .answer h4{margin:12px 0 6px}
+.answer code{font-family:var(--mono); font-size:12.5px; background:#f4f4f8; padding:1px 5px; border-radius:5px}
+.timing{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+.timing .pill{font-weight:500}
+.timing b{color:var(--ink)}
+
+table.vault{width:100%; border-collapse:collapse; font-size:13px}
+.vault td{padding:7px 4px; border-bottom:1px solid #f0f0f4}
+.vault td:first-child{font-family:var(--mono); color:#6d28d9}
+.vault td.arrow{color:var(--muted); width:24px; text-align:center}
+.vault td:nth-child(3){font-weight:600}
+.vault td:last-child{color:var(--muted); text-align:right; font-size:12px}
+.empty{color:var(--muted); font-size:13px; font-style:italic}
+
+/* the path */
+.flow{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:12.5px; font-weight:600; color:var(--ink2)}
+.flow .node{display:inline-flex; align-items:center; gap:7px; padding:6px 11px; border-radius:999px; background:#fff;
+  border:1px solid var(--line); transition:all .25s}
+.flow .node i{width:9px; height:9px; border-radius:50%; background:var(--c)}
+.flow .sep{color:#c0c3cf}
+.flow .node.live{border-color:var(--c); box-shadow:0 0 0 4px color-mix(in srgb, var(--c) 18%, transparent);
+  transform:translateY(-1px)}
+.sees{display:grid; grid-template-columns:1.6fr 1fr; gap:16px}
+@media (max-width:700px){ .sees{grid-template-columns:1fr} }
+.h6{font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:0 0 6px}
+.h6.y{color:var(--teal)} .h6.n{color:var(--coral)}
+.kv{display:grid; grid-template-columns:118px 1fr; gap:4px 10px; font-size:13px; align-items:baseline}
+.kv dt{color:var(--muted)} .kv dd{margin:0; min-width:0; overflow-wrap:anywhere}
+.mono{font-family:var(--mono); font-size:12px}
+.never{list-style:none; margin:0; padding:0; font-size:13px; color:var(--ink2)}
+.never li{padding:2px 0} .never li:before{content:"✕"; color:var(--coral); font-weight:700; margin-right:8px; font-size:11px}
+.badge{display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:700}
+.badge.acc{background:#ccfbf1; color:#0f766e} .badge.rej{background:#ffe4e9; color:#be123c}
+.callout{margin-top:12px; padding:10px 12px; border-radius:10px; font-size:12.5px; background:#f7f8fb;
+  border:1px solid var(--line); color:var(--ink2)}
+.callout b{color:var(--ink)}
+.callout.good{background:#f0fdf9; border-color:#b8efe2}
+.callout.bad{background:#fff4f6; border-color:#ffd0da}
+pre{margin:0; font-family:var(--mono); font-size:11.8px; line-height:1.55; background:#0f1220; color:#e3e6f3;
+  border-radius:12px; padding:12px 14px; max-height:300px; overflow:auto; white-space:pre-wrap; word-break:break-word}
+pre .k{color:#a5b4fc} pre .s{color:#86efac} pre .h{color:#fda4af} pre .c{color:#7c8199}
+.compare{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
+.compare > div{border-radius:10px; padding:10px 12px; font-size:12.5px; border:1px solid var(--line)}
+.compare .without{background:#fff4f6; border-color:#ffd0da}
+.compare .with{background:#f5f3ff; border-color:#ddd6fe}
+.compare h5{margin:0 0 6px; font-size:11px; letter-spacing:.06em; text-transform:uppercase}
+.compare .without h5{color:#be123c} .compare .with h5{color:#6d28d9}
+.compare ul{margin:0; padding-left:16px}
+.toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1f1d3a; color:#fff;
+  padding:11px 16px; border-radius:12px; font-size:13px; box-shadow:0 10px 30px -10px #0008; max-width:680px;
+  display:none; z-index:20}
+.spinner{width:14px; height:14px; border:2px solid #ffffff66; border-top-color:#fff; border-radius:50%;
+  animation:spin .7s linear infinite; display:none}
+.busy .spinner{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+footer{max-width:1560px; margin:0 auto; padding:0 28px 28px; color:var(--muted); font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Lethe<i>.</i></div>
+  <div class="tag">Local demo · watch what every party in the path can see</div>
+  <div class="grow"></div>
+  <span class="pill" id="detector"><span class="dot"></span><span>Scrubber</span></span>
+  <span class="pill" id="provider"><span class="dot"></span><span>…</span></span>
+</header>
+
+<main>
+  <!-- ============================ your device ============================ -->
+  <section class="col">
+    <div class="card role" style="--c:var(--sky)">
+      <h2><span class="num">1</span>Your device <small>the only place your real words exist</small></h2>
+      <p class="hint">Ask the way you normally would. Names, places and IDs are swapped here before anything leaves.</p>
+      <textarea id="prompt">My son Ethan Miller, 9, has ADHD. Should he switch from Adderall to Vyvanse? We're on Kaiser in Sacramento and his school wants a 504 plan. Reach me at sarah.miller@gmail.com.</textarea>
+      <label class="k" for="hide">Always hide</label>
+      <input type="text" id="hide" placeholder="Anything else to keep private, comma separated: Acme Capital, Project Orion">
+      <label class="k">Model</label>
+      <div class="row">
+        <div class="seg" id="models"></div>
+        <div class="grow"></div>
+        <button id="newchat">New chat</button>
+        <button class="primary row" id="ask" style="gap:8px"><span class="spinner"></span><span>Ask privately</span></button>
+      </div>
+      <div class="wallet">
+        <span class="h6" style="margin:0;color:var(--amber)">Credentials</span>
+        <div class="creds" id="creds"></div>
+        <span class="tag" id="credtext"></span>
+        <div class="grow"></div>
+        <button class="small" id="subscribe">Subscribe · +5</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>What left your device</h2>
+      <p class="hint" id="scrubhint">Ask something to see the swap.</p>
+      <div class="h6" style="color:var(--coral)">You wrote</div>
+      <div class="txt" id="orig"><span class="empty">—</span></div>
+      <div class="arrowdown">swapped on device</div>
+      <div class="h6" style="color:var(--violet)">Sent</div>
+      <div class="txt" id="sent"><span class="empty">—</span></div>
+      <div class="legend">
+        <span><i class="sw" style="background:#ede9fe"></i>stand-in, swapped back in the answer</span>
+        <span><i class="sw" style="background:#f1f0fb;border:1px solid #e1e0ee"></i>generalised or removed, nothing to swap back</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Answer <small style="font-weight:500;color:var(--muted);font-size:12.5px" id="turns"></small></h2>
+      <p class="hint">Real names are put back on your device. <a href="#" id="rawtoggle">Show what the model wrote</a></p>
+      <div class="answer" id="answer"><span class="empty">—</span></div>
+      <div class="timing" id="timing"></div>
+    </div>
+
+    <div class="card">
+      <h2>Kept on your device</h2>
+      <p class="hint">The vault that turns stand-ins back into real names. It never leaves this machine and rotates with every new chat.</p>
+      <div id="vault"><span class="empty">Empty.</span></div>
+    </div>
+  </section>
+
+  <!-- ============================ the path ============================ -->
+  <section class="col">
+    <div class="card">
+      <h2>The request path</h2>
+      <p class="hint">Four parties touch your question. Each card shows exactly what that party received on the last request.</p>
+      <div class="flow">
+        <span class="node" id="f-you" style="--c:var(--sky)"><i></i>You</span><span class="sep">→</span>
+        <span class="node" id="f-relay" style="--c:var(--teal)"><i></i>Relay</span><span class="sep">→</span>
+        <span class="node" id="f-gw" style="--c:var(--indigo)"><i></i>Gateway</span><span class="sep">→</span>
+        <span class="node" id="f-lab" style="--c:var(--violet)"><i></i>Lab</span>
+        <span class="sep" style="margin-left:10px">·</span>
+        <span class="node" id="f-iss" style="--c:var(--lime)"><i></i>Issuer, at subscribe</span>
+      </div>
+    </div>
+
+    <div class="card role" style="--c:var(--lime)">
+      <h2><span class="num">2</span>Token issuer <small>takes your payment, signs credentials blind</small></h2>
+      <div class="sees">
+        <div><div class="h6 y">Sees</div><dl class="kv" id="issuer"><dt>—</dt><dd class="empty">Subscribe to see it.</dd></dl></div>
+        <div><div class="h6 n">Never sees</div><ul class="never"><li>which credential you spend</li><li>any prompt</li><li>which lab you use</li></ul></div>
+      </div>
+      <div class="callout" id="linktest">Link test appears after your first question.</div>
+    </div>
+
+    <div class="card role" style="--c:var(--teal)">
+      <h2><span class="num">3</span>Independent relay <small>knows who is connecting, cannot read what</small></h2>
+      <div class="sees">
+        <div><div class="h6 y">Sees</div><dl class="kv" id="relay"><dt>—</dt><dd class="empty">Nothing yet.</dd></dl></div>
+        <div><div class="h6 n">Never sees</div><ul class="never"><li>the prompt</li><li>the credential</li><li>which lab or model</li></ul></div>
+      </div>
+    </div>
+
+    <div class="card role" style="--c:var(--indigo)">
+      <h2><span class="num">4</span>Lethe gateway <small>checks the credential, forwards under Lethe's key</small></h2>
+      <div class="sees">
+        <div><div class="h6 y">Sees</div><dl class="kv" id="gateway"><dt>—</dt><dd class="empty">Nothing yet.</dd></dl></div>
+        <div><div class="h6 n">Never sees</div><ul class="never"><li>your IP address</li><li>your account or card</li><li>your real names</li></ul></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="small" id="replay">Replay the last sealed request</button>
+        <span class="tag">Credentials are single-use, so abuse is rate-limited without knowing who anyone is.</span>
+      </div>
+      <div class="callout bad" id="replayout" style="display:none"></div>
+    </div>
+
+    <div class="card role" style="--c:var(--violet)">
+      <h2><span class="num">5</span>Frontier lab <small id="labname">the model provider</small></h2>
+      <div class="h6 y">Exactly what the lab received</div>
+      <pre id="lab"><span class="c">// Ask something to see the request.</span></pre>
+      <div class="compare">
+        <div class="without"><h5>Without Lethe, the lab also gets</h5><ul id="without"><li>your account</li><li>your card</li><li>your IP</li><li>your real words</li><li>every past chat, linked</li></ul></div>
+        <div class="with"><h5>With Lethe, it gets</h5><ul><li>one valid request from Lethe's pool</li><li>stand-ins instead of names</li><li>no account, card or IP of yours</li><li>nothing linking this chat to your others</li></ul></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Demo-grade cryptography, not audited: RSA-FDH blind signatures (the idea behind Privacy Pass), X25519 + ChaCha20-Poly1305 sealing in the shape of Oblivious HTTP, padding to fixed sizes. All five parties run in one local process so you can inspect them.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let state = {model:null, showRaw:false, last:null, account:"", card:""};
+
+async function api(path, body){
+  const r = await fetch(path, {method: body ? "POST" : "GET", headers:{"Content-Type":"application/json"},
+                                body: body ? JSON.stringify(body) : undefined});
+  const j = await r.json();
+  if(!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+}
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.style.display="block"; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display="none", 6000); }
+function kv(el, rows){ el.innerHTML = rows.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join(""); }
+function segs(list, cls){
+  return list.map(s => !s.k ? esc(s.t) :
+    `<mark class="${cls === "s" && s.r === false ? "g" : cls}" title="${esc(s.k)}">${esc(s.t)}</mark>`).join("");
+}
+function md(text){
+  let h = esc(text).replace(/(.*?)/g, '<mark class="restored">$1</mark>')
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
+  let out = "", list = false;
+  for(const line of h.split("\n")){
+    const li = line.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)/), hd = line.match(/^#{1,6}\s+(.*)/);
+    if(li){ if(!list){ out += "<ul>"; list = true; } out += `<li>${li[1]}</li>`; continue; }
+    if(list){ out += "</ul>"; list = false; }
+    if(hd) out += `<h4>${hd[1]}</h4>`; else if(line.trim()) out += `<p>${line}</p>`;
+  }
+  return out + (list ? "</ul>" : "");
+}
+function json(o){
+  return esc(JSON.stringify(o, null, 2))
+    .replace(/(&quot;[^&]*?&quot;)(\s*:)/g, '<span class="k">$1</span>$2')
+    .replace(/:\s(&quot;.*?&quot;)/g, ': <span class="s">$1</span>');
+}
+
+function renderViews(v){
+  // wallet
+  const total = v.wallet.unspent + v.wallet.spent;
+  $("#creds").innerHTML = Array.from({length: total}, (_, i) => `<i class="cred ${i < v.wallet.spent ? "spent" : ""}"></i>`).join("");
+  $("#credtext").textContent = total ? `${v.wallet.unspent} unspent · ${v.wallet.spent} spent` : "none yet";
+  // issuer
+  if(v.issuer) kv($("#issuer"), [
+    ["Account", esc(v.issuer.account)], ["Card", esc(v.issuer.card)],
+    ["Signed, blind", `<span class="mono">${v.issuer.blinded.slice(0,3).map(esc).join("<br>")}</span>${v.issuer.blinded.length>3?`<br><span class="tag">+${v.issuer.blinded.length-3} more</span>`:""}`],
+    ["Key", `<span class="mono">${esc(v.issuer.key_id)}</span> <span class="tag">one key for everyone</span>`]]);
+  // relay
+  if(v.relay) kv($("#relay"), [
+    ["Your IP", `<b>${esc(v.relay.client_ip)}</b> <span class="tag">your real IP in production</span>`],
+    ["Sealed request", `${v.relay.request_bytes.toLocaleString()} bytes <span class="tag">padded to a fixed size</span>`],
+    ["First bytes", `<span class="mono">${esc(v.relay.preview.slice(0,40))}…</span>`],
+    ["Destination", esc(v.relay.target)]]);
+  // gateway
+  if(v.gateway){
+    const g = v.gateway, lastUser = [...g.messages].reverse().find(m => m.role === "user");
+    kv($("#gateway"), [
+      ["Came from", esc(g.from)],
+      ["Credential", `<span class="badge ${g.status==="accepted"?"acc":"rej"}">${g.status==="accepted"?"✓ valid, now spent":"✕ "+esc(g.status)}</span> <span class="mono">${esc(g.credential)}</span>`],
+      ["Model", `<span class="mono">${esc(g.model)}</span>`],
+      ["Prompt", `<span style="color:#6d28d9">${esc(lastUser ? lastUser.content : "")}</span>`],
+      ["Context", `${g.messages.length} message${g.messages.length===1?"":"s"} in this chat, nothing else`]]);
+  }
+  // lab
+  if(v.lab){
+    const l = v.lab;
+    $("#lab").innerHTML = `<span class="h">${esc(l.request)}</span>\n` +
+      Object.entries(l.headers).map(([k,val]) => `<span class="k">${esc(k)}</span>: ${esc(val)}`).join("\n") +
+      `\n\n${json(l.body)}` + (l.answered_by ? `\n\n<span class="c">// answered by ${esc(l.answered_by)}</span>` : "");
+  }
+  // link test
+  if(state.last && state.last.spent_credential && v.issuer_saw.length){
+    $("#linktest").className = "callout good";
+    $("#linktest").innerHTML = `<b>Link test.</b> The issuer signed <span class="mono">${esc(v.issuer_saw[0])}</span> and ${v.issuer_saw.length-1} others. ` +
+      `The gateway was handed <span class="mono">${esc(state.last.spent_credential)}</span>. They share nothing, so even the issuer and gateway together cannot tell which subscriber asked.`;
+  }
+  // vault
+  $("#vault").innerHTML = v.vault.length ? `<table class="vault">${v.vault.map(r =>
+    `<tr><td>${esc(r.standin)}</td><td class="arrow">→</td><td>${esc(r.original)}</td><td>${esc(r.kind)}</td></tr>`).join("")}</table>`
+    : '<span class="empty">Empty.</span>';
+  $("#turns").textContent = v.turns ? `· turn ${v.turns} of this chat` : "";
+}
+
+function renderResult(r){
+  state.last = r;
+  const found = r.scrub.found;
+  $("#orig").innerHTML = segs(r.scrub.orig_segments, "o");
+  $("#sent").innerHTML = segs(r.scrub.scrub_segments, "s");
+  $("#scrubhint").textContent = found.length
+    ? `${found.length} detail${found.length===1?"":"s"} swapped in ${r.scrub.ms} ms, on this machine.`
+    : "Nothing personal found. Add terms to “Always hide” if needed.";
+  $("#without").innerHTML = `<li>your account: <b>${esc(state.account)}</b></li><li>your card: <b>${esc(state.card)}</b></li>` +
+    `<li>your IP</li><li>${found.length ? found.slice(0,3).map(f => `<b>${esc(f.original)}</b>`).join(", ") + (found.length>3?" and more":"") : "your real words"}</li><li>every past chat, linked</li>`;
+  if(r.error){ $("#answer").innerHTML = `<div class="callout bad">${esc(r.error)}</div>`; $("#timing").innerHTML=""; return; }
+  renderAnswer();
+  const t = r.timing, u = r.usage || {};
+  $("#timing").innerHTML =
+    `<span class="pill">Lethe added <b>&nbsp;${t.lethe_ms} ms</b></span>` +
+    `<span class="pill">scrub <b>&nbsp;${t.scrub_ms} ms</b></span>` +
+    `<span class="pill">model <b>&nbsp;${t.lab_ms.toLocaleString()} ms</b></span>` +
+    (u.prompt_tokens ? `<span class="pill">tokens <b>&nbsp;${u.prompt_tokens} in · ${u.completion_tokens} out</b></span>` : "") +
+    (r.restored.length ? `<span class="pill" style="color:#0f766e">${r.restored.length} name${r.restored.length===1?"":"s"} put back</span>` : "");
+}
+function renderAnswer(){
+  const r = state.last; if(!r || r.error) return;
+  $("#answer").innerHTML = state.showRaw
+    ? `<div class="callout">What the model actually wrote, with stand-ins:</div><div class="txt" style="margin-top:8px">${esc(r.answer_raw)}</div>`
+    : md(r.answer);
+  $("#rawtoggle").textContent = state.showRaw ? "Show the answer with real names" : "Show what the model wrote";
+}
+
+let pulseTimer = null;
+function pulse(on){
+  const ids = ["#f-you", "#f-relay", "#f-gw", "#f-lab"]; let i = 0;
+  clearInterval(pulseTimer); document.querySelectorAll(".flow .node").forEach(n => n.classList.remove("live"));
+  if(!on) return;
+  pulseTimer = setInterval(() => {
+    document.querySelectorAll(".flow .node").forEach(n => n.classList.remove("live"));
+    const step = i % 7; const idx = step < 4 ? step : 6 - step; $(ids[idx]).classList.add("live"); i++;
+  }, 260);
+}
+
+async function ask(){
+  const btn = $("#ask"); btn.disabled = true; btn.classList.add("busy"); pulse(true); $("#replayout").style.display = "none";
+  try{
+    const res = await api("/api/ask", {prompt: $("#prompt").value, hide: $("#hide").value, model: state.model});
+    renderResult(res.result); renderViews(res);
+  }catch(e){ toast(e.message); }
+  finally{ btn.disabled = false; btn.classList.remove("busy"); pulse(false); }
+}
+
+async function init(){
+  const s = await api("/api/status");
+  state.account = s.account; state.card = s.card;
+  const p = $("#provider");
+  p.className = "pill " + (s.has_key ? "ok" : "warn");
+  p.lastElementChild.textContent = s.has_key ? `${s.provider} · key loaded` : "Dry run · add a key to demo/.env";
+  $("#detector").className = "pill ok"; $("#detector").lastElementChild.textContent = "Scrubber: " + s.detector;
+  $("#labname").textContent = s.has_key ? `${s.provider}, reached with Lethe's key` : "not called in dry run";
+  const names = Object.keys(s.models); state.model = names[0];
+  $("#models").innerHTML = names.map(n => `<button data-m="${esc(n)}" title="${esc(s.models[n])}">${esc(n)}</button>`).join("");
+  const mark = () => document.querySelectorAll("#models button").forEach(b => b.classList.toggle("on", b.dataset.m === state.model));
+  $("#models").onclick = e => { if(e.target.dataset.m){ state.model = e.target.dataset.m; mark(); } }; mark();
+  renderViews(s);
+}
+
+$("#ask").onclick = ask;
+$("#prompt").addEventListener("keydown", e => { if(e.key === "Enter" && (e.metaKey || e.ctrlKey)) ask(); });
+$("#subscribe").onclick = async () => {
+  $("#f-iss").classList.add("live");
+  try{ renderViews(await api("/api/subscribe", {})); }catch(e){ toast(e.message); }
+  setTimeout(() => $("#f-iss").classList.remove("live"), 700);
+};
+$("#replay").onclick = async () => {
+  try{
+    const res = await api("/api/replay", {}); renderViews(res);
+    const o = $("#replayout"); o.style.display = "block";
+    o.innerHTML = `<b>Refused.</b> ${esc(res.result.error)}`;
+  }catch(e){ toast(e.message); }
+};
+$("#newchat").onclick = async () => {
+  try{ renderViews(await api("/api/new_chat", {})); toast("New chat: stand-ins rotate, nothing links it to the last one."); }catch(e){ toast(e.message); }
+};
+$("#rawtoggle").onclick = e => { e.preventDefault(); state.showRaw = !state.showRaw; renderAnswer(); };
+init().catch(e => toast(e.message));
+</script>
+</body>
+</html>

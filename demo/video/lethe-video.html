@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lethe · demo film</title>
+<style>
+:root{
+  --bg:#F0EEE6; --paper:#FAF9F5; --ink:#141413; --ink2:#3D3D3A; --muted:#87867F; --line:#DAD7CC;
+  --clay:#D97757; --clayD:#B5532F; --clayT:#F5DED2;
+  --sky:#6A9BCC;  --skyD:#2F6394;  --skyT:#DCE7F2;
+  --olive:#788C5D; --oliveD:#4E6236; --oliveT:#E2E9D5;
+  --kraft:#D4A27F; --heather:#CBCADB; --fig:#C46686;
+  --serif:"Iowan Old Style", Charter, Georgia, serif;
+  --sans:system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --mono:Menlo, monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{background:var(--bg); overflow:hidden}
+#stage{position:relative; width:1920px; height:1080px; background:var(--bg); overflow:hidden; color:var(--ink);
+  font-family:var(--sans); -webkit-font-smoothing:antialiased}
+section{position:absolute; inset:0; display:none}
+.abs{position:absolute}
+.o0{opacity:0}
+.serif{font-family:var(--serif)}
+.center{left:0; right:0; text-align:center}
+.h1{font-family:var(--serif); font-size:76px; line-height:1.15; letter-spacing:-.01em; font-weight:400}
+.h2{font-family:var(--serif); font-size:58px; line-height:1.15; letter-spacing:-.01em; font-weight:400}
+.eyebrow{font-family:var(--sans); font-size:22px; letter-spacing:.16em; text-transform:uppercase; color:var(--clayD); font-weight:600}
+.cap{font-family:var(--sans); font-size:30px; color:var(--muted); line-height:1.4}
+.card{background:var(--paper); border-radius:28px; box-shadow:0 1px 0 rgba(20,20,19,.04), 0 30px 60px -30px rgba(20,20,19,.22);
+  border:1px solid rgba(20,20,19,.06)}
+.label{font-size:20px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.body{font-family:var(--sans); font-size:40px; line-height:1.62; color:var(--ink2)}
+.mw{display:inline-block; position:relative; overflow:hidden; height:1.32em; vertical-align:-0.3em; border-radius:10px; white-space:nowrap}
+.mw > span{position:absolute; left:0; top:0; padding:0 10px; white-space:nowrap; line-height:1.32em; font-weight:600}
+.chip{display:inline-flex; align-items:center; gap:10px; white-space:nowrap; padding:10px 20px; border-radius:999px; font-size:24px;
+  font-weight:600; background:var(--paper); border:1px solid var(--line); color:var(--ink2)}
+.dot{width:12px; height:12px; border-radius:50%; display:inline-block}
+.node{width:300px; height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px}
+.node .nm{font-family:var(--serif); font-size:40px}
+.node .rl{font-size:19px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.sees{width:350px; font-size:28px; line-height:1.42; color:var(--ink2)}
+.sees b{display:block; font-size:18px; letter-spacing:.16em; text-transform:uppercase; color:var(--clayD); margin-bottom:8px}
+.row{display:flex; justify-content:space-between; font-size:28px; padding:15px 0; border-bottom:1px solid var(--line)}
+.row span:first-child{color:var(--muted)}
+.row span:last-child{font-weight:600}
+.small{font-size:30px; line-height:1.55}
+.tile{width:208px; height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  text-align:center; font-size:25px; font-weight:600; color:var(--ink2)}
+.tile i{font-style:normal; font-size:16px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.token{width:54px; height:54px; border-radius:12px; background:linear-gradient(135deg,#E9C28F,#D4A27F);
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.08), 0 10px 20px -10px rgba(0,0,0,.3)}
+svg{position:absolute; inset:0; overflow:visible}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- =============================== S1 · hook =============================== -->
+<section id="s1">
+  <div class="abs center h1" id="s1a" style="top:400px">Every question you ask an AI</div>
+  <div class="abs center h1" id="s1b" style="top:500px">arrives with <em style="color:var(--clay)">your name</em> on it.</div>
+</section>
+
+<!-- =============================== S2 · the profile =============================== -->
+<section id="s2">
+  <div class="abs label" id="s2l" style="left:160px; top:250px">You ask</div>
+  <div class="abs card" id="s2card" style="left:160px; top:300px; width:900px; height:420px; padding:44px 50px">
+    <div class="body" style="font-size:38px" id="s2type"></div>
+    <div class="body" style="font-size:38px; display:none" id="s2rich">My son <span class="hl">Ethan Miller</span>, 9, has ADHD. Should he switch from Adderall to Vyvanse? We're on <span class="hl">Kaiser</span> in <span class="hl">Sacramento</span>. Reach me at <span class="hl">sarah.miller@gmail.com</span>.</div>
+  </div>
+  <svg><path id="s2arrow" d="M1080 510 C 1120 510, 1130 510, 1170 510" fill="none" stroke="var(--clay)" stroke-width="3" stroke-linecap="round"/></svg>
+  <div class="abs label" id="s2pl" style="left:1190px; top:200px; color:var(--clayD)">What the lab keeps</div>
+  <div class="abs card" id="s2prof" style="left:1190px; top:250px; width:570px; padding:30px 40px">
+    <div class="row s2r"><span>Account</span><span>sarah.miller@gmail.com</span></div>
+    <div class="row s2r"><span>Card</span><span>Visa ending 4242</span></div>
+    <div class="row s2r"><span>IP address</span><span>Sacramento, CA</span></div>
+    <div class="row s2r"><span>Child</span><span>Ethan, 9, ADHD</span></div>
+    <div class="row s2r"><span>Insurer</span><span>Kaiser</span></div>
+    <div class="row s2r" style="border:none"><span>Every past chat</span><span>linked</span></div>
+  </div>
+  <div class="abs center cap" id="s2cap" style="top:870px">Today, every lab knows who is asking. And it remembers.</div>
+</section>
+
+<!-- =============================== S3 · title =============================== -->
+<section id="s3">
+  <div class="abs center serif" id="s3a" style="top:360px; font-size:170px; letter-spacing:-.02em">Lethe<span style="color:var(--clay)">.</span></div>
+  <div class="abs center serif" id="s3b" style="top:580px; font-size:30px; color:var(--muted); font-style:italic">in Greek myth, the river of forgetting</div>
+  <div class="abs center" id="s3c" style="top:660px; font-size:42px; color:var(--ink2)">Frontier AI, without the profile.</div>
+</section>
+
+<!-- =============================== S4 · swap on device =============================== -->
+<section id="s4">
+  <div class="abs eyebrow" id="s4e" style="left:160px; top:150px">01 · On your device</div>
+  <div class="abs h2" id="s4h" style="left:160px; top:200px; width:1600px">Personal details are swapped before anything leaves.</div>
+  <div class="abs card" id="s4card" style="left:160px; top:380px; width:1600px; padding:56px 64px">
+    <div class="body" style="font-size:46px">My son <span class="mw" data-a="Ethan Miller" data-b="Silas Ellison" data-from="real" data-to="stand"></span>, 9, has ADHD. Should he switch from Adderall to Vyvanse? We're on <span class="mw" data-a="Kaiser" data-b="an HMO" data-from="real" data-to="gen"></span> in <span class="mw" data-a="Sacramento" data-b="California" data-from="real" data-to="gen"></span>. Reach me at <span class="mw" data-a="sarah.miller@gmail.com" data-b="contact1@example.com" data-from="real" data-to="stand"></span>.</div>
+  </div>
+  <div class="abs" id="s4stats" style="left:160px; top:790px; display:flex; gap:16px">
+    <span class="chip"><span class="dot" style="background:var(--clay)"></span>4 details found</span>
+    <span class="chip">3.2 ms</span>
+    <span class="chip">on this Mac, nothing sent to a cloud</span>
+  </div>
+  <div class="abs cap" id="s4cap" style="left:160px; top:880px; width:1600px">Stand-ins rotate with every chat, so two chats can't be linked.</div>
+</section>
+
+<!-- =============================== S5 · the path =============================== -->
+<section id="s5">
+  <div class="abs eyebrow" id="s5e" style="left:160px; top:110px">02 · The path</div>
+  <div class="abs h2" id="s5h" style="left:160px; top:160px">No one can both identify you and read you.</div>
+  <svg>
+    <line id="s5l0" x1="310" y1="398" x2="310" y2="470" stroke="var(--kraft)" stroke-width="3" stroke-dasharray="6 8"/>
+    <line id="s5l1" x1="460" y1="545" x2="610" y2="545" stroke="var(--line)" stroke-width="4"/>
+    <line id="s5l2" x1="910" y1="545" x2="1060" y2="545" stroke="var(--line)" stroke-width="4"/>
+    <line id="s5l3" x1="1360" y1="545" x2="1510" y2="545" stroke="var(--line)" stroke-width="4"/>
+  </svg>
+  <div class="abs card" id="s5iss" style="left:160px; top:300px; width:300px; height:96px; display:flex; align-items:center; justify-content:center; gap:14px; border-radius:22px">
+    <span class="token" style="width:30px; height:30px; border-radius:8px"></span><span style="font-size:26px; font-weight:600">Issuer</span><span style="font-size:22px; color:var(--muted)">knows you paid</span>
+  </div>
+  <div class="abs card node" id="s5n0" style="left:160px; top:470px"><span class="nm">You</span><span class="rl">your device</span></div>
+  <div class="abs card node" id="s5n1" style="left:610px; top:470px"><span class="nm">Relay</span><span class="rl">independent</span></div>
+  <div class="abs card node" id="s5n2" style="left:1060px; top:470px"><span class="nm">Gateway</span><span class="rl">Lethe, attested</span></div>
+  <div class="abs card node" id="s5n3" style="left:1510px; top:470px"><span class="nm">Lab</span><span class="rl">GPT · Claude · Gemini</span></div>
+  <div class="abs sees" id="s5s0" style="left:140px; top:665px"><b>Sees</b>Everything. And keeps it.</div>
+  <div class="abs sees" id="s5s1" style="left:590px; top:665px"><b>Sees</b>Your IP and 1,084 sealed bytes. Can't open them.</div>
+  <div class="abs sees" id="s5s2" style="left:1040px; top:665px"><b>Sees</b>A valid one-time credential and the question. Not who you are.</div>
+  <div class="abs sees" id="s5s3" style="left:1490px; top:665px"><b>Sees</b>One question from Lethe. Full model, full intelligence.</div>
+  <div class="abs" id="s5pk" style="left:0; top:0; width:40px; height:40px; border-radius:11px; background:var(--ink);
+       box-shadow:0 12px 24px -10px rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center">
+    <span style="width:12px; height:12px; border-radius:50%; background:var(--clay)"></span></div>
+</section>
+
+<!-- =============================== S6 · the answer =============================== -->
+<section id="s6">
+  <div class="abs eyebrow" id="s6e" style="left:160px; top:130px">03 · The answer</div>
+  <div class="abs h2" id="s6h" style="left:160px; top:180px">Real names come back only on your device.</div>
+  <div class="abs card" id="s6c1" style="left:160px; top:340px; width:1600px; padding:44px 60px">
+    <div class="label" style="margin-bottom:16px">GPT-5.6, turn 1</div>
+    <div class="body" style="font-size:38px">I can't tell from here whether <span class="mw" data-a="Silas" data-b="Ethan" data-from="stand" data-to="back"></span> should switch, and don't change or combine medications without his prescriber. Adderall and Vyvanse are both amphetamine stimulants, but the best choice depends on response, side effects and timing.</div>
+  </div>
+  <div class="abs card" id="s6c2" style="left:160px; top:690px; width:1600px; padding:44px 60px">
+    <div class="label" style="margin-bottom:16px">Turn 2 · a note for his teacher</div>
+    <div class="body" style="font-size:38px">Dear Mrs. <span class="mw" data-a="Merritt" data-b="Johnson" data-from="stand" data-to="back"></span>, <span class="mw" data-a="Silas" data-b="Ethan" data-from="stand" data-to="back"></span> may be transitioning from Adderall to Vyvanse under his prescriber's guidance.</div>
+  </div>
+</section>
+
+<!-- =============================== S7 · anything =============================== -->
+<section id="s7">
+  <div class="abs eyebrow" id="s7e" style="left:160px; top:130px">04 · Anything you ask</div>
+  <div class="abs h2" id="s7h" style="left:160px; top:180px">Whatever you'd rather not hand over.</div>
+  <div class="abs card" id="s7c0" style="left:160px; top:340px; width:510px; height:520px; padding:40px 40px">
+    <div class="label" style="margin-bottom:18px">Career</div>
+    <div class="small">My manager <span class="mw" data-a="David Chen" data-b="Callum Ashford" data-from="real" data-to="stand"></span> at <span class="mw" data-a="Goldman Sachs" data-b="a large financial firm" data-from="real" data-to="gen"></span> wants me to sign a non-compete before my bonus. My cell is <span class="mw" data-a="(212) 555-0198" data-b="(555) 010-0001" data-from="real" data-to="stand"></span>.</div>
+  </div>
+  <div class="abs card" id="s7c1" style="left:705px; top:340px; width:510px; height:520px; padding:40px 40px">
+    <div class="label" style="margin-bottom:18px">Housing</div>
+    <div class="small">My landlord <span class="mw" data-a="Robert Kim" data-b="Emmett Ashford" data-from="real" data-to="stand"></span> kept my deposit for <span class="mw" data-a="482 Oak Street" data-b="[street address]" data-from="real" data-to="gen"></span>, <span class="mw" data-a="Austin" data-b="Texas" data-from="real" data-to="gen"></span>. He still has my SSN, <span class="mw" data-a="123-45-6789" data-b="[removed]" data-from="real" data-to="gen"></span>.</div>
+  </div>
+  <div class="abs card" id="s7c2" style="left:1250px; top:340px; width:510px; height:520px; padding:40px 40px">
+    <div class="label" style="margin-bottom:18px">Work · confidential</div>
+    <div class="small">Email <span class="mw" data-a="Jennifer Lopez" data-b="Freya Holloway" data-from="real" data-to="stand"></span> at <span class="mw" data-a="Acme Capital" data-b="Tamarind" data-from="real" data-to="stand"></span>: we're delaying <span class="mw" data-a="Project Orion" data-b="Ardent" data-from="real" data-to="stand"></span> to Q2.</div>
+    <div id="s7reply" style="margin-top:26px; padding-top:22px; border-top:1px solid var(--line)">
+      <div class="label" style="margin-bottom:10px; font-size:17px">Draft from the model</div>
+      <div class="small" style="font-size:28px">Hi <span class="mw" data-a="Freya" data-b="Jennifer" data-from="stand" data-to="back"></span>, we need to delay <span class="mw" data-a="Ardent" data-b="Project Orion" data-from="stand" data-to="back"></span>'s launch until Q2.</div>
+    </div>
+  </div>
+  <div class="abs cap" id="s7cap" style="left:160px; top:900px; width:1600px">Four real conversations, run through the live demo with GPT-5.6.</div>
+</section>
+
+<!-- =============================== S8 · accountable =============================== -->
+<section id="s8">
+  <div class="abs eyebrow" id="s8e" style="left:160px; top:130px">05 · Accountable, not identified</div>
+  <div class="abs h2" id="s8h" style="left:160px; top:180px; width:1600px">Every request spends a one-time credential. Abuse is limited without knowing who anyone is.</div>
+  <div class="abs" id="s8row" style="left:160px; top:560px; display:flex; gap:22px">
+    <div class="token" id="s8t0"></div><div class="token"></div><div class="token"></div><div class="token"></div><div class="token"></div>
+  </div>
+  <div class="abs token" id="s8mv" style="left:160px; top:560px"></div>
+  <div class="abs token" id="s8ghost" style="left:160px; top:560px; opacity:0"></div>
+  <div class="abs card node" id="s8gw" style="left:1300px; top:510px; width:340px"><span class="nm">Gateway</span><span class="rl">checks the credential</span></div>
+  <div class="abs chip" id="s8ok" style="left:1330px; top:700px; color:var(--oliveD); background:var(--oliveT); border-color:transparent">✓ Accepted, now spent</div>
+  <div class="abs chip" id="s8no" style="left:1330px; top:780px; color:var(--clayD); background:var(--clayT); border-color:transparent">✕ Replay refused</div>
+</section>
+
+<!-- =============================== S9 · foundation =============================== -->
+<section id="s9">
+  <div class="abs eyebrow" id="s9e" style="left:160px; top:110px">06 · The foundation</div>
+  <div class="abs h2" id="s9h" style="left:160px; top:160px">Today, your questions. Next, everywhere you use AI.</div>
+  <svg id="s9svg"></svg>
+  <div id="s9tiles"></div>
+  <div class="abs card" id="s9band" style="left:160px; top:600px; width:1600px; height:120px; border-radius:26px;
+       display:flex; align-items:center; justify-content:space-between; padding:0 50px; background:var(--ink); color:var(--paper)">
+    <span class="serif" style="font-size:46px">Lethe<span style="color:var(--clay)">.</span> <span style="font-family:var(--sans); font-size:24px; color:#B8B6AC; margin-left:16px">the privacy layer</span></span>
+    <span style="font-size:22px; color:#B8B6AC; letter-spacing:.04em">swap on device · blind credentials · sealed relay · attested gateway</span>
+  </div>
+  <div class="abs" id="s9labs" style="left:575px; top:830px; display:flex; gap:30px">
+    <span class="chip" style="width:170px; justify-content:center">GPT</span><span class="chip" style="width:170px; justify-content:center">Claude</span><span class="chip" style="width:170px; justify-content:center">Gemini</span><span class="chip" style="width:170px; justify-content:center; color:var(--muted)">every model</span>
+  </div>
+  <div class="abs center cap" id="s9cap" style="top:940px">One layer between people and every model.</div>
+</section>
+
+<!-- =============================== S10 · end =============================== -->
+<section id="s10">
+  <div class="abs center serif" id="s10a" style="top:380px; font-size:150px; letter-spacing:-.02em">Lethe<span style="color:var(--clay)">.</span></div>
+  <div class="abs center" id="s10b" style="top:590px; font-size:44px; color:var(--ink2)">The privacy layer for AI.</div>
+  <div class="abs center" id="s10c" style="top:900px; font-size:24px; color:var(--muted)">Pranjal Joshi · Prashil Bulbule · Vaibhav</div>
+  <div class="abs center" id="s10d" style="top:945px; font-size:20px; color:var(--muted); letter-spacing:.04em">Live local demo · real model · real cryptography · October 2026</div>
+</section>
+
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const E = { out: x => 1 - Math.pow(1 - x, 3), inout: x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2,
+            outq: x => 1 - Math.pow(1 - x, 4) };
+const prog = (t, a, d) => clamp((t - a) / d);
+const lerp = (a, b, p) => a + (b - a) * p;
+
+// fade + rise + unblur in at a; fade out at `out`
+function show(el, t, a, d = .9, o = {}){
+  if(typeof el === "string") el = $(el);
+  const y = o.y ?? 26, blur = o.blur ?? 10;
+  const p = E.out(prog(t, a, d)), q = o.out == null ? 1 : 1 - E.inout(prog(t, o.out, o.od ?? .6));
+  el.style.opacity = p * q;
+  el.style.transform = `translateY(${(1 - p) * y - (1 - q) * (o.yo ?? 0)}px) scale(${1 - (1 - p) * (o.scale ?? 0)})`;
+  el.style.filter = (1 - p) * blur > .05 ? `blur(${(1 - p) * blur}px)` : "none";
+}
+
+// ---------------------------------------------------------------- morphing words
+const C = { ink:[61,61,58], real:[181,83,47], realBg:[245,222,210], stand:[47,99,148], standBg:[220,231,242],
+            gen:[61,61,58], genBg:[232,229,219], back:[78,98,54], backBg:[226,233,213], paper:[250,249,245] };
+const mix = (a, b, p) => a.map((v, i) => Math.round(lerp(v, b[i], p)));
+const rgb = c => `rgb(${c.join(",")})`;
+function prepMorphs(){
+  document.querySelectorAll(".mw").forEach(m => {
+    m.innerHTML = `<span class="a">${m.dataset.a}</span><span class="b">${m.dataset.b}</span>`;
+    m._a = m.children[0]; m._b = m.children[1];
+  });
+  document.querySelectorAll("section").forEach(s => s.style.display = "block");
+  document.querySelectorAll(".mw").forEach(m => { m._wa = m._a.offsetWidth; m._wb = m._b.offsetWidth; });
+  document.querySelectorAll("section").forEach(s => s.style.display = "none");
+}
+// hl: highlight 0..1, p: morph 0..1
+function morph(m, hl, p){
+  hl = E.out(clamp(hl)); p = E.inout(clamp(p));
+  const f = m.dataset.from, t = m.dataset.to;
+  m.style.width = lerp(m._wa, m._wb, p) + "px";
+  const text = mix(mix(C.ink, C[f], hl), C[t], p), bg = mix(mix(C.paper, C[f + "Bg"], hl), C[t + "Bg"], p);
+  m.style.background = rgb(bg); m._a.style.color = m._b.style.color = rgb(text);
+  m._a.style.opacity = 1 - p; m._a.style.transform = `translateY(${-p * 16}px)`; m._a.style.filter = `blur(${p * 4}px)`;
+  m._b.style.opacity = p; m._b.style.transform = `translateY(${(1 - p) * 16}px)`; m._b.style.filter = `blur(${(1 - p) * 4}px)`;
+}
+const morphsIn = sel => [...document.querySelectorAll(sel + " .mw")];
+
+// ---------------------------------------------------------------- scenes
+const S2_TEXT = "My son Ethan Miller, 9, has ADHD. Should he switch from Adderall to Vyvanse? We're on Kaiser in Sacramento. Reach me at sarah.miller@gmail.com.";
+const TILES = [
+  ["Chat", "today"], ["Browser", "app"], ["Health apps", "app"], ["Email & docs", "service"],
+  ["Coding agents", "agent"], ["Company tools", "service"], ["Agent swarms", "agent"]];
+
+const scenes = [
+  { id:"s1", a:0, b:6.4, run(t){
+      show("#s1a", t, .3, 1.2, {out:5.6}); show("#s1b", t, 1.9, 1.2, {out:5.6}); } },
+
+  { id:"s2", a:6.4, b:16, run(t){
+      show("#s2l", t, .1, .8, {out:8.9}); show("#s2card", t, .1, .9, {out:8.9});
+      const n = Math.floor(clamp((t - .7) / 2.9) * S2_TEXT.length);
+      const typing = t < 3.7;
+      $("#s2type").style.display = typing ? "block" : "none"; $("#s2rich").style.display = typing ? "none" : "block";
+      $("#s2type").innerHTML = S2_TEXT.slice(0, n).replace(/&/g,"&amp;") +
+        (typing ? `<span style="display:inline-block;width:3px;height:1.1em;vertical-align:-.15em;background:var(--ink);opacity:${(Math.floor(t*2.4)%2)?0:1}"></span>` : "");
+      document.querySelectorAll("#s2rich .hl").forEach((h, i) => {
+        const p = E.out(prog(t, 3.9 + i * .18, .5));
+        h.style.background = rgb(mix(C.paper, C.realBg, p)); h.style.color = rgb(mix(C.ink, C.real, p));
+        h.style.borderRadius = "8px"; h.style.padding = "0 4px"; h.style.margin = "0 -4px"; h.style.fontWeight = p > .5 ? 600 : 400;
+      });
+      const ar = $("#s2arrow"), L = ar.getTotalLength(); ar.style.strokeDasharray = L;
+      ar.style.strokeDashoffset = L * (1 - E.inout(prog(t, 4.6, .6))); ar.style.opacity = 1 - prog(t, 8.9, .5);
+      show("#s2pl", t, 4.9, .8, {out:8.9}); show("#s2prof", t, 4.9, .8, {out:8.9});
+      document.querySelectorAll(".s2r").forEach((r, i) => show(r, t, 5.2 + i * .28, .6, {y:12, blur:4}));
+      show("#s2cap", t, 6.6, .9, {out:8.9}); } },
+
+  { id:"s3", a:16, b:20.6, run(t){
+      show("#s3a", t, .2, 1.3, {y:10, blur:16, scale:.03, out:3.9}); show("#s3b", t, 1.1, 1, {out:3.9});
+      show("#s3c", t, 1.8, 1, {out:3.9}); } },
+
+  { id:"s4", a:20.6, b:32, run(t){
+      show("#s4e", t, .1, .8, {out:10.8}); show("#s4h", t, .3, .9, {out:10.8}); show("#s4card", t, .7, .9, {out:10.8});
+      morphsIn("#s4card").forEach((m, i) => morph(m, prog(t, 2.0 + i * .2, .5), prog(t, 3.4 + i * .75, .8)));
+      show("#s4stats", t, 6.6, .8, {out:10.8}); show("#s4cap", t, 7.6, .9, {out:10.8}); } },
+
+  { id:"s5", a:32, b:46, run(t){
+      show("#s5e", t, .1, .8, {out:13.2}); show("#s5h", t, .3, .9, {out:13.2});
+      ["#s5n0","#s5n1","#s5n2","#s5n3"].forEach((n, i) => show(n, t, .8 + i * .22, .8, {out:13.2}));
+      show("#s5iss", t, 1.9, .8, {out:13.2});
+      const l0 = $("#s5l0"); l0.style.opacity = E.out(prog(t, 2.2, .6)) * (1 - prog(t, 13.2, .5));
+      [1,2,3].forEach(i => { const l = $("#s5l" + i), L = 150; l.style.strokeDasharray = L;
+        l.style.strokeDashoffset = L * (1 - E.inout(prog(t, 1.6 + i * .25, .6))); l.style.opacity = 1 - prog(t, 13.2, .5); });
+      // the sealed packet travels You -> Relay -> Gateway -> Lab
+      const xs = [310, 760, 1210, 1660], hops = [[3.4, 4.4], [5.6, 6.6], [7.8, 8.8]];
+      let x = xs[0], vis = prog(t, 3.0, .4);
+      hops.forEach(([a, b], i) => { if(t >= a) x = lerp(xs[i], xs[i + 1], E.inout(prog(t, a, b - a))); });
+      const pk = $("#s5pk"); pk.style.opacity = vis * (1 - prog(t, 9.6, .5));
+      pk.style.transform = `translate(${x - 20}px, ${425 - 20 + Math.sin(prog(t,3,8)*Math.PI*6)*0}px)`;
+      [2.9, 4.5, 6.7, 8.9].forEach((a, i) => show("#s5s" + i, t, a, .8, {out:13.2}));
+      ["#s5n0","#s5n1","#s5n2","#s5n3"].forEach((n, i) => {
+        const at = [3.0, 4.4, 6.6, 8.8][i], glow = Math.max(0, 1 - Math.abs(t - at - .2) / .9);
+        $(n).style.boxShadow = `0 0 0 ${glow * 6}px rgba(217,119,87,${glow * .25}), 0 30px 60px -30px rgba(20,20,19,.22)`; });
+    } },
+
+  { id:"s6", a:46, b:56.2, run(t){
+      show("#s6e", t, .1, .8, {out:9.6}); show("#s6h", t, .3, .9, {out:9.6});
+      show("#s6c1", t, .7, .9, {out:9.6}); show("#s6c2", t, 4.4, .9, {out:9.6});
+      morphsIn("#s6c1").forEach(m => morph(m, prog(t, 1.4, .4), prog(t, 2.8, .9)));
+      morphsIn("#s6c2").forEach((m, i) => morph(m, prog(t, 4.9, .4), prog(t, 6.0 + i * .5, .9))); } },
+
+  { id:"s7", a:56.2, b:69.6, run(t){
+      show("#s7e", t, .1, .8, {out:12.7}); show("#s7h", t, .3, .9, {out:12.7});
+      [0,1,2].forEach(i => { show("#s7c" + i, t, .7 + i * .25, .9, {out:12.7});
+        morphsIn("#s7c" + i).filter(m => !m.closest("#s7reply")).forEach((m, j) =>
+          morph(m, prog(t, 1.8 + i * 1.6, .4), prog(t, 2.5 + i * 1.6 + j * .4, .7))); });
+      show("#s7reply", t, 7.6, .8, {y:14});
+      morphsIn("#s7reply").forEach((m, j) => morph(m, prog(t, 8.2, .4), prog(t, 9.0 + j * .5, .8)));
+      show("#s7cap", t, 10.2, .9, {out:12.7}); } },
+
+  { id:"s8", a:69.6, b:76.4, run(t){
+      show("#s8e", t, .1, .8, {out:6.1}); show("#s8h", t, .3, .9, {out:6.1});
+      show("#s8row", t, .9, .8, {out:6.1}); show("#s8gw", t, 1.1, .8, {out:6.1});
+      $("#s8t0").style.visibility = t > 1.9 ? "hidden" : "visible";
+      const mv = $("#s8mv"), p = E.inout(prog(t, 1.9, 1.1));
+      mv.style.opacity = (t > 1.9 ? 1 : 0) * (1 - prog(t, 3.1, .3));
+      mv.style.transform = `translate(${lerp(0, 1300 - 160 - 70, p)}px, ${-Math.sin(p * Math.PI) * 60}px)`;
+      show("#s8ok", t, 3.0, .6, {out:6.1, y:10});
+      const g = $("#s8ghost"), q = E.inout(prog(t, 3.8, 1.0));
+      g.style.opacity = (t > 3.8 ? .55 : 0) * (1 - prog(t, 4.9, .3));
+      g.style.transform = `translate(${lerp(0, 1300 - 160 - 70, q) - Math.sin(prog(t, 4.8, .3) * Math.PI * 3) * 14 * (t > 4.8 ? 1 : 0)}px, ${-Math.sin(q * Math.PI) * 60}px)`;
+      show("#s8no", t, 4.85, .5, {out:6.1, y:10}); } },
+
+  { id:"s9", a:76.4, b:88.4, run(t){
+      show("#s9e", t, .1, .8, {out:11.4}); show("#s9h", t, .3, .9, {out:11.4});
+      show("#s9band", t, .8, 1, {out:11.4, y:20}); show("#s9labs", t, 1.4, .9, {out:11.4});
+      document.querySelectorAll(".s9tile").forEach((el, i) => show(el, t, 2.0 + i * .55, .8, {out:11.4, y:18}));
+      document.querySelectorAll(".s9line").forEach((l, i) => {
+        const L = 90; l.style.strokeDasharray = L; l.style.strokeDashoffset = L * (1 - E.inout(prog(t, 2.4 + i * .55, .6)));
+        l.style.opacity = 1 - prog(t, 11.4, .5); });
+      show("#s9cap", t, 7.0, .9, {out:11.4}); } },
+
+  { id:"s10", a:88.4, b:95, run(t){
+      show("#s10a", t, .3, 1.4, {y:10, blur:16, scale:.03, out:5.6, od:1}); show("#s10b", t, 1.2, 1.1, {out:5.6, od:1});
+      show("#s10c", t, 2.0, 1, {out:5.6, od:1}); show("#s10d", t, 2.3, 1, {out:5.6, od:1}); } },
+];
+window.DURATION = 95;
+
+function buildTiles(){
+  const n = TILES.length, w = 208, gap = (1600 - n * w) / (n - 1);
+  let html = "", svg = "";
+  TILES.forEach(([name, kind], i) => {
+    const x = 160 + i * (w + gap), today = i === 0;
+    html += `<div class="abs card tile s9tile" style="left:${x}px; top:380px; ${today ? "border:2px solid var(--clay)" : ""}">
+      ${name}<i style="${today ? "color:var(--clayD)" : ""}">${kind}</i></div>`;
+    svg += `<line class="s9line" x1="${x + w / 2}" y1="530" x2="${x + w / 2}" y2="600" stroke="${today ? "var(--clay)" : "var(--line)"}" stroke-width="3"/>`;
+  });
+  [660, 860, 1060, 1260].forEach(x => svg += `<line class="s9line" x1="${x}" y1="720" x2="${x}" y2="830" stroke="var(--line)" stroke-width="3"/>`);
+  $("#s9tiles").innerHTML = html; $("#s9svg").innerHTML = svg;
+}
+
+function render(t){
+  for(const s of scenes){
+    const on = t >= s.a && t < s.b, el = document.getElementById(s.id);
+    el.style.display = on ? "block" : "none";
+    if(on) s.run(t - s.a);
+  }
+}
+window.render = render;
+window.ready = (async () => {
+  await document.fonts.ready; buildTiles(); prepMorphs();
+  const m = location.hash.match(/t=([\d.]+)/); render(m ? parseFloat(m[1]) : 0);
+  if(location.hash.includes("play")){ const t0 = performance.now(); const loop = () => { render((performance.now() - t0) / 1000 % DURATION); requestAnimationFrame(loop); }; loop(); }
+  return true;
+})();
+</script>
+</body>
+</html>

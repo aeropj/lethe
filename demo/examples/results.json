@@ -1,0 +1,517 @@
+{
+  "model": "gpt-5.6-luna",
+  "provider": "OpenAI",
+  "examples": [
+    {
+      "id": "health",
+      "title": "A parent asks about medication",
+      "turns": [
+        {
+          "prompt": "My son Ethan Miller, 9, has ADHD. Should he switch from Adderall to Vyvanse? We're on Kaiser in Sacramento and his school wants a 504 plan. Reach me at sarah.miller@gmail.com.",
+          "sent": "My son Silas Ellison, 9, has ADHD. Should he switch from Adderall to Vyvanse? We're on an HMO in California and his school wants a 504 plan. Reach me at contact1@example.com.",
+          "found": [
+            {
+              "original": "Ethan Miller",
+              "standin": "Silas Ellison",
+              "kind": "person",
+              "reversible": true
+            },
+            {
+              "original": "Kaiser",
+              "standin": "an HMO",
+              "kind": "organisation",
+              "reversible": false
+            },
+            {
+              "original": "Sacramento",
+              "standin": "California",
+              "kind": "city",
+              "reversible": false
+            },
+            {
+              "original": "sarah.miller@gmail.com",
+              "standin": "contact1@example.com",
+              "kind": "email",
+              "reversible": true
+            }
+          ],
+          "scrub_ms": 3.23,
+          "answer_raw": "I can\u2019t tell from here whether Silas should switch, and **don\u2019t change or combine medications without his prescriber**. Adderall and Vyvanse are both amphetamine stimulants, but the best choice depends on response, side effects, timing, and insurance coverage.\n\n### Adderall vs. Vyvanse\u2014general differences\n- **Adderall**: available as immediate-release and extended-release; may be more flexible for timing but can have noticeable \u201cwear-off\u201d or rebound in some children.\n- **Vyvanse**: a longer-acting prodrug, often providing a smoother all-day effect; it may last roughly 10\u201313 hours, though this varies. It can be expensive or require prior authorization.\n- Both can cause decreased appetite/weight gain, sleep problems, stomachache, headaches, irritability, increased heart rate or blood pressure, and rarely more serious mood or psychiatric symptoms.\n\nAsk his clinician to review:\n1. How much the current medication helps at school and home.\n2. When it starts wearing off and whether rebound occurs.\n3. Appetite, growth/weight, sleep, mood, blood pressure, and heart history.\n4. Whether a different **Adderall formulation or dose** might be enough before switching.\n5. Your HMO\u2019s formulary and prior-authorization rules. The prescriber\u2019s office or HMO pharmacy department can check this.\n\nSeek prompt medical advice for chest pain, fainting, severe agitation, hallucinations, suicidal thoughts, or a major change in behavior.\n\n### 504 plan in California\nYou or the school can request a **written Section 504 evaluation**. ADHD can qualify when it substantially limits a major life activity\u2014such as learning, concentrating, reading, thinking, or regulating behavior\u2014but a diagnosis alone does not automatically guarantee a plan.\n\nPossible accommodations include:\n- Preferential seating and reduced distractions\n- Shorter assignments or breaks\n- Extended time and alternative testing location\n- Written and repeated instructions\n- Organizational/check-in support\n- Positive behavior supports\n- Communication between school and family\n\nA 504 plan is different from an **IEP**. If Silas needs specialized instruction, not just accommodations, request a special-education evaluation for an IEP as well. Keep requests and school responses in writing, and ask the school\u2019s 504 coordinator or special-education office about timelines and procedures.\n\nFor privacy, don\u2019t post personal contact information here.",
+          "answer": "I can\u2019t tell from here whether Ethan should switch, and **don\u2019t change or combine medications without his prescriber**. Adderall and Vyvanse are both amphetamine stimulants, but the best choice depends on response, side effects, timing, and insurance coverage.\n\n### Adderall vs. Vyvanse\u2014general differences\n- **Adderall**: available as immediate-release and extended-release; may be more flexible for timing but can have noticeable \u201cwear-off\u201d or rebound in some children.\n- **Vyvanse**: a longer-acting prodrug, often providing a smoother all-day effect; it may last roughly 10\u201313 hours, though this varies. It can be expensive or require prior authorization.\n- Both can cause decreased appetite/weight gain, sleep problems, stomachache, headaches, irritability, increased heart rate or blood pressure, and rarely more serious mood or psychiatric symptoms.\n\nAsk his clinician to review:\n1. How much the current medication helps at school and home.\n2. When it starts wearing off and whether rebound occurs.\n3. Appetite, growth/weight, sleep, mood, blood pressure, and heart history.\n4. Whether a different **Adderall formulation or dose** might be enough before switching.\n5. Your HMO\u2019s formulary and prior-authorization rules. The prescriber\u2019s office or HMO pharmacy department can check this.\n\nSeek prompt medical advice for chest pain, fainting, severe agitation, hallucinations, suicidal thoughts, or a major change in behavior.\n\n### 504 plan in California\nYou or the school can request a **written Section 504 evaluation**. ADHD can qualify when it substantially limits a major life activity\u2014such as learning, concentrating, reading, thinking, or regulating behavior\u2014but a diagnosis alone does not automatically guarantee a plan.\n\nPossible accommodations include:\n- Preferential seating and reduced distractions\n- Shorter assignments or breaks\n- Extended time and alternative testing location\n- Written and repeated instructions\n- Organizational/check-in support\n- Positive behavior supports\n- Communication between school and family\n\nA 504 plan is different from an **IEP**. If Ethan needs specialized instruction, not just accommodations, request a special-education evaluation for an IEP as well. Keep requests and school responses in writing, and ask the school\u2019s 504 coordinator or special-education office about timelines and procedures.\n\nFor privacy, don\u2019t post personal contact information here.",
+          "restored": [
+            "Silas",
+            "Silas"
+          ],
+          "timing": {
+            "scrub_ms": 3.23,
+            "lab_ms": 9802,
+            "total_ms": 9807,
+            "lethe_ms": 4.7
+          },
+          "usage": {
+            "prompt_tokens": 54,
+            "completion_tokens": 686,
+            "total_tokens": 740,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 187,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "error": null,
+          "relay": {
+            "client_ip": "127.0.0.1",
+            "request_bytes": 1084,
+            "response_bytes": 4124,
+            "preview": "b35cea58932692e60ea4a40b66378230f168ca9224878ececb423b7d",
+            "target": "Lethe gateway (fixed: the relay cannot see which lab)"
+          },
+          "gateway_status": "accepted",
+          "lab_body": {
+            "model": "gpt-5.6-luna",
+            "messages": [
+              {
+                "role": "user",
+                "content": "My son Silas Ellison, 9, has ADHD. Should he switch from Adderall to Vyvanse? We're on an HMO in California and his school wants a 504 plan. Reach me at contact1@example.com."
+              }
+            ]
+          }
+        },
+        {
+          "prompt": "Write a three-sentence note I can hand Ethan's teacher, Mrs. Johnson, about the change.",
+          "sent": "Write a three-sentence note I can hand Silas's teacher, Mrs. Merritt, about the change.",
+          "found": [
+            {
+              "original": "Ethan",
+              "standin": "Silas",
+              "kind": "person",
+              "reversible": true
+            },
+            {
+              "original": "Johnson",
+              "standin": "Merritt",
+              "kind": "person",
+              "reversible": true
+            }
+          ],
+          "scrub_ms": 0.78,
+          "answer_raw": "Dear Mrs. Merritt, Silas may be transitioning from Adderall to Vyvanse under his prescriber\u2019s guidance, and we would appreciate your observations during the adjustment. Please let us know about any notable changes in attention, mood, appetite, sleepiness, or behavior at school. Thank you for partnering with us and keeping this information confidential.",
+          "answer": "Dear Mrs. Johnson, Ethan may be transitioning from Adderall to Vyvanse under his prescriber\u2019s guidance, and we would appreciate your observations during the adjustment. Please let us know about any notable changes in attention, mood, appetite, sleepiness, or behavior at school. Thank you for partnering with us and keeping this information confidential.",
+          "restored": [
+            "Merritt",
+            "Silas"
+          ],
+          "timing": {
+            "scrub_ms": 0.78,
+            "lab_ms": 3624,
+            "total_ms": 3627,
+            "lethe_ms": 2.6
+          },
+          "usage": {
+            "prompt_tokens": 577,
+            "completion_tokens": 145,
+            "total_tokens": 722,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 66,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "error": null,
+          "relay": {
+            "client_ip": "127.0.0.1",
+            "request_bytes": 4156,
+            "response_bytes": 1052,
+            "preview": "c014deca92df58464fea446265714cc6a2bccc511cf04c73c86d5477",
+            "target": "Lethe gateway (fixed: the relay cannot see which lab)"
+          },
+          "gateway_status": "accepted",
+          "lab_body": {
+            "model": "gpt-5.6-luna",
+            "messages": [
+              {
+                "role": "user",
+                "content": "My son Silas Ellison, 9, has ADHD. Should he switch from Adderall to Vyvanse? We're on an HMO in California and his school wants a 504 plan. Reach me at contact1@example.com."
+              },
+              {
+                "role": "assistant",
+                "content": "I can\u2019t tell from here whether Silas should switch, and **don\u2019t change or combine medications without his prescriber**. Adderall and Vyvanse are both amphetamine stimulants, but the best choice depends on response, side effects, timing, and insurance coverage.\n\n### Adderall vs. Vyvanse\u2014general differences\n- **Adderall**: available as immediate-release and extended-release; may be more flexible for timing but can have noticeable \u201cwear-off\u201d or rebound in some children.\n- **Vyvanse**: a longer-acting prodrug, often providing a smoother all-day effect; it may last roughly 10\u201313 hours, though this varies. It can be expensive or require prior authorization.\n- Both can cause decreased appetite/weight gain, sleep problems, stomachache, headaches, irritability, increased heart rate or blood pressure, and rarely more serious mood or psychiatric symptoms.\n\nAsk his clinician to review:\n1. How much the current medication helps at school and home.\n2. When it starts wearing off and whether rebound occurs.\n3. Appetite, growth/weight, sleep, mood, blood pressure, and heart history.\n4. Whether a different **Adderall formulation or dose** might be enough before switching.\n5. Your HMO\u2019s formulary and prior-authorization rules. The prescriber\u2019s office or HMO pharmacy department can check this.\n\nSeek prompt medical advice for chest pain, fainting, severe agitation, hallucinations, suicidal thoughts, or a major change in behavior.\n\n### 504 plan in California\nYou or the school can request a **written Section 504 evaluation**. ADHD can qualify when it substantially limits a major life activity\u2014such as learning, concentrating, reading, thinking, or regulating behavior\u2014but a diagnosis alone does not automatically guarantee a plan.\n\nPossible accommodations include:\n- Preferential seating and reduced distractions\n- Shorter assignments or breaks\n- Extended time and alternative testing location\n- Written and repeated instructions\n- Organizational/check-in support\n- Positive behavior supports\n- Communication between school and family\n\nA 504 plan is different from an **IEP**. If Silas needs specialized instruction, not just accommodations, request a special-education evaluation for an IEP as well. Keep requests and school responses in writing, and ask the school\u2019s 504 coordinator or special-education office about timelines and procedures.\n\nFor privacy, don\u2019t post personal contact information here."
+              },
+              {
+                "role": "user",
+                "content": "Write a three-sentence note I can hand Silas's teacher, Mrs. Merritt, about the change."
+              }
+            ]
+          }
+        }
+      ],
+      "vault": [
+        {
+          "standin": "Silas",
+          "original": "Ethan",
+          "kind": "person"
+        },
+        {
+          "standin": "Ellison",
+          "original": "Miller",
+          "kind": "person"
+        },
+        {
+          "standin": "Silas Ellison",
+          "original": "Ethan Miller",
+          "kind": "person"
+        },
+        {
+          "standin": "contact1@example.com",
+          "original": "sarah.miller@gmail.com",
+          "kind": "email"
+        },
+        {
+          "standin": "Merritt",
+          "original": "Johnson",
+          "kind": "person"
+        }
+      ]
+    },
+    {
+      "id": "career",
+      "title": "An employee asks about a non-compete",
+      "turns": [
+        {
+          "prompt": "I'm a VP at Goldman Sachs in Manhattan. My manager David Chen wants me to sign a 12-month non-compete before my bonus is paid. Can he make that a condition? My cell is (212) 555-0198.",
+          "sent": "I'm a VP at a large financial firm in New York. My manager Callum Ashford wants me to sign a 12-month non-compete before my bonus is paid. Can he make that a condition? My cell is (555) 010-0001.",
+          "found": [
+            {
+              "original": "Goldman Sachs",
+              "standin": "a large financial firm",
+              "kind": "organisation",
+              "reversible": false
+            },
+            {
+              "original": "Manhattan",
+              "standin": "New York",
+              "kind": "city",
+              "reversible": false
+            },
+            {
+              "original": "David Chen",
+              "standin": "Callum Ashford",
+              "kind": "person",
+              "reversible": true
+            },
+            {
+              "original": "(212) 555-0198",
+              "standin": "(555) 010-0001",
+              "kind": "phone",
+              "reversible": true
+            }
+          ],
+          "scrub_ms": 1.14,
+          "answer_raw": "Short answer: **possibly, but it depends heavily on the bonus plan, when the bonus became earned, and the terms of the proposed non-compete.** This is New York employment-law territory, so you should have a NY employment attorney review the documents before signing.\n\nKey distinctions:\n\n- **Discretionary or not-yet-earned bonus:** Your employer may generally make payment contingent on signing new terms, if the bonus plan or employment agreement allows that and the condition is clearly disclosed. They may also offer a new retention payment in exchange for restrictions.\n- **Already-earned bonus:** If the bonus was earned under an existing plan or contract based on completed performance, withholding it solely because you refuse a newly imposed non-compete may create contract, wage-payment, or forfeiture issues. The exact plan language matters.\n- **Existing bonus conditions:** Check for provisions requiring you to be employed on the payment date, remain in good standing, sign updated agreements, repay the bonus if you leave, or comply with post-employment restrictions.\n- **Non-compete enforceability:** New York generally evaluates whether the restriction protects a legitimate business interest, is reasonable in duration, geographic scope, and activity, and does not impose undue hardship or harm the public. A restriction covering all financial-services work may be more vulnerable than a narrowly tailored restriction protecting specific clients, confidential information, or strategies.\n- **Financial-services considerations:** Your role, access to trading or client information, regulatory obligations, and any FINRA or firm confidentiality provisions may affect the analysis. A non-solicitation, confidentiality, garden-leave, or forfeiture-for-competition provision is not always treated identically to a traditional non-compete.\n\nBefore signing, request in writing:\n\n1. The full proposed agreement and all referenced policies.\n2. The bonus plan and calculation showing whether the bonus is earned or discretionary.\n3. The payment date and the consequences of refusing to sign.\n4. The duration, geography, covered activities, clients, and any clawback or repayment terms.\n5. Whether the restriction applies if you are terminated without cause, laid off, or the firm materially changes your compensation.\n\nDo not sign immediately under pressure. You can respond that you are reviewing the agreement and reserve all rights concerning compensation already earned. Also, avoid sharing your cell number publicly; I have not used it.",
+          "answer": "Short answer: **possibly, but it depends heavily on the bonus plan, when the bonus became earned, and the terms of the proposed non-compete.** This is New York employment-law territory, so you should have a NY employment attorney review the documents before signing.\n\nKey distinctions:\n\n- **Discretionary or not-yet-earned bonus:** Your employer may generally make payment contingent on signing new terms, if the bonus plan or employment agreement allows that and the condition is clearly disclosed. They may also offer a new retention payment in exchange for restrictions.\n- **Already-earned bonus:** If the bonus was earned under an existing plan or contract based on completed performance, withholding it solely because you refuse a newly imposed non-compete may create contract, wage-payment, or forfeiture issues. The exact plan language matters.\n- **Existing bonus conditions:** Check for provisions requiring you to be employed on the payment date, remain in good standing, sign updated agreements, repay the bonus if you leave, or comply with post-employment restrictions.\n- **Non-compete enforceability:** New York generally evaluates whether the restriction protects a legitimate business interest, is reasonable in duration, geographic scope, and activity, and does not impose undue hardship or harm the public. A restriction covering all financial-services work may be more vulnerable than a narrowly tailored restriction protecting specific clients, confidential information, or strategies.\n- **Financial-services considerations:** Your role, access to trading or client information, regulatory obligations, and any FINRA or firm confidentiality provisions may affect the analysis. A non-solicitation, confidentiality, garden-leave, or forfeiture-for-competition provision is not always treated identically to a traditional non-compete.\n\nBefore signing, request in writing:\n\n1. The full proposed agreement and all referenced policies.\n2. The bonus plan and calculation showing whether the bonus is earned or discretionary.\n3. The payment date and the consequences of refusing to sign.\n4. The duration, geography, covered activities, clients, and any clawback or repayment terms.\n5. Whether the restriction applies if you are terminated without cause, laid off, or the firm materially changes your compensation.\n\nDo not sign immediately under pressure. You can respond that you are reviewing the agreement and reserve all rights concerning compensation already earned. Also, avoid sharing your cell number publicly; I have not used it.",
+          "restored": [],
+          "timing": {
+            "scrub_ms": 1.14,
+            "lab_ms": 11503,
+            "total_ms": 11506,
+            "lethe_ms": 3.2
+          },
+          "usage": {
+            "prompt_tokens": 60,
+            "completion_tokens": 990,
+            "total_tokens": 1050,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 512,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "error": null,
+          "relay": {
+            "client_ip": "127.0.0.1",
+            "request_bytes": 1084,
+            "response_bytes": 4124,
+            "preview": "c0a67fe34d114c5599f3c91dedeffed3c13d2fe256fcebbddc897c2a",
+            "target": "Lethe gateway (fixed: the relay cannot see which lab)"
+          },
+          "gateway_status": "accepted",
+          "lab_body": {
+            "model": "gpt-5.6-luna",
+            "messages": [
+              {
+                "role": "user",
+                "content": "I'm a VP at a large financial firm in New York. My manager Callum Ashford wants me to sign a 12-month non-compete before my bonus is paid. Can he make that a condition? My cell is (555) 010-0001."
+              }
+            ]
+          }
+        }
+      ],
+      "vault": [
+        {
+          "standin": "Callum",
+          "original": "David",
+          "kind": "person"
+        },
+        {
+          "standin": "Ashford",
+          "original": "Chen",
+          "kind": "person"
+        },
+        {
+          "standin": "Callum Ashford",
+          "original": "David Chen",
+          "kind": "person"
+        },
+        {
+          "standin": "(555) 010-0001",
+          "original": "(212) 555-0198",
+          "kind": "phone"
+        }
+      ]
+    },
+    {
+      "id": "housing",
+      "title": "A tenant asks about a deposit",
+      "turns": [
+        {
+          "prompt": "My landlord Robert Kim hasn't returned my $2,400 deposit for 482 Oak Street, Austin, TX 78704. He still has my SSN 123-45-6789 from the rental application. What are my rights, and what should I send him?",
+          "sent": "My landlord Emmett Ashford hasn't returned my $2,400 deposit for [street address], Texas, TX [ZIP]. He still has my SSN [SSN removed] from the rental application. What are my rights, and what should I send him?",
+          "found": [
+            {
+              "original": "Robert Kim",
+              "standin": "Emmett Ashford",
+              "kind": "person",
+              "reversible": true
+            },
+            {
+              "original": "482 Oak Street",
+              "standin": "[street address]",
+              "kind": "street address",
+              "reversible": false
+            },
+            {
+              "original": "Austin",
+              "standin": "Texas",
+              "kind": "city",
+              "reversible": false
+            },
+            {
+              "original": "78704",
+              "standin": "[ZIP]",
+              "kind": "ZIP code",
+              "reversible": false
+            },
+            {
+              "original": "123-45-6789",
+              "standin": "[SSN removed]",
+              "kind": "SSN",
+              "reversible": false
+            }
+          ],
+          "scrub_ms": 0.85,
+          "answer_raw": "In Texas, your main rights are under **Texas Property Code Chapter 92, Subchapter C**.\n\n### Security deposit\n\nGenerally, your landlord must:\n\n- Return the **$2,400 deposit within 30 days** after you surrender the rental **and provide a written forwarding address**.\n- Provide an itemized list of deductions if he keeps any portion for damages or other lawful charges.\n- Deduct only amounts allowed by the lease and law. **Normal wear and tear cannot be charged.**\n- Return the deposit to the forwarding address you gave him.\n\nA key Texas rule is that the landlord generally is not required to return the deposit until you provide a **written forwarding address**. If you have not done that, send it now and keep proof.\n\nIf the landlord withheld the deposit **in bad faith**, you may be able to recover:\n\n- The amount wrongfully withheld;\n- **$100 plus three times the portion wrongfully withheld**; and\n- Reasonable attorney\u2019s fees.\n\nBad faith can be inferred if the landlord simply ignores the deadline or withholds money without a legitimate basis, but the facts matter. If the landlord claims deductions, request the itemization and supporting documentation.\n\n### Your Social Security number\n\nDo **not** include your full SSN in a letter, email, text, or online complaint. A Texas landlord may have obtained it lawfully for screening, and Texas law does not necessarily require every landlord to immediately delete it. However, you can ask him to:\n\n- Confirm where the SSN is stored and who has access;\n- Stop using or disclosing it except as legally necessary;\n- Securely destroy or permanently delete it when no longer needed; and\n- Confirm in writing that it has been destroyed or deleted.\n\nIf you believe your SSN may have been exposed or misused, consider placing a **credit freeze** with Equifax, Experian, and TransUnion and reviewing your credit reports at AnnualCreditReport.com. If there is evidence of identity theft, report it at IdentityTheft.gov and consider notifying the Texas Attorney General.\n\n### Letter you can send\n\nSend this by **certified mail, return receipt requested**, and keep a copy. You can also email a copy. Do not put your SSN in it.\n\n> **Subject: Demand for Return of Security Deposit**\n>\n> Date: [date]\n>\n> Emmett Ashford  \n> [landlord\u2019s mailing address]\n>\n> Re: Security deposit for [rental address]\n>\n> I surrendered possession of the rental property on [move-out date]. My security deposit was **$2,400**. My current forwarding address is:\n>\n> [your forwarding address]\n>\n> Under Texas Property Code \u00a7 92.103, please return the full deposit to the address above within the time required by law. If you contend that any amount may lawfully be withheld, please provide a written, itemized statement identifying each deduction and the basis for it.\n>\n> If the deposit is not returned, or a legally sufficient itemization is not provided, I will consider pursuing the remedies available under Texas Property Code \u00a7\u00a7 92.103 and 92.109, including statutory damages and attorney\u2019s fees where applicable.\n>\n> Separately, you possess sensitive personal information that I provided during the rental application process, including my Social Security number. Please confirm that it is being securely stored, is not being disclosed or used except as legally necessary, and will be securely destroyed or permanently deleted when no longer needed. Please do not send or restate my Social Security number in any response.\n>\n> Sincerely,  \n> [name]  \n> [phone/email]\n\nIf the 30-day period has already passed, you can make the letter a **formal demand** and give a short deadline\u2014such as 10 days\u2014to pay. Keep your lease, move-in and move-out photos, proof of surrender, forwarding-address proof, rent-payment records, and all communications. If he still does not pay, a Texas **Justice Court** can generally hear claims within its jurisdiction, including many security-deposit disputes.",
+          "answer": "In Texas, your main rights are under **Texas Property Code Chapter 92, Subchapter C**.\n\n### Security deposit\n\nGenerally, your landlord must:\n\n- Return the **$2,400 deposit within 30 days** after you surrender the rental **and provide a written forwarding address**.\n- Provide an itemized list of deductions if he keeps any portion for damages or other lawful charges.\n- Deduct only amounts allowed by the lease and law. **Normal wear and tear cannot be charged.**\n- Return the deposit to the forwarding address you gave him.\n\nA key Texas rule is that the landlord generally is not required to return the deposit until you provide a **written forwarding address**. If you have not done that, send it now and keep proof.\n\nIf the landlord withheld the deposit **in bad faith**, you may be able to recover:\n\n- The amount wrongfully withheld;\n- **$100 plus three times the portion wrongfully withheld**; and\n- Reasonable attorney\u2019s fees.\n\nBad faith can be inferred if the landlord simply ignores the deadline or withholds money without a legitimate basis, but the facts matter. If the landlord claims deductions, request the itemization and supporting documentation.\n\n### Your Social Security number\n\nDo **not** include your full SSN in a letter, email, text, or online complaint. A Texas landlord may have obtained it lawfully for screening, and Texas law does not necessarily require every landlord to immediately delete it. However, you can ask him to:\n\n- Confirm where the SSN is stored and who has access;\n- Stop using or disclosing it except as legally necessary;\n- Securely destroy or permanently delete it when no longer needed; and\n- Confirm in writing that it has been destroyed or deleted.\n\nIf you believe your SSN may have been exposed or misused, consider placing a **credit freeze** with Equifax, Experian, and TransUnion and reviewing your credit reports at AnnualCreditReport.com. If there is evidence of identity theft, report it at IdentityTheft.gov and consider notifying the Texas Attorney General.\n\n### Letter you can send\n\nSend this by **certified mail, return receipt requested**, and keep a copy. You can also email a copy. Do not put your SSN in it.\n\n> **Subject: Demand for Return of Security Deposit**\n>\n> Date: [date]\n>\n> Robert Kim  \n> [landlord\u2019s mailing address]\n>\n> Re: Security deposit for [rental address]\n>\n> I surrendered possession of the rental property on [move-out date]. My security deposit was **$2,400**. My current forwarding address is:\n>\n> [your forwarding address]\n>\n> Under Texas Property Code \u00a7 92.103, please return the full deposit to the address above within the time required by law. If you contend that any amount may lawfully be withheld, please provide a written, itemized statement identifying each deduction and the basis for it.\n>\n> If the deposit is not returned, or a legally sufficient itemization is not provided, I will consider pursuing the remedies available under Texas Property Code \u00a7\u00a7 92.103 and 92.109, including statutory damages and attorney\u2019s fees where applicable.\n>\n> Separately, you possess sensitive personal information that I provided during the rental application process, including my Social Security number. Please confirm that it is being securely stored, is not being disclosed or used except as legally necessary, and will be securely destroyed or permanently deleted when no longer needed. Please do not send or restate my Social Security number in any response.\n>\n> Sincerely,  \n> [name]  \n> [phone/email]\n\nIf the 30-day period has already passed, you can make the letter a **formal demand** and give a short deadline\u2014such as 10 days\u2014to pay. Keep your lease, move-in and move-out photos, proof of surrender, forwarding-address proof, rent-payment records, and all communications. If he still does not pay, a Texas **Justice Court** can generally hear claims within its jurisdiction, including many security-deposit disputes.",
+          "restored": [
+            "Emmett Ashford"
+          ],
+          "timing": {
+            "scrub_ms": 0.85,
+            "lab_ms": 16338,
+            "total_ms": 16340,
+            "lethe_ms": 2.3
+          },
+          "usage": {
+            "prompt_tokens": 59,
+            "completion_tokens": 1182,
+            "total_tokens": 1241,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 345,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "error": null,
+          "relay": {
+            "client_ip": "127.0.0.1",
+            "request_bytes": 1084,
+            "response_bytes": 8220,
+            "preview": "52df881d46b803b7e5eeb33d257c7414682040d540e770f55fada2e5",
+            "target": "Lethe gateway (fixed: the relay cannot see which lab)"
+          },
+          "gateway_status": "accepted",
+          "lab_body": {
+            "model": "gpt-5.6-luna",
+            "messages": [
+              {
+                "role": "user",
+                "content": "My landlord Emmett Ashford hasn't returned my $2,400 deposit for [street address], Texas, TX [ZIP]. He still has my SSN [SSN removed] from the rental application. What are my rights, and what should I send him?"
+              }
+            ]
+          }
+        }
+      ],
+      "vault": [
+        {
+          "standin": "Emmett",
+          "original": "Robert",
+          "kind": "person"
+        },
+        {
+          "standin": "Ashford",
+          "original": "Kim",
+          "kind": "person"
+        },
+        {
+          "standin": "Emmett Ashford",
+          "original": "Robert Kim",
+          "kind": "person"
+        }
+      ]
+    },
+    {
+      "id": "work",
+      "title": "A founder drafts a confidential email",
+      "hide": "Acme Capital, Project Orion",
+      "turns": [
+        {
+          "prompt": "Draft a short email to Jennifer Lopez at Acme Capital saying we need to delay Project Orion's launch to Q2 because the security audit found two issues. Sign it from Michael.",
+          "sent": "Draft a short email to Freya Holloway at Tamarind saying we need to delay Ardent's launch to Q2 because the security audit found two issues. Sign it from Miles.",
+          "found": [
+            {
+              "original": "Jennifer Lopez",
+              "standin": "Freya Holloway",
+              "kind": "person",
+              "reversible": true
+            },
+            {
+              "original": "Acme Capital",
+              "standin": "Tamarind",
+              "kind": "always hide",
+              "reversible": true
+            },
+            {
+              "original": "Project Orion",
+              "standin": "Ardent",
+              "kind": "always hide",
+              "reversible": true
+            },
+            {
+              "original": "Michael",
+              "standin": "Miles",
+              "kind": "person",
+              "reversible": true
+            }
+          ],
+          "scrub_ms": 0.84,
+          "answer_raw": "**Subject:** Ardent Launch Timing\n\nHi Freya,\n\nI wanted to let you know that we need to delay Ardent\u2019s launch until Q2. Our security audit identified two issues that need to be addressed before we proceed.\n\nWe\u2019ll keep you updated on our remediation progress and confirm the revised launch date as soon as possible.\n\nBest,  \nMiles",
+          "answer": "**Subject:** Project Orion Launch Timing\n\nHi Jennifer,\n\nI wanted to let you know that we need to delay Project Orion\u2019s launch until Q2. Our security audit identified two issues that need to be addressed before we proceed.\n\nWe\u2019ll keep you updated on our remediation progress and confirm the revised launch date as soon as possible.\n\nBest,  \nMichael",
+          "restored": [
+            "Ardent",
+            "Freya",
+            "Ardent",
+            "Miles"
+          ],
+          "timing": {
+            "scrub_ms": 0.84,
+            "lab_ms": 2493,
+            "total_ms": 2495,
+            "lethe_ms": 1.9
+          },
+          "usage": {
+            "prompt_tokens": 43,
+            "completion_tokens": 117,
+            "total_tokens": 160,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 38,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "error": null,
+          "relay": {
+            "client_ip": "127.0.0.1",
+            "request_bytes": 1084,
+            "response_bytes": 1052,
+            "preview": "862dbdf52f7c2ea8625534cfba318d0a09af51d5f76e820e86c7790d",
+            "target": "Lethe gateway (fixed: the relay cannot see which lab)"
+          },
+          "gateway_status": "accepted",
+          "lab_body": {
+            "model": "gpt-5.6-luna",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Draft a short email to Freya Holloway at Tamarind saying we need to delay Ardent's launch to Q2 because the security audit found two issues. Sign it from Miles."
+              }
+            ]
+          }
+        }
+      ],
+      "vault": [
+        {
+          "standin": "Freya",
+          "original": "Jennifer",
+          "kind": "person"
+        },
+        {
+          "standin": "Holloway",
+          "original": "Lopez",
+          "kind": "person"
+        },
+        {
+          "standin": "Freya Holloway",
+          "original": "Jennifer Lopez",
+          "kind": "person"
+        },
+        {
+          "standin": "Tamarind",
+          "original": "Acme Capital",
+          "kind": "always hide"
+        },
+        {
+          "standin": "Ardent",
+          "original": "Project Orion",
+          "kind": "always hide"
+        },
+        {
+          "standin": "Miles",
+          "original": "Michael",
+          "kind": "person"
+        }
+      ]
+    }
+  ],
+  "replay": {
+    "error": "Credential already spent. Replays are refused."
+  }
+}

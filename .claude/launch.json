@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "lethe-demo",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["demo/server.py"],
+      "port": 8787
+    }
+  ]
+}
