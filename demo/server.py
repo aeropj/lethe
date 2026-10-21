@@ -9,7 +9,8 @@ One process plays all five parties, each handed only the bytes it would really r
   lab      OpenAI or OpenRouter; gets one scrubbed question from "Lethe"
 
 Run:  python3 demo/server.py   then open http://localhost:8787
-Key:  OPENROUTER_API_KEY or OPENAI_API_KEY in demo/.env. Without one it runs dry.
+Key:  OPENROUTER_API_KEY or OPENAI_API_KEY in demo/.env or the environment. Without one it runs dry.
+      LETHE_OPENAI_STORE=1 lets you verify on OpenAI's side what it received (see VERIFY.md).
 """
 import hashlib
 import json
@@ -50,11 +51,11 @@ def make_provider():
                            "Claude": os.getenv("LETHE_MODEL_CLAUDE", "anthropic/claude-haiku-5.5"),
                            "Gemini": os.getenv("LETHE_MODEL_GEMINI", "google/gemini-3.5-flash-lite")}}
     if os.getenv("OPENAI_API_KEY"):
-        return {"name": "OpenAI", "url": "https://api.openai.com/v1/chat/completions",
+        return {"name": "OpenAI", "url": "https://api.openai.com/v1/responses",
                 "key": os.environ["OPENAI_API_KEY"],
                 "models": {"GPT-5.6 Luna": "gpt-5.6-luna", "GPT-5.6 Sol": "gpt-5.6-sol",
                            "GPT-5.4 mini": "gpt-5.4-mini"}}
-    return {"name": "Dry run", "url": "https://api.openai.com/v1/chat/completions", "key": None,
+    return {"name": "Dry run", "url": "https://api.openai.com/v1/responses", "key": None,
             "models": {"GPT-5.6 Luna": "gpt-5.6-luna"}}
 
 
@@ -84,38 +85,79 @@ class Issuer:
 
 
 class Lab:
-    """The model provider. Gets whatever the gateway sends, under the gateway's key."""
+    """The model provider. Gets whatever the gateway sends, under the gateway's key.
+
+    OpenAI is called through the Responses API so every request can be checked afterwards:
+    with LETHE_OPENAI_STORE=1 OpenAI keeps it, and GET /v1/responses/{id}/input_items returns
+    exactly the input OpenAI received.
+    """
 
     def __init__(self, provider):
         self.p = provider
+        self.store = provider["name"] == "OpenAI" and os.getenv("LETHE_OPENAI_STORE") == "1"
 
-    def complete(self, model: str, messages: list[dict]):
-        body = {"model": model, "messages": messages}
-        if self.p["name"] == "OpenRouter" and os.getenv("LETHE_ZDR") == "1":
-            body["provider"] = {"data_collection": "deny"}
+    def _post(self, body):
         headers = {"Content-Type": "application/json", "User-Agent": "Lethe-Gateway/0.1"}
-        view = {"request": f"POST {self.p['url']}",
-                "headers": dict(headers, Authorization="Bearer <Lethe's pool key: the same for every member>"),
-                "body": body}
-        if not self.p["key"]:
-            return ("Dry run: add OPENAI_API_KEY or OPENROUTER_API_KEY to demo/.env for a real answer. "
-                    "The request above is exactly what would be sent."), None, view, 0.0
         req = urllib.request.Request(self.p["url"], data=json.dumps(body).encode(),
                                      headers=dict(headers, Authorization="Bearer " + self.p["key"]))
-        t = time.perf_counter()
         try:
             with urllib.request.urlopen(req, timeout=120) as r:
-                data = json.load(r)
+                return json.load(r), r.headers
         except urllib.error.HTTPError as e:
             raise LabError(f"{self.p['name']} returned {e.code}: {e.read().decode(errors='replace')[:300]}")
         except urllib.error.URLError as e:
             raise LabError(f"Could not reach {self.p['name']}: {e.reason}")
+
+    def complete(self, model: str, messages: list[dict]):
+        if self.p["name"] == "OpenRouter":
+            body = {"model": model, "messages": messages}
+            if os.getenv("LETHE_ZDR") == "1":
+                body["provider"] = {"data_collection": "deny"}
+        else:
+            body = {"model": model, "input": messages, "store": self.store}
+        view = {"request": f"POST {self.p['url']}",
+                "headers": {"Content-Type": "application/json", "User-Agent": "Lethe-Gateway/0.1",
+                            "Authorization": "Bearer <the gateway's key: Lethe's pooled key in production; "
+                                             "the key you configured in this local POC>"},
+                "body": body}
+        if not self.p["key"]:
+            return ("Dry run: set OPENAI_API_KEY or OPENROUTER_API_KEY for a real answer. "
+                    "The request above is exactly what would be sent."), None, view, 0.0
+        t = time.perf_counter()
+        data, headers = self._post(body)
         ms = (time.perf_counter() - t) * 1000
-        content = data["choices"][0]["message"].get("content") or ""
-        if isinstance(content, list):
-            content = "".join(part.get("text", "") for part in content if isinstance(part, dict))
-        view["answered_by"] = data.get("model", model)
-        return content, data.get("usage"), view, ms
+        if self.p["name"] == "OpenRouter":
+            content = data["choices"][0]["message"].get("content") or ""
+            if isinstance(content, list):
+                content = "".join(part.get("text", "") for part in content if isinstance(part, dict))
+            usage = data.get("usage")
+        else:
+            content = "".join(c.get("text", "") for item in data.get("output", []) if item.get("type") == "message"
+                              for c in item.get("content", []) if c.get("type") == "output_text")
+            u = data.get("usage") or {}
+            usage = {"prompt_tokens": u.get("input_tokens"), "completion_tokens": u.get("output_tokens")}
+        view.update(answered_by=data.get("model", model), response_id=data.get("id"),
+                    request_id=headers.get("x-request-id"), processing_ms=headers.get("openai-processing-ms"),
+                    stored=bool(body.get("store")))
+        return content, usage, view, ms
+
+    def stored_input(self, response_id: str) -> list[str]:
+        """Ask OpenAI for the input it stored for this response: an independent check of what it received."""
+        url = f"https://api.openai.com/v1/responses/{response_id}/input_items?limit=100&order=asc"
+        req = urllib.request.Request(url, headers={"Authorization": "Bearer " + self.p["key"]})
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                items = json.load(r).get("data", [])
+        except urllib.error.HTTPError as e:
+            raise LabError(f"OpenAI returned {e.code}: {e.read().decode(errors='replace')[:200]}")
+        texts = []
+        for it in items:
+            content = it.get("content")
+            if isinstance(content, str):
+                texts.append(f"{it.get('role', '')}: {content}")
+            elif isinstance(content, list):
+                texts.append(f"{it.get('role', '')}: " + "".join(c.get("text", "") for c in content))
+        return texts
 
 
 class Gateway:
@@ -147,8 +189,14 @@ class Gateway:
             try:
                 answer, usage, self.lab_view, ms = self.lab.complete(req["model"], req["messages"])
                 reply = {"answer": answer, "usage": usage, "lab_ms": round(ms)}
+                lv = self.lab_view
+                print(f"[gateway] credential ok · {req['model']} · response {lv.get('response_id')} · "
+                      f"request {lv.get('request_id')} · store={lv.get('stored')}", flush=True)
             except LabError as e:
                 reply["error"] = str(e)
+                print(f"[gateway] lab error: {e}", flush=True)
+        if view["status"] != "accepted":
+            print(f"[gateway] refused: {reply['error']}", flush=True)
         view["spent_total"] = len(self.spent)
         self.view = view
         return lc.seal_response(k_res, json.dumps(reply).encode()), view
@@ -178,6 +226,7 @@ class Device:
         self.history: list[dict] = []
         self.last_blob = None
         self.last_k_res = None
+        self.originals: set[str] = set()
 
     def subscribe(self):
         n, e = self.issuer.key.n, self.issuer.key.e
@@ -195,6 +244,7 @@ class Device:
             self.subscribe()  # happens once per subscription, not per request: kept out of the timing
         t0 = time.perf_counter()
         scrubbed = self.scrubber.scrub(prompt, hide)
+        self.originals |= {f["original"] for f in scrubbed["found"]}
         cred = next(c for c in self.wallet if not c["spent"])
         cred["spent"] = True
         messages = self.history + [{"role": "user", "content": scrubbed["text"]}]
@@ -226,6 +276,7 @@ class Device:
     def new_chat(self):
         self.scrubber.new_chat()
         self.history = []
+        self.originals = set()
 
 
 # ======================================================================== app wiring
@@ -247,8 +298,26 @@ class App:
 
     def status(self):
         return {"provider": self.provider["name"], "has_key": bool(self.provider["key"]),
+                "store": self.gateway.lab.store,
                 "models": self.provider["models"], "detector": self.device.scrubber.mode,
                 "account": DEMO_ACCOUNT, "card": DEMO_CARD, **self.views()}
+
+    def verify(self):
+        """Fetch what OpenAI stored for the last request and look for any private original in it."""
+        lab = self.gateway.lab_view or {}
+        if not lab.get("response_id"):
+            raise ValueError("Ask something first (with a real OpenAI key).")
+        if not lab.get("stored"):
+            raise ValueError("This request was sent with store=false, so OpenAI kept nothing to fetch. "
+                             "Restart with LETHE_OPENAI_STORE=1 to verify.")
+        texts = self.gateway.lab.stored_input(lab["response_id"])
+        joined = "\n".join(texts).lower()
+        originals = sorted(self.device.originals)
+        standins = [v["standin"] for v in self.device.scrubber.vault_view()]
+        return {"response_id": lab["response_id"], "stored_input": texts,
+                "originals_checked": len(originals),
+                "originals_found": [o for o in originals if o.lower() in joined],
+                "standins_found": [s for s in standins if s.lower() in joined]}
 
     def handle(self, path: str, body: dict, client_ip: str):
         with self.lock:
@@ -266,6 +335,8 @@ class App:
                 return {"result": self.device.ask(prompt, model, hide, client_ip), **self.views()}
             if path == "/api/replay":
                 return {"result": self.device.replay(client_ip), **self.views()}
+            if path == "/api/verify":
+                return self.verify()
             if path == "/api/new_chat":
                 self.device.new_chat()
                 return self.views()
@@ -285,12 +356,17 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
-        self.wfile.write(payload)
+        try:
+            self.wfile.write(payload)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # the client went away; nothing to do
 
     def _json(self, code: int, obj):
         self._send(code, json.dumps(obj).encode(), "application/json")
 
     def do_GET(self):
+        if self.path == "/healthz":  # no lock: answers even while a request is waiting on the lab
+            return self._json(200, {"ok": True})
         if self.path in ("/", "/index.html"):
             return self._send(200, (HERE / "static" / "index.html").read_bytes(), "text/html; charset=utf-8")
         if self.path == "/api/status":
@@ -312,9 +388,10 @@ def main():
     global APP
     APP = App()
     port = int(os.getenv("LETHE_PORT", "8787"))
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    host = os.getenv("LETHE_HOST", "127.0.0.1")  # the container sets 0.0.0.0; publish it to localhost only
+    server = ThreadingHTTPServer((host, port), Handler)
     print(f"Lethe demo on http://localhost:{port}  ·  lab: {APP.provider['name']}  ·  detector: "
-          f"{APP.device.scrubber.mode}", flush=True)
+          f"{APP.device.scrubber.mode}  ·  OpenAI store: {'on' if APP.gateway.lab.store else 'off'}", flush=True)
     server.serve_forever()
 
 

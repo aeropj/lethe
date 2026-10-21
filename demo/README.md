@@ -9,14 +9,27 @@ swarms: anywhere a request leaves for a model.
 
 ## Run it
 
+With Docker (recommended):
+
 ```bash
-pip install cryptography          # the only dependency
-cp demo/.env.example demo/.env    # then put your OpenAI or OpenRouter key in it
-python3 demo/server.py            # open http://localhost:8787
+cd demo
+cp .env.example .env          # put your OPENAI_API_KEY in it
+docker compose up --build     # open http://localhost:8787
+```
+
+Without Docker:
+
+```bash
+pip install cryptography
+python3 demo/server.py
 ```
 
 With no key it runs dry: every step happens, and the lab card shows the exact request that would be sent.
-`demo/.env` is git-ignored.
+`demo/.env` is git-ignored and excluded from the image.
+
+**Verify on OpenAI's side** that it never received your real details: [VERIFY.md](VERIFY.md). With
+`LETHE_OPENAI_STORE=1` (the compose default) OpenAI keeps each request, and the Lab card's
+"Ask OpenAI what it stored" button fetches it back and searches it for everything you typed.
 
 ## What happens when you press "Ask privately"
 
@@ -26,7 +39,7 @@ With no key it runs dry: every step happens, and the lab card shows the exact re
 | **Issuer** (at subscribe) | your account and card, and 5 *blinded* credentials it signs | which credential you spend, any prompt |
 | **Relay** | your IP and a sealed blob padded to a fixed size | the prompt, the credential, the lab |
 | **Gateway** | a valid one-time credential and the scrubbed question | your IP, account, card, real names |
-| **Lab** | one request from Lethe's key, with stand-ins | anything about you |
+| **Lab** | one request from the gateway's key, with stand-ins | anything about you (in production; in this local POC it sees your key and IP) |
 
 - **Swaps on device.** Names, emails and phones become consistent stand-ins that are swapped back into the
   answer. Cities become their state, insurers and employers their category. SSNs, card numbers, street

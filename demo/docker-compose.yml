@@ -1,0 +1,11 @@
+# From demo/:  put OPENAI_API_KEY=... in demo/.env, then  docker compose up --build
+services:
+  lethe:
+    build: .
+    image: lethe-demo
+    ports:
+      - "127.0.0.1:8787:8787"   # localhost only: the server spends your key and has no login
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:?Put OPENAI_API_KEY in demo/.env}
+      LETHE_OPENAI_STORE: ${LETHE_OPENAI_STORE:-1}
+    restart: "no"

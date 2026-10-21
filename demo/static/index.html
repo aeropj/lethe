@@ -251,10 +251,20 @@ footer{max-width:1560px; margin:0 auto; padding:0 28px 28px; color:var(--muted);
       <h2><span class="num">5</span>Frontier lab <small id="labname">the model provider</small></h2>
       <div class="h6 y">Exactly what the lab received</div>
       <pre id="lab"><span class="c">// Ask something to see the request.</span></pre>
+      <div class="callout" id="verifybox" style="margin-top:12px">
+        <div class="row" style="justify-content:space-between">
+          <span><b>Check it on OpenAI's side.</b> <span id="verifymeta" class="tag">Ask something first.</span></span>
+          <button class="small" id="verify">Ask OpenAI what it stored</button>
+        </div>
+        <div id="verifyout" style="margin-top:8px"></div>
+        <div class="tag" style="margin-top:6px">Also: <a href="https://platform.openai.com/logs?api=responses" target="_blank" rel="noopener">Logs</a> ·
+          <a href="https://platform.openai.com/usage" target="_blank" rel="noopener">Usage</a> on platform.openai.com. Steps in demo/VERIFY.md.</div>
+      </div>
       <div class="compare">
         <div class="without"><h5>Without Lethe, the lab also gets</h5><ul id="without"><li>your account</li><li>your card</li><li>your IP</li><li>your real words</li><li>every past chat, linked</li></ul></div>
         <div class="with"><h5>With Lethe, it gets</h5><ul><li>one valid request from Lethe's pool</li><li>stand-ins instead of names</li><li>no account, card or IP of yours</li><li>nothing linking this chat to your others</li></ul></div>
       </div>
+      <p class="tag" style="margin-top:10px">In this local POC the gateway runs on your machine, so OpenAI sees your API key and your IP. In production the relay and gateway are separate operators and the key is Lethe's.</p>
     </div>
   </section>
 </main>
@@ -329,6 +339,9 @@ function renderViews(v){
     $("#lab").innerHTML = `<span class="h">${esc(l.request)}</span>\n` +
       Object.entries(l.headers).map(([k,val]) => `<span class="k">${esc(k)}</span>: ${esc(val)}`).join("\n") +
       `\n\n${json(l.body)}` + (l.answered_by ? `\n\n<span class="c">// answered by ${esc(l.answered_by)}</span>` : "");
+    $("#verifymeta").innerHTML = l.response_id
+      ? `response <span class="mono">${esc(l.response_id)}</span> · request <span class="mono">${esc(l.request_id || "")}</span> · ${l.stored ? "stored by OpenAI, so it can be checked" : "store=false: OpenAI kept nothing to check"}`
+      : "Dry run: nothing was sent.";
   }
   // link test
   if(state.last && state.last.spent_credential && v.issuer_saw.length){
@@ -398,7 +411,8 @@ async function init(){
   p.className = "pill " + (s.has_key ? "ok" : "warn");
   p.lastElementChild.textContent = s.has_key ? `${s.provider} · key loaded` : "Dry run · add a key to demo/.env";
   $("#detector").className = "pill ok"; $("#detector").lastElementChild.textContent = "Scrubber: " + s.detector;
-  $("#labname").textContent = s.has_key ? `${s.provider}, reached with Lethe's key` : "not called in dry run";
+  $("#labname").textContent = s.has_key ? `${s.provider}, reached through the gateway` : "not called in dry run";
+  if(s.has_key && s.provider === "OpenAI") p.lastElementChild.textContent += s.store ? " · store on, verifiable" : " · store off";
   const names = Object.keys(s.models); state.model = names[0];
   $("#models").innerHTML = names.map(n => `<button data-m="${esc(n)}" title="${esc(s.models[n])}">${esc(n)}</button>`).join("");
   const mark = () => document.querySelectorAll("#models button").forEach(b => b.classList.toggle("on", b.dataset.m === state.model));
@@ -422,6 +436,18 @@ $("#replay").onclick = async () => {
 };
 $("#newchat").onclick = async () => {
   try{ renderViews(await api("/api/new_chat", {})); toast("New chat: stand-ins rotate, nothing links it to the last one."); }catch(e){ toast(e.message); }
+};
+$("#verify").onclick = async () => {
+  const out = $("#verifyout"); out.innerHTML = '<span class="tag">Asking OpenAI…</span>';
+  try{
+    const v = await api("/api/verify", {});
+    const ok = v.originals_found.length === 0;
+    out.innerHTML = `<div class="callout ${ok ? "good" : "bad"}" style="margin:0"><b>${ok ? "✓" : "✕"} OpenAI stored ${v.stored_input.length} message${v.stored_input.length===1?"":"s"}.
+      ${v.originals_found.length} of ${v.originals_checked} private details appear in them.</b>
+      ${v.standins_found.length ? `Stand-ins it holds instead: ${v.standins_found.map(s => `<span class="mono">${esc(s)}</span>`).join(", ")}.` : ""}
+      ${ok ? "" : `Found: ${v.originals_found.map(esc).join(", ")}.`}</div>
+      <pre style="margin-top:8px; max-height:180px">${esc(v.stored_input.join("\n\n"))}</pre>`;
+  }catch(e){ out.innerHTML = `<div class="callout bad" style="margin:0">${esc(e.message)}</div>`; }
 };
 $("#rawtoggle").onclick = e => { e.preventDefault(); state.showRaw = !state.showRaw; renderAnswer(); };
 init().catch(e => toast(e.message));
