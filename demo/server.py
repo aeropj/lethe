@@ -11,11 +11,11 @@ One process plays all five parties, each handed only the bytes it would really r
 Every ask and replay is recorded as a trace: one timed span per step, holding the real bytes that step
 handled. The page's Observability view (#/trace) shows them.
 
-Run:  python3 demo/server.py   then open http://localhost:8787
+Run:  ./demo/run.sh   then open http://localhost:8787
 Key:  paste an OpenAI key in the browser. It is kept in this process's memory only. OPENAI_API_KEY or
       OPENROUTER_API_KEY in demo/.env or the environment still work as presets. Without a key it can run dry.
       Verification mode sends "store": true, so you can check on OpenAI's side what it received
-      (see VERIFY.md). It is on by default; LETHE_OPENAI_STORE=0 or 1 presets it.
+      (see the README). It is on by default; LETHE_OPENAI_STORE=0 or 1 presets it.
 """
 import contextvars
 import hashlib
@@ -754,7 +754,7 @@ def main():
     threading.Thread(target=scrub_mod.load_detector, daemon=True).start()   # the model loads while the page opens
     APP = App()
     port = int(os.getenv("LETHE_PORT", "8787"))
-    host = os.getenv("LETHE_HOST", "127.0.0.1")  # the container sets 0.0.0.0; publish it to localhost only
+    host = os.getenv("LETHE_HOST", "127.0.0.1")  # localhost only: the server spends your key and has no login
     server = ThreadingHTTPServer((host, port), Handler)
     p = APP.provider
     key = f"{p['name']} key from the environment ({mask(p['key'])})" if p["key"] else "no key yet: paste one in the page"

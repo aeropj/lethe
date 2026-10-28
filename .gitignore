@@ -1,27 +1,12 @@
-# LaTeX build artefacts
-*.aux
-*.log
-*.out
-*.toc
-*.nav
-*.snm
-*.vrb
-*.fls
-*.fdb_latexmk
-*.synctex.gz
-build/
-paper/test-fig.*
 .DS_Store
-.claude/worktrees/
+.claude/
 
-# demo secrets and caches
+# secrets and local caches
 .env
 demo/.env
 __pycache__/
-# demo film: keep only the final cut and poster
-demo/video/out/*
-!demo/video/out/lethe-demo.mp4
-!demo/video/out/poster.png
-!demo/video/out/lethe-live-demo.mp4
-demo/data/
 demo/.venv/
+demo/data/
+
+# local video work files
+demo/video/

@@ -1,9 +1,0 @@
-.env
-.env.*
-!.env.example
-__pycache__/
-*.pyc
-video/
-examples/
-data/
-eval/RESULTS*.md
