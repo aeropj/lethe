@@ -419,6 +419,7 @@ class Device:
         self.last_k_res = None
         self.last_prompt = self.last_model = None
         self.originals: set[str] = set()
+        self.sent_terms: set[str] = set()
 
     def subscribe(self):
         n, e = self.issuer.key.n, self.issuer.key.e
@@ -437,11 +438,12 @@ class Device:
         with span("detect", "Find private details", "device") as d:
             scrubbed = self.scrubber.scrub(prompt, hide, keep)
         self.originals |= {f["original"] for f in scrubbed["found"]}
+        self.sent_terms |= {f["standin"] for f in scrubbed["found"]}
         d.update(prompt=prompt, sent=scrubbed["text"], orig_segments=scrubbed["orig_segments"],
                  scrub_segments=scrubbed["scrub_segments"], entities=scrubbed["found"], always_hide=hide,
                  kept_by_you=keep or [], model_ms=scrubbed.get("model_ms"),
                  detector=self.scrubber.mode, scrub_ms=scrubbed["ms"], chat_originals=sorted(self.originals),
-                 chat_standins=sorted(self.scrubber.vault))
+                 chat_standins=sorted(self.scrubber.vault), chat_sent_terms=sorted(self.sent_terms))
 
         with span("credential", "Spend one blind credential", "device") as d:
             cred = next(c for c in self.wallet if not c["spent"])
@@ -500,6 +502,7 @@ class Device:
         self.scrubber.new_chat()
         self.history = []
         self.originals = set()
+        self.sent_terms = set()
 
 
 # ======================================================================== app wiring
@@ -608,9 +611,18 @@ class App:
         joined = "\n".join(texts).lower()
         detect = trace.data("detect")
         originals, standins = detect.get("chat_originals", []), detect.get("chat_standins", [])
+        residue = joined                     # take out what Lethe itself sent ("60-something", "Gujarat", stand-ins)
+        for t in sorted(detect.get("chat_sent_terms", []), key=len, reverse=True):
+            residue = residue.replace(t.lower(), " ")
+
+        def leaked(original: str) -> bool:
+            o = original.lower()
+            if o.isascii():
+                return re.search(r"(?<![\w])" + re.escape(o) + r"(?![\w])", residue) is not None
+            return o in residue
         result = {"trace_id": trace.id, "response_id": lab["response_id"], "request_id": lab.get("request_id"),
                   "checked_at": time.time(), "stored_input": texts, "originals_checked": len(originals),
-                  "originals": originals, "originals_found": [o for o in originals if o.lower() in joined],
+                  "originals": originals, "originals_found": [o for o in originals if leaked(o)],
                   "standins_found": [s for s in standins if s.lower() in joined]}
         trace.d["verification"] = result
         return result
