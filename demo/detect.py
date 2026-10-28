@@ -31,6 +31,7 @@ LABELS = {
     "organization": ("org", 0.80),
     "city": ("location", 0.55),
     "state or province": ("location", 0.55),
+    "neighborhood": ("location", 0.55),
     "street address": ("address", 0.50),
     "postal code": ("postcode", 0.50),
     "age": ("age", 0.60),
@@ -52,6 +53,12 @@ nadra sars hsa fsa isa sip etf reit cd ulip tfsa rrsp superannuation pension pro
 GENERIC_NOUNS = set("""ira fund funds account accounts card cards loan loans mortgage tax taxes policy plan plans scheme
 schemes insurance stock stocks share shares bond bonds index etf court courts visa visas pension regime deposit interest
 benefit benefits allowance subsidy permit license licence certificate degree course exam test""".split())
+# a lowercase "kirana store" or "textile shop" is a kind of workplace, not a named one
+WORKPLACE_NOUNS = set("""store stores shop shops business firm company startup clinic hospital school college office
+factory restaurant hotel agency salon dukaan dukan godown warehouse showroom outlet stall""".split())
+# "Section 54", "Article 21", "Rule 11UA": references to law, not places or IDs
+LEGAL_REF_RE = re.compile(r"^(?:section|sec\.?|article|art\.?|rule|clause|schedule|form|chapter|para(?:graph)?|"
+                          r"regulation|u/s)\s*\d", re.I)
 PUBLIC_PHRASES = {"roth ira", "traditional ira", "401(k)", "mutual fund", "social security", "income tax", "provident fund"}
 
 EMAIL_RE = re.compile(r"\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b")
@@ -147,12 +154,16 @@ def iban_ok(s: str) -> bool:
 class Gazetteer:
     """GeoNames cities with population >= 15k: name -> (region, country). Well-known cities are also found by name."""
 
+    # well-known older or English names of big cities, found on their own like the cities themselves
+    EXONYMS = """bombay calcutta madras bangalore poona baroda gurgaon cochin trivandrum benares banaras mysore
+    allahabad pondicherry calicut simla mangalore vizag trichy cawnpore peking canton saigon rangoon""".split()
     COMMON = set("""of nice split mobile reading bath worth march may sale most hope victoria florence aurora
     independence orange garden grove columbia lincoln marion union jackson mesa page""".split())
 
     def __init__(self, folder: Path):
         self.city = {}
         self.foreign = {}
+        self.alt = {}
         self.known = set()
         self.regions = set()
         self.countries = set()
@@ -173,6 +184,11 @@ class Gazetteer:
         self.countries = {v.lower() for v in country.values()}
         for f in csv.reader(open(cities, encoding="utf-8"), delimiter="\t", quoting=csv.QUOTE_NONE):
             name, ascii_name, cc, a1, pop = f[1], f[2], f[8], f[10], int(f[14] or 0)
+            if pop >= 500_000:                # big cities: their other Latin names (Bangalore, Bombay) for lookups
+                for alt in f[3].split(","):
+                    a = alt.lower()
+                    if re.match(r"^[A-Z][A-Za-z .'-]{4,}$", alt) and (a not in self.alt or self.alt[a][2] < pop):
+                        self.alt[a] = (admin1.get(f"{cc}.{a1}", ""), country.get(cc, cc), pop)
             if pop >= 1_000_000:              # big cities: also their names in other scripts (上海, القاهرة, Москва)
                 for alt in f[3].split(","):
                     if alt and not re.match(r"^[A-Za-z .'-]*$", alt) and len(alt) >= 2 and not alt.isdigit():
@@ -185,6 +201,10 @@ class Gazetteer:
                     self.city[n] = (region, ctry, pop)
                 if pop >= 250_000 and len(n) > 3 and n not in self.COMMON:
                     self.known.add(n)
+        for k, v in self.alt.items():
+            if k not in self.city:
+                self.city[k] = v
+        self.known |= {e for e in self.EXONYMS if e in self.city}
         known = sorted(self.known, key=len, reverse=True)
         self.known_re = re.compile(r"(?<![\w-])(" + "|".join(map(re.escape, known)) + r")(?![\w-])", re.I) if known else None
         for k, v in self.foreign.items():
@@ -193,7 +213,7 @@ class Gazetteer:
         foreign = sorted(self.foreign, key=len, reverse=True)
         self.foreign_re = re.compile("|".join(map(re.escape, foreign))) if foreign else None
 
-    def region_of(self, text: str):
+    def region_of(self, text: str, min_pop: int = 0):
         """Best (region, country) for a place mention such as 'surat gujarat' or 'ikeja, lagos'."""
         words = re.findall(r"[\wÀ-ɏ.'-]+", text.lower())
         best, name = None, ""
@@ -201,7 +221,7 @@ class Gazetteer:
             for i in range(len(words) - size + 1):
                 key = " ".join(words[i:i + size])
                 hit = self.city.get(key)
-                if hit and (best is None or hit[2] > best[2]):
+                if hit and hit[2] >= min_pop and (best is None or hit[2] > best[2]):
                     best, name = hit, key
             if best:
                 break
@@ -283,6 +303,8 @@ class Detector:
                 for e in ents:
                     e = dict(e, start=back[e["start"]], end=back[e["end"] - 1] + 1)
                     kind, thr = LABELS[e["label"]]
+                    if kind == "postcode" and not re.search(r"\d", e["text"]):
+                        kind, thr = LABELS["city"]       # "Koramangala, Bangalore" is a place, not a postcode
                     if e["score"] < thr:
                         continue
                     s, t = chunk_start + e["start"], chunk_start + e["end"]
@@ -300,6 +322,11 @@ class Detector:
                         continue          # "family court": a lowercase generic institution, not a named one
                     if kind == "org" and word == low and re.search(r"\b(a|an)\s+$", text[max(0, s - 4):s], re.I):
                         continue          # "a textile shop": an indefinite, lowercase phrase is generic
+                    if (kind == "org" and word == low and len(words) <= 2 and words[-1] in WORKPLACE_NOUNS
+                            and "'" not in word):
+                        continue          # "kirana store", "my clinic": a kind of workplace, not a named one
+                    if kind in ("location", "address", "org", "id") and LEGAL_REF_RE.match(low):
+                        continue          # "Section 54" is the law, not a place
                     if kind in ("org", "location") and len(low) < 3 and not re.search(r"[^\x00-\x7f]", low):
                         continue
                     if kind == "location" and self.geo.is_region_or_country(low):
@@ -343,20 +370,6 @@ class Detector:
                 add(m.start(), m.start() + len(cand), "id", "pattern", label="IBAN")
         for m in WALLET_RE.finditer(text):
             add(m.start(), m.end(), "id", "pattern", label="wallet")
-        for m in NHS_RE.finditer(text):
-            if nhs_ok(re.sub(r"\D", "", m.group())):
-                add(m.start(), m.end(), "id", "pattern", label="NHS number")
-        for m in CODE_RE.finditer(text):
-            tok = m.group()
-            if len(tok) >= 8 and sum(ch.isdigit() for ch in tok) >= 5:
-                add(m.start(), m.end(), "id", "pattern", label="ID number")
-        phones = [(x["start"], x["end"]) for x in spans if x["kind"] == "phone"]
-        for m in CONTEXT_ID_RE.finditer(text):
-            code = m.group(1).rstrip()
-            if any(a < m.start(1) + len(code) and m.start(1) < b for a, b in phones):
-                continue                      # a valid phone number stays a phone number
-            if sum(ch.isdigit() for ch in code) >= 4:
-                add(m.start(1), m.start(1) + len(code), "id", "pattern", label="ID number")
         try:
             import phonenumbers
             seen = set()
@@ -367,8 +380,28 @@ class Detector:
                         add(m.start, m.end, "phone", "pattern")
         except ImportError:
             pass
+        phones = [(x["start"], x["end"]) for x in spans if x["kind"] == "phone"]
+
+        def on_phone(a, b):
+            return any(a < y and x < b for x, y in phones)
+
+        for m in NHS_RE.finditer(text):
+            near_nhs = re.search(r"\bnhs\b", text[max(0, m.start() - 40):m.start()], re.I)
+            if nhs_ok(re.sub(r"\D", "", m.group())) and (near_nhs or not on_phone(m.start(), m.end())):
+                add(m.start(), m.end(), "id", "pattern", label="NHS number")
+        for m in CODE_RE.finditer(text):
+            tok = m.group()
+            if len(tok) >= 8 and sum(ch.isdigit() for ch in tok) >= 5:
+                add(m.start(), m.end(), "id", "pattern", label="ID number")
+        for m in CONTEXT_ID_RE.finditer(text):
+            code = _code_prefix(m.group(1))
+            if on_phone(m.start(1), m.start(1) + len(code)):
+                continue                      # a valid phone number stays a phone number
+            if sum(ch.isdigit() for ch in code) >= 4:
+                add(m.start(1), m.start(1) + len(code), "id", "pattern", label="ID number")
         for m in LONGNUM_RE.finditer(text):
-            add(m.start(), m.end(), "id", "pattern", label="number")
+            if not on_phone(m.start(), m.end()):
+                add(m.start(), m.end(), "id", "pattern", label="number")
         for m in ADDRESS_RE.finditer(text):
             add(m.start(), m.end(), "address", "pattern")
         for rx in (UK_POST_RE, CA_POST_RE):
@@ -399,7 +432,37 @@ class Detector:
             if m:
                 add(s["end"] + m.start(1), s["end"] + m.end(1), "postcode", "pattern")
 
-        return _resolve(spans)
+        return _join_address(_resolve(spans), text)
+
+
+def _join_address(spans, text):
+    """'flat 302, shanti apartments, andheri west, mumbai 400058': the short comma-separated pieces between a
+    street address and the city or postcode that follows are part of the address too."""
+    for a, b in zip(spans, spans[1:]):
+        if a["kind"] != "address" or b["kind"] not in ("location", "postcode", "address"):
+            continue
+        gap = text[a["end"]:b["start"]]
+        parts = [x.strip() for x in gap.split(",")]
+        if not gap.lstrip().startswith(",") or len(parts) > 4 or re.search(r"[.?!;:\n]", gap):
+            continue
+        if all(len(x.split()) <= 4 and len(x) <= 40 for x in parts):
+            last = gap.rstrip(" ,")
+            if last:
+                a["end"] += len(last)
+                a["text"] = text[a["start"]:a["end"]]
+    return spans
+
+
+def _code_prefix(code: str) -> str:
+    """Keep the leading pieces that belong to one code ("MH 12 AB 1234"); stop at the first ordinary word,
+    so "BQZPV4821K and Aadhaar 4382" is cut after the PAN."""
+    end = 0
+    for t in re.finditer(r"[A-Za-z0-9]+", code):
+        tok = t.group()
+        if not (any(c.isdigit() for c in tok) or (tok.isupper() and len(tok) <= 4)):
+            break
+        end = t.end()
+    return code[:end]
 
 
 CJK = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]")

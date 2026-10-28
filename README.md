@@ -30,21 +30,25 @@ copy to check none of your details are in it ([demo/VERIFY.md](demo/VERIFY.md)).
 **How well detection works**, on prompts in 13 languages and styles (lowercase, voice-typed, Hinglish,
 Chinese, Arabic…), reproducible with `python demo/eval/run_eval.py`:
 
-| | 45 tuning prompts | 30 fresh prompts |
-|---|---|---|
-| Identifiers removed | 98.3% | 100% |
-| Prompts with nothing identifying left | 95.6% | 100% |
-| Exact ages and occupations generalised | 100% | 100% |
-| Useful terms kept | 98.8% | 96.2% |
-| Median detection time on a laptop CPU | 85 ms | 87 ms |
+| | 45 tuning prompts | 30 fresh prompts | 12 Indian prompts |
+|---|---|---|---|
+| Identifiers removed | 98.3% | 100% | 100% |
+| Prompts with nothing identifying left | 95.6% | 100% | 100% |
+| Exact ages and occupations generalised | 100% | 100% | 100% |
+| Useful terms kept | 98.8% | 96.2% | 100% |
+| Median detection time on a laptop CPU | ~100 ms | ~100 ms | ~300 ms |
 
 The fresh prompts were written after tuning; one later fix (lowercase generic phrases such as "family court"
-being hidden) came from a miss in that set.
+being hidden) came from a miss in that set. The Indian prompts (English and Hinglish: PAN, Aadhaar, GSTIN,
+UAN, mobiles, neighbourhoods, "Section 54") found real bugs and were then fixed against, so treat them as
+tuning prompts too. Run a set by name: `python demo/eval/run_eval.py heldout` or `… india`.
 
 Known limits: names that are ordinary words ("hope and will are getting married"), venue names like hotels,
-and some over-hiding of generic phrases ("family court"). The live preview is there for exactly these. In this
-local demo all parties run in one process with your key, so OpenAI still sees your account and IP; hiding
-those needs the relay and gateway run by separate operators. Details: [demo/README.md](demo/README.md).
+small neighbourhoods the model is unsure of, and some over-hiding of generic phrases ("family court"). Text in
+Indic scripts (Devanagari etc.) is not supported yet; romanised Hindi is. The live preview is there for
+exactly these. In this local demo all parties run in one process with your key, so OpenAI still sees your
+account and IP; hiding those needs the relay and gateway run by separate operators. Details:
+[demo/README.md](demo/README.md).
 
 ## Read
 

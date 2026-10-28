@@ -61,7 +61,14 @@ OCCUPATIONS = [
     ("creative professional", r"artist|writer|author|musician|actor|photographer|journalist|editor|filmmaker"),
     ("service worker", r"driver|cashier|waiter|chef|cook|barista|cleaner|guard|delivery|retail|salesperson"),
     ("student", r"student|undergrad|graduate|phd|intern"),
+    ("agricultural worker", r"farm|agricultur|kisan|fisher|dairy|horticultur"),
+    ("manager", r"manager|executive|consultant|director|supervisor|administrator|head of"),
 ]
+# "Apollo Hospital" -> "a hospital": the kind of place stays, the name goes
+ORG_KINDS = {"hospital": "a hospital", "hospitals": "a hospital", "clinic": "a clinic", "school": "a school",
+             "college": "a college", "university": "a university", "bank": "a bank", "institute": "an institute",
+             "academy": "an academy", "hotel": "a hotel", "restaurant": "a restaurant", "pharmacy": "a pharmacy",
+             "labs": "a lab", "studio": "a studio", "foundation": "a foundation", "trust": "a trust"}
 REMOVED = {"address": "[street address]", "postcode": "[postcode]", "dob": "[birth date]", "card": "[card number removed]"}
 LABELS = {"person": "person", "org": "organisation", "location": "place", "address": "street address",
           "postcode": "postcode", "age": "age", "occupation": "occupation", "phone": "phone", "email": "email",
@@ -164,6 +171,9 @@ class Scrubber:
             cat = ORG_CATEGORY.get(original.lower().strip(" .,"))
             if cat:
                 return cat, False
+            last = re.findall(r"\w+", original.lower())[-1:]
+            if last and last[0] in ORG_KINDS:
+                return ORG_KINDS[last[0]], False
             return self._remember(original, self._pick(CODENAMES, original, text), kind), True
         if kind == "email":
             n = sum(k == "email" for _, k in self.vault.values()) + 1
@@ -191,6 +201,10 @@ class Scrubber:
         if kind == "id":
             return f"[{span.get('label', 'ID number')} removed]" if span.get("label") not in (None, "number") \
                 else "[number removed]", False
+        if kind == "address":                       # keep the region the street is in: "[street address], Uttar Pradesh"
+            hit = geo.region_of(original, min_pop=100_000) if geo else None
+            if hit:
+                return f"[street address], {hit[0] or hit[1]}", False
         return REMOVED.get(kind, "[removed]"), False
 
     # ------------------------------------------------------------ the swap

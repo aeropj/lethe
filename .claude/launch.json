@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "lethe-demo",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["demo/server.py"],
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["demo/run.sh"],
       "port": 8787
     }
   ]
