@@ -30,12 +30,16 @@ copy to check none of your details are in it ([demo/VERIFY.md](demo/VERIFY.md)).
 **How well detection works**, on prompts in 13 languages and styles (lowercase, voice-typed, Hinglish,
 Chinese, Arabic…), reproducible with `python demo/eval/run_eval.py`:
 
-| | 44 tuning prompts | 30 fresh prompts |
+| | 45 tuning prompts | 30 fresh prompts |
 |---|---|---|
 | Identifiers removed | 98.3% | 100% |
-| Prompts with nothing identifying left | 95.5% | 100% |
+| Prompts with nothing identifying left | 95.6% | 100% |
 | Exact ages and occupations generalised | 100% | 100% |
-| Useful terms kept | 98.7% | 94.2% |
+| Useful terms kept | 98.8% | 96.2% |
+| Median detection time on a laptop CPU | 85 ms | 87 ms |
+
+The fresh prompts were written after tuning; one later fix (lowercase generic phrases such as "family court"
+being hidden) came from a miss in that set.
 
 Known limits: names that are ordinary words ("hope and will are getting married"), venue names like hotels,
 and some over-hiding of generic phrases ("family court"). The live preview is there for exactly these. In this

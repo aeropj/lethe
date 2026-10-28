@@ -48,6 +48,10 @@ husband kid kids child children boss manager friend doctor sir madam""".split())
 PUBLIC = set("""lrs irs hmrc sec rbi sebi nhs fbi cia un eu who imf nasa adhd gst itr ppf nps elss epf uan 401k ira
 roth medicare medicaid fema usps ssa dmv cra ato ncert cbse icse upsc neet jee sat gre gmat toefl ielts uif fbr
 nadra sars hsa fsa isa sip etf reit cd ulip tfsa rrsp superannuation pension provident fund""".split())
+# words that make a phrase a product, scheme or institution type, not a job or a named organisation
+GENERIC_NOUNS = set("""ira fund funds account accounts card cards loan loans mortgage tax taxes policy plan plans scheme
+schemes insurance stock stocks share shares bond bonds index etf court courts visa visas pension regime deposit interest
+benefit benefits allowance subsidy permit license licence certificate degree course exam test""".split())
 PUBLIC_PHRASES = {"roth ira", "traditional ira", "401(k)", "mutual fund", "social security", "income tax", "provident fund"}
 
 EMAIL_RE = re.compile(r"\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b")
@@ -289,6 +293,11 @@ class Detector:
                     if kind == "org" and (low in PUBLIC or low in PUBLIC_PHRASES
                                           or all(w in PUBLIC for w in re.findall(r"[\w()]+", low))):
                         continue
+                    words = re.findall(r"[\w()]+", low)
+                    if kind == "occupation" and any(w in GENERIC_NOUNS or w in PUBLIC for w in words):
+                        continue          # "roth ira" is a product, not a job
+                    if kind == "org" and word == low and any(w in GENERIC_NOUNS for w in words):
+                        continue          # "family court": a lowercase generic institution, not a named one
                     if kind == "org" and word == low and re.search(r"\b(a|an)\s+$", text[max(0, s - 4):s], re.I):
                         continue          # "a textile shop": an indefinite, lowercase phrase is generic
                     if kind in ("org", "location") and len(low) < 3 and not re.search(r"[^\x00-\x7f]", low):

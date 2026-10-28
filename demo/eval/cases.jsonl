@@ -42,3 +42,4 @@
 {"id": "plain-question", "text": "What is the difference between a Roth IRA and a traditional IRA?", "hide": [], "keep": ["Roth IRA", "traditional IRA"]}
 {"id": "plain-code", "text": "Write a python function that returns the nth fibonacci number using memoization.", "hide": [], "keep": ["python", "fibonacci", "memoization"]}
 {"id": "plain-health", "text": "Is it safe to take ibuprofen and paracetamol together for a fever?", "hide": [], "keep": ["ibuprofen", "paracetamol", "fever"]}
+{"id": "plain-lowercase-finance", "text": "what is the difference between a roth ira and a traditional ira? which is better for a 30 year old?", "hide": [], "keep": ["roth ira", "traditional ira"]}
