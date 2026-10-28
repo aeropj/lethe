@@ -23,3 +23,5 @@ demo/video/out/*
 !demo/video/out/lethe-demo.mp4
 !demo/video/out/poster.png
 !demo/video/out/lethe-live-demo.mp4
+demo/data/
+demo/.venv/

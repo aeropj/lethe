@@ -1,0 +1,7 @@
+# Lethe demo. Python 3.10+.
+cryptography>=46,<47      # blind credentials and sealed requests
+phonenumbers>=8.13        # phone numbers for every country
+gliner==0.2.29            # the on-device PII model (downloads ~1.2 GB of weights once, on first start)
+torch>=2.5                # CPU is enough
+protobuf
+sentencepiece

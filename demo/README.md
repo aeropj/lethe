@@ -9,23 +9,24 @@ swarms: anywhere a request leaves for a model.
 
 ## Run it
 
-With Docker (recommended), straight from [Docker Hub](https://hub.docker.com/r/aeropj/lethe-demo):
-
 ```bash
-docker run --rm -p 127.0.0.1:8787:8787 aeropj/lethe-demo     # open http://localhost:8787
+./demo/run.sh            # from the repo root; open http://localhost:8787
 ```
 
-To build it yourself instead: `docker build -t lethe-demo demo`.
+It makes a local Python environment in `demo/.venv`, installs `requirements.txt` (CPU PyTorch, GLiNER,
+phonenumbers, cryptography), and starts the server. The first start downloads the PII model (~1.2 GB, from
+Hugging Face) and the GeoNames city list once. The page is usable while the model loads (~20–40 s); the
+header shows when detection is ready.
 
 The page opens on a key screen. Paste an OpenAI API key and press Connect. The server checks it against
 `GET /v1/models`, picks up to three GPT models your project can use, and keeps the key in the container's
-memory only: it is never written to disk, logged, or sent anywhere except api.openai.com. The key menu in
+memory only (this process, or the container): it is never written to disk, logged, or sent anywhere except api.openai.com. The key menu in
 the header shows it masked, and can change or forget it. "Try a dry run" skips the key: every step still
 happens, and the trace shows the exact request that would be sent.
 
-Presets still work: `-e OPENAI_API_KEY` (or `OPENROUTER_API_KEY`) skips the key screen, and
-`LETHE_OPENAI_STORE=0` or `1` sets verification mode. `docker compose up --build` reads them from
-`demo/.env`, which is git-ignored and excluded from the image.
+Presets still work: `OPENAI_API_KEY` (or `OPENROUTER_API_KEY`) in the environment or in `demo/.env`
+(git-ignored) skips the key screen, and `LETHE_OPENAI_STORE=0` or `1` sets verification mode.
+A `Dockerfile` is included if you prefer a container (`docker build -t lethe-demo demo`).
 
 Without Docker:
 
@@ -41,7 +42,7 @@ The port is published to localhost only. The server spends your key and has no l
 Every question and replay is traced. Open **Observability** in the header, or **Open trace** under an
 answer, to see one request end to end:
 
-- **KPIs**: total latency, Lethe's overhead (a few milliseconds, well under 1% of a model call), model
+- **KPIs**: total latency, Lethe's overhead (mostly the on-device model, ~0.1–0.4 s), model
   latency, tokens, details hidden, sealed bytes on the wire, verification status.
 - **Waterfall**: the nine steps on one clock, coloured by party. "Zoom Lethe steps" compresses the model
   call so the on-device and gateway steps are readable.
@@ -62,15 +63,23 @@ fetch it back and search it for everything you typed. Turn it off in the key men
 
 | Party | Gets | Never gets |
 |---|---|---|
-| **Your device** | everything; it scrubs the prompt in ~1–4 ms, keeps the vault | — |
+| **Your device** | everything; its model finds personal details in ~0.1–0.4 s, keeps the vault | — |
 | **Issuer** (at subscribe) | your account and card, and 5 *blinded* credentials it signs | which credential you spend, any prompt |
 | **Relay** | your IP and a sealed blob padded to a fixed size | the prompt, the credential, the lab |
 | **Gateway** | a valid one-time credential and the scrubbed question | your IP, account, card, real names |
 | **Lab** | one request from the gateway's key, with stand-ins | anything about you (in production; in this local POC it sees your key and IP) |
 
-- **Swaps on device.** Names, emails and phones become consistent stand-ins that are swapped back into the
-  answer. Cities become their state, insurers and employers their category. SSNs, card numbers, street
-  addresses and ZIPs are removed. Anything in "Always hide" becomes a codename. Stand-ins rotate per chat.
+- **Finds details on device.** A multilingual PII model ([GLiNER](https://github.com/urchade/GLiNER),
+  `urchade/gliner_multi_pii-v1`) runs locally and tags people, places, organisations, street addresses, ages,
+  occupations and IDs in any casing or language. Checksummed patterns add emails, phone numbers for any country,
+  cards, IBANs, crypto wallets and national IDs (SSN, PAN, Aadhaar, NINO, NHS, CPF, SIN, RFC/CURP and more).
+  A GeoNames gazetteer (CC BY 4.0) maps any city to its state and country. See [eval/](eval/) for the scores.
+- **Swaps, generalises or removes.** People, contacts, organisations and "always hide" terms become stand-ins
+  that are swapped back into the answer. Cities become their state, exact adult ages a decade ("60-something"),
+  occupations a category ("teacher"), well-known employers their kind. IDs, cards, street addresses and postcodes
+  are removed. Stand-ins rotate per chat.
+- **You stay in control.** The live preview shows what would be sent; click any word to hide it or any highlight
+  to keep it. If nothing is found, sending needs a second click.
 - **Blind credentials.** RSA-FDH blind signatures, the idea behind Privacy Pass (RFC 9474/9578).
 - **Sealed requests.** X25519 + HKDF + ChaCha20-Poly1305, the shape of Oblivious HTTP (RFC 9458), padded to
   fixed buckets.

@@ -24,15 +24,15 @@ Verification mode sends `"store": true`, which tells OpenAI to keep each request
 can inspect it. It is on by default. Every request shows `"store": true` in the trace.
 
 ```bash
-docker run --rm -p 127.0.0.1:8787:8787 aeropj/lethe-demo
+./demo/run.sh
 ```
 
 Open http://localhost:8787, paste the `lethe-demo` key, leave **Verification mode** on, and press
-**Connect**. The key stays in the container's memory only. To skip the key screen, pass it as a preset
-instead: `docker run ... -e OPENAI_API_KEY aeropj/lethe-demo`, or `docker compose up --build` with the key in
+**Connect**. The key stays in the server's memory only. To skip the key screen, pass it as a preset
+instead: `OPENAI_API_KEY=sk-… ./demo/run.sh`, or put it in
 `demo/.env`.
 
-The port is published to localhost only. The server spends your key and has no login, so do not expose it.
+The server listens on localhost only. It spends your key and has no login, so do not expose it.
 
 ## 3. Ask, and note the two IDs
 
@@ -41,8 +41,7 @@ Press **Ask privately**, then **Open trace**. The trace's "Prove it" panel shows
 - `resp_…`: the response ID. This is how you look the request up.
 - `req_…`: the request ID from OpenAI's `x-request-id` header. OpenAI support uses it to find one call.
 
-The container also logs both for every request (`docker logs -f <container>`, or
-`docker compose logs -f lethe`):
+The server also logs both for every request, in the terminal where `run.sh` is running:
 
 ```
 [gateway] credential ok · gpt-5.6-luna · response resp_0313b5… · request req_cdf884… · store=True

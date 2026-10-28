@@ -5,3 +5,5 @@ __pycache__/
 *.pyc
 video/
 examples/
+data/
+eval/RESULTS*.md

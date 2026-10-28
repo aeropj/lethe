@@ -37,6 +37,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import lethe_crypto as lc  # noqa: E402
+import scrub as scrub_mod  # noqa: E402
 from scrub import Scrubber  # noqa: E402
 
 DEMO_ACCOUNT = "sarah.miller@gmail.com"
@@ -430,14 +431,15 @@ class Device:
     def wallet_view(self):
         return {"unspent": sum(not c["spent"] for c in self.wallet), "spent": sum(c["spent"] for c in self.wallet)}
 
-    def ask(self, prompt: str, model: str, hide: list[str], client_ip: str):
+    def ask(self, prompt: str, model: str, hide: list[str], client_ip: str, keep: list[str] | None = None):
         if not any(not c["spent"] for c in self.wallet):
             self.subscribe()  # happens once per subscription, not per request: kept out of the timing
         with span("detect", "Find private details", "device") as d:
-            scrubbed = self.scrubber.scrub(prompt, hide)
+            scrubbed = self.scrubber.scrub(prompt, hide, keep)
         self.originals |= {f["original"] for f in scrubbed["found"]}
         d.update(prompt=prompt, sent=scrubbed["text"], orig_segments=scrubbed["orig_segments"],
                  scrub_segments=scrubbed["scrub_segments"], entities=scrubbed["found"], always_hide=hide,
+                 kept_by_you=keep or [], model_ms=scrubbed.get("model_ms"),
                  detector=self.scrubber.mode, scrub_ms=scrubbed["ms"], chat_originals=sorted(self.originals),
                  chat_standins=sorted(self.scrubber.vault))
 
@@ -579,6 +581,7 @@ class App:
         return {"provider": p["name"], "has_key": bool(p["key"]), "masked_key": mask(p["key"]),
                 "key_source": p.get("source"), "store": self.store_pref,
                 "models": p["models"], "detector": self.device.scrubber.mode,
+                "detector_ready": scrub_mod._ready.is_set(),
                 "account": DEMO_ACCOUNT, "card": DEMO_CARD, **self.views()}
 
     def verify(self, trace_id: str | None = None):
@@ -612,9 +615,19 @@ class App:
         trace.d["verification"] = result
         return result
 
+    def preview(self, body: dict):
+        """What would be sent, without touching the chat's vault. No lock: it runs while you type."""
+        live = self.device.scrubber
+        sc = Scrubber.__new__(Scrubber)
+        sc.key, sc.forward, sc.vault, sc.used = live.key, dict(live.forward), dict(live.vault), set(live.used)
+        r = sc.scrub(str(body.get("prompt", "")), terms(body.get("hide")), terms(body.get("keep")))
+        return {k: r[k] for k in ("text", "orig_segments", "scrub_segments", "found", "ms", "detector")}
+
     def handle(self, path: str, body: dict, client_ip: str):
         if path == "/api/key":
             return self.set_key(body)
+        if path == "/api/preview":
+            return self.preview(body)
         with self.lock:
             if path == "/api/status":
                 return self.status()
@@ -634,8 +647,10 @@ class App:
                 if not prompt:
                     raise ValueError("Type a question first.")
                 model = self.provider["models"].get(body.get("model")) or next(iter(self.provider["models"].values()))
-                hide = [t for t in str(body.get("hide", "")).split(",") if t.strip()]
-                result = self.traced("ask", model, prompt, lambda: self.device.ask(prompt, model, hide, client_ip))
+                hide = terms(body.get("hide"))
+                keep = terms(body.get("keep"))
+                result = self.traced("ask", model, prompt,
+                                     lambda: self.device.ask(prompt, model, hide, client_ip, keep))
                 self.last_ask_trace = result["trace_id"]
                 return {"result": result, **self.views()}
             if path == "/api/replay":
@@ -650,6 +665,12 @@ class App:
                 self.device.new_chat()
                 return self.views()
         raise NoRoute(path)
+
+
+def terms(value) -> list[str]:
+    """Accept a list or a comma-separated string of terms."""
+    items = value if isinstance(value, list) else str(value or "").split(",")
+    return [str(t).strip() for t in items if str(t).strip()]
 
 
 APP = None
@@ -718,6 +739,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     global APP
+    threading.Thread(target=scrub_mod.load_detector, daemon=True).start()   # the model loads while the page opens
     APP = App()
     port = int(os.getenv("LETHE_PORT", "8787"))
     host = os.getenv("LETHE_HOST", "127.0.0.1")  # the container sets 0.0.0.0; publish it to localhost only
