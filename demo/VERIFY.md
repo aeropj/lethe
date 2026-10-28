@@ -18,41 +18,31 @@ So Logs and Usage show only this demo.
    **Create new secret key**, pick project `lethe-demo`, and copy the key.
 3. Optional: set a low monthly budget for the project under its **Limits** settings.
 
-## 2. Run with storage on
+## 2. Run with verification mode on
 
-Storage tells OpenAI to keep each request for up to 30 days so you can inspect it. The compose file turns
-it on by default for this reason. Every request shows `"store": true` in the Lab card.
-
-```bash
-cd demo
-cp .env.example .env        # paste the key after OPENAI_API_KEY=
-docker compose up --build   # http://localhost:8787
-```
-
-Without compose:
+Verification mode sends `"store": true`, which tells OpenAI to keep each request for up to 30 days so you
+can inspect it. It is on by default. Every request shows `"store": true` in the trace.
 
 ```bash
-docker build -t lethe-demo demo
+docker run --rm -p 127.0.0.1:8787:8787 aeropj/lethe-demo
 ```
 
-```bash
-docker run --rm -p 127.0.0.1:8787:8787 --env-file demo/.env -e LETHE_OPENAI_STORE=1 lethe-demo
-```
+Open http://localhost:8787, paste the `lethe-demo` key, leave **Verification mode** on, and press
+**Connect**. The key stays in the container's memory only. To skip the key screen, pass it as a preset
+instead: `docker run ... -e OPENAI_API_KEY aeropj/lethe-demo`, or `docker compose up --build` with the key in
+`demo/.env`.
 
 The port is published to localhost only. The server spends your key and has no login, so do not expose it.
 
 ## 3. Ask, and note the two IDs
 
-Open http://localhost:8787 and press **Ask privately**. The Lab card shows:
+Press **Ask privately**, then **Open trace**. The trace's "Prove it" panel shows, each with a copy button:
 
 - `resp_…`: the response ID. This is how you look the request up.
 - `req_…`: the request ID from OpenAI's `x-request-id` header. OpenAI support uses it to find one call.
 
-The container also logs both for every request:
-
-```bash
-docker compose logs -f lethe
-```
+The container also logs both for every request (`docker logs -f <container>`, or
+`docker compose logs -f lethe`):
 
 ```
 [gateway] credential ok · gpt-5.6-luna · response resp_0313b5… · request req_cdf884… · store=True
@@ -60,15 +50,17 @@ docker compose logs -f lethe
 
 ## 4. Check 1: in the app
 
-In the Lab card press **Ask OpenAI what it stored**. The server calls OpenAI's
-`GET /v1/responses/{id}/input_items` and shows exactly the input OpenAI holds. It then searches that input
-for every private detail you typed in this chat. You should see:
+In the trace's "Prove it" panel press **Verify with OpenAI** (the Lab card on the Ask page has the same
+check). The server calls OpenAI's `GET /v1/responses/{id}/input_items` and shows exactly the input OpenAI
+holds. It then searches that input for every private detail you typed in this chat. You should see:
 
-> ✓ OpenAI stored 1 message. 0 of 5 private details appear in them. Stand-ins it holds instead: Rhys Brooks, contact1@example.com.
+> 0 of 5 private details found, in the input OpenAI stored for resp_…
+
+with each detail it searched for, and the stand-ins OpenAI holds instead.
 
 ## 5. Check 2: yourself, without the app
 
-The same call from your own terminal, with the same key:
+The same call from your own terminal, with the same key ("Copy curl" in the trace gives you this line):
 
 ```bash
 curl -s https://api.openai.com/v1/responses/resp_XXXX/input_items -H "Authorization: Bearer $OPENAI_API_KEY" | python3 -m json.tool
@@ -100,7 +92,7 @@ organisation owner may also need to allow log visibility in the organisation's d
 ## 7. Check 4: usage
 
 Open [Usage](https://platform.openai.com/usage) and filter to project `lethe-demo`. The request count matches
-the number of questions you asked. Input and output tokens match the "tokens" pill under each answer.
+the number of questions you asked. Input and output tokens match the "Tokens" figure in each trace.
 Usage also updates with a delay.
 
 ## 8. Clean up
@@ -111,10 +103,11 @@ Delete a stored response:
 curl -X DELETE https://api.openai.com/v1/responses/resp_XXXX -H "Authorization: Bearer $OPENAI_API_KEY"
 ```
 
-For normal use run with `LETHE_OPENAI_STORE=0`, so requests carry `"store": false`. OpenAI may still keep
+For normal use turn **Verification mode** off in the key menu (or preset `LETHE_OPENAI_STORE=0`), so
+requests carry `"store": false`. OpenAI may still keep
 API data for up to 30 days for abuse monitoring
 ([OpenAI: your data](https://developers.openai.com/api/docs/guides/your-data)), which is why the stand-ins
-matter: whatever is kept has no real details in it. Revoke the demo key when you are done.
+matter: whatever is kept has no real details in it. "Forget key" in the key menu drops it from the server's memory. Revoke the demo key when you are done.
 
 ## What each check proves
 

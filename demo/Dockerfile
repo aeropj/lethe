@@ -1,7 +1,13 @@
 # Lethe local POC: one container runs the device, issuer, relay, gateway and lab adapter.
 #   docker build -t lethe-demo .
-#   docker run --rm -p 127.0.0.1:8787:8787 -e OPENAI_API_KEY -e LETHE_OPENAI_STORE=1 lethe-demo
+#   docker run --rm -p 127.0.0.1:8787:8787 lethe-demo     then paste an OpenAI key at http://localhost:8787
+# The key you paste stays in the container's memory. -e OPENAI_API_KEY still works as a preset.
 FROM python:3.12-slim
+
+LABEL org.opencontainers.image.title="Lethe demo" \
+      org.opencontainers.image.description="Ask OpenAI a personal question privately: names are swapped on device, the request is sealed, relayed and checked with a blind credential, and every step is traced." \
+      org.opencontainers.image.source="https://github.com/aeropj/lethe" \
+      org.opencontainers.image.authors="aeropj"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

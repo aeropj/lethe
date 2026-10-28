@@ -8,24 +8,25 @@ Pranjal Joshi · Prashil Bulbule · Vaibhav
 
 ![Lethe demo film](demo/video/out/poster.png)
 
-## Try it in two minutes
+## Try it in one command
 
 Needs Docker and an OpenAI API key.
 
 ```bash
-git clone https://github.com/aeropj/lethe && cd lethe/demo
-cp .env.example .env          # put your OPENAI_API_KEY in it
-docker compose up --build     # open http://localhost:8787
+docker run --rm -p 127.0.0.1:8787:8787 aeropj/lethe-demo
 ```
+
+Open http://localhost:8787 and paste your key. It stays in the container's memory and goes only to
+api.openai.com. Works on Intel and Apple-silicon machines ([Docker Hub](https://hub.docker.com/r/aeropj/lethe-demo)).
 
 Ask a personal question and watch what each party receives: your device swaps names, places and IDs for
 stand-ins, a blind credential pays for the request, a relay sees only sealed bytes, and the model gets one
-scrubbed question. Then check on OpenAI's own side that it never received your real details:
-**[demo/VERIFY.md](demo/VERIFY.md)**.
+scrubbed question. The **Observability** tab traces every request in nine timed steps, with the real bytes,
+and **Prove it** asks OpenAI for its own stored copy to show none of your details are in it.
+Steps to check it yourself on platform.openai.com: [demo/VERIFY.md](demo/VERIFY.md).
 
 More: [demo/README.md](demo/README.md) · four tested examples in
-[demo/examples/RESULTS.md](demo/examples/RESULTS.md) · the 95-second film
-[demo/video/out/lethe-demo.mp4](demo/video/out/lethe-demo.mp4).
+[demo/examples/RESULTS.md](demo/examples/RESULTS.md) · the films in [demo/video/out/](demo/video/out/).
 
 ## Read
 

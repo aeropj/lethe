@@ -4,37 +4,75 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lethe · local demo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%234F46E5'/%3E%3Cpath d='M11 8v16h11' stroke='white' stroke-width='3.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 :root{
-  --ink:#14161F; --ink2:#3d4150; --muted:#737889; --line:#e6e7ee; --bg:#f6f6f9; --card:#fff;
+  --ink:#14161F; --ink2:#3d4150; --muted:#6b7084; --line:#e6e7ee; --line2:#f0f0f4; --bg:#f6f6f9; --card:#fff;
   --indigo:#4F46E5; --violet:#7C3AED; --teal:#0D9488; --sky:#0EA5E9; --coral:#F43F5E;
   --amber:#F59E0B; --lime:#65A30D; --plum:#A21CAF;
+  --device:#0EA5E9; --issuer:#65A30D; --relay:#0D9488; --gateway:#4F46E5; --lab:#7C3AED;
   --mono: ui-monospace, "SF Mono", "IBM Plex Mono", Menlo, monospace;
+  --shadow: 0 1px 2px rgba(20,22,31,.04), 0 10px 30px -18px rgba(20,22,31,.18);
 }
 *{box-sizing:border-box}
 html,body{margin:0}
+html{scroll-behavior:smooth}
 body{font:14px/1.5 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color:var(--ink);
-  background:radial-gradient(1200px 500px at 85% -10%, #ece9ff 0, transparent 60%), var(--bg); min-height:100vh}
-header{display:flex; align-items:center; gap:18px; padding:14px 28px; background:rgba(255,255,255,.85);
-  backdrop-filter:blur(8px); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:10}
-.brand{font-weight:800; font-size:19px; letter-spacing:-.02em}
+  background:radial-gradient(1200px 500px at 85% -10%, #ece9ff 0, transparent 60%), var(--bg); min-height:100vh;
+  -webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden}
+a{color:var(--indigo); text-decoration:none}
+a:hover{text-decoration:underline}
+[hidden]{display:none !important}
+:focus-visible{outline:2px solid #a5b4fc; outline-offset:2px}
+.ic{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; flex:none}
+
+/* ---------------------------------------------------------------- header */
+header.top{display:flex; align-items:center; gap:16px; padding:12px 28px; background:rgba(255,255,255,.86);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+  position:sticky; top:0; z-index:20}
+.brand{font-weight:800; font-size:19px; letter-spacing:-.02em; color:var(--ink)}
+.brand:hover{text-decoration:none}
 .brand i{font-style:normal; color:var(--indigo)}
 .tag{color:var(--muted); font-size:13px}
 .grow{flex:1}
-@media (max-width:1000px){ header .tag{display:none} header{padding:12px 16px; flex-wrap:wrap} main{padding:16px} }
+.tabs{display:flex; gap:2px; background:#f1f1f6; border:1px solid var(--line); border-radius:11px; padding:3px}
+.tab{display:inline-flex; align-items:center; gap:7px; padding:5px 12px; border-radius:8px; font-size:13px; font-weight:600;
+  color:var(--ink2); transition:background .15s, color .15s}
+.tab:hover{text-decoration:none; color:var(--ink)}
+.tab.on{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(20,22,31,.1)}
+.count{min-width:20px; height:18px; padding:0 6px; border-radius:999px; background:#e4e2f7; color:var(--indigo);
+  font-size:11px; font-weight:700; display:inline-grid; place-items:center; font-variant-numeric:tabular-nums}
+.tab.on .count{background:var(--indigo); color:#fff}
+.count.bump{animation:bump .6s ease}
+@keyframes bump{30%{transform:scale(1.25)} 100%{transform:scale(1)}}
+@media (max-width:1280px){ header.top .tag{display:none} }
+@media (max-width:900px){ #detector{display:none} }
+@media (max-width:1000px){ header.top{padding:10px 14px; gap:10px} main{padding:16px} }
+
 .pill{display:inline-flex; align-items:center; gap:7px; padding:5px 11px; border-radius:999px; font-size:12px;
   font-weight:600; border:1px solid var(--line); background:#fff; color:var(--ink2); white-space:nowrap}
-.dot{width:8px; height:8px; border-radius:50%; background:var(--muted)}
+.dot{width:8px; height:8px; border-radius:50%; background:var(--muted); flex:none}
 .ok .dot{background:var(--teal); box-shadow:0 0 0 3px #0d948822}
 .warn .dot{background:var(--amber); box-shadow:0 0 0 3px #f59e0b22}
+.keywrap{position:relative}
+.keybtn{padding:5px 10px 5px 11px; border-radius:999px; font-size:12px; gap:7px}
+.keybtn .vt{font-weight:600; color:var(--teal); border-left:1px solid var(--line); padding-left:8px}
+.keybtn .vt.off{color:var(--muted)}
+@media (max-width:640px){ .keybtn .vt, .keybtn .kl-detail{display:none} }
+@media (max-width:480px){ #keylabel{display:none} .keybtn{padding:8px 9px} .tab{padding:5px 10px} .brand{font-size:17px} }
+.popover{position:absolute; right:0; top:calc(100% + 10px); width:360px; max-width:calc(100vw - 24px); background:#fff;
+  border:1px solid var(--line); border-radius:16px; padding:16px; z-index:40;
+  box-shadow:0 24px 60px -24px rgba(20,22,31,.4), 0 2px 6px rgba(20,22,31,.06); animation:pop .16s ease}
+@keyframes pop{from{opacity:0; transform:translateY(-4px)}}
+.pop-h{display:flex; align-items:center; gap:8px; margin-bottom:12px; font-size:14px}
+.popover .kv{grid-template-columns:72px 1fr; font-size:12.5px; gap:6px 10px}
+.popover .row{margin-top:14px}
+.popover .fine{font-size:11.5px; color:var(--muted); margin:12px 0 0; display:flex; gap:7px; align-items:flex-start}
 
-main{display:grid; grid-template-columns:minmax(400px, 5fr) 7fr; gap:22px; padding:22px 28px 40px;
-  max-width:1560px; margin:0 auto}
-@media (max-width:1050px){ main{grid-template-columns:1fr} }
-.col{display:flex; flex-direction:column; gap:16px; min-width:0}
-
-.card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px;
-  box-shadow:0 1px 2px rgba(20,22,31,.04), 0 10px 30px -18px rgba(20,22,31,.18); position:relative}
+/* ---------------------------------------------------------------- shared controls */
+.card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:var(--shadow);
+  position:relative}
 .card h2{margin:0 0 2px; font-size:15px; letter-spacing:-.01em; display:flex; align-items:center; gap:9px}
 .card .hint{color:var(--muted); font-size:12.5px; margin:0 0 12px}
 .num{display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; color:#fff;
@@ -43,32 +81,87 @@ main{display:grid; grid-template-columns:minmax(400px, 5fr) 7fr; gap:22px; paddi
 .role h2 .num{background:var(--c)}
 .role h2 small{font-weight:500; color:var(--muted); font-size:12.5px}
 
-textarea, input[type=text]{width:100%; font:inherit; color:var(--ink); border:1px solid var(--line);
+textarea, input[type=text], input[type=password]{width:100%; font:inherit; color:var(--ink); border:1px solid var(--line);
   border-radius:12px; padding:11px 13px; background:#fbfbfd; outline:none; transition:border .15s, box-shadow .15s}
 textarea{min-height:118px; resize:vertical; font-size:14.5px; line-height:1.55}
-textarea:focus, input[type=text]:focus{border-color:#c7c4ff; box-shadow:0 0 0 4px #4f46e514; background:#fff}
+textarea:focus, input:focus{border-color:#c7c4ff; box-shadow:0 0 0 4px #4f46e514; background:#fff}
 label.k{display:block; font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--muted);
   text-transform:uppercase; margin:12px 0 6px}
 .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
 button{font:inherit; font-weight:600; border-radius:11px; border:1px solid var(--line); background:#fff;
-  color:var(--ink2); padding:9px 14px; cursor:pointer; transition:transform .05s, background .15s, box-shadow .15s}
+  color:var(--ink2); padding:9px 14px; cursor:pointer; transition:transform .05s, background .15s, box-shadow .15s, border-color .15s;
+  display:inline-flex; align-items:center; gap:7px}
 button:hover{background:#f4f4f8}
 button:active{transform:translateY(1px)}
-button.primary{background:var(--indigo); border-color:var(--indigo); color:#fff;
-  box-shadow:0 6px 16px -8px #4f46e5aa}
+button.primary{background:var(--indigo); border-color:var(--indigo); color:#fff; box-shadow:0 6px 16px -8px #4f46e5aa}
 button.primary:hover{background:#4338ca}
 button.small{padding:5px 10px; font-size:12.5px; border-radius:9px}
-button:disabled{opacity:.55; cursor:default}
+button.danger{color:#be123c}
+button.danger:hover{background:#fff4f6; border-color:#ffd0da}
+button:disabled{opacity:.5; cursor:not-allowed}
+button:disabled:active{transform:none}
 .seg{display:inline-flex; border:1px solid var(--line); border-radius:11px; padding:3px; background:#f4f4f8}
 .seg button{border:none; background:transparent; padding:6px 11px; border-radius:8px; font-size:13px}
 .seg button.on{background:#fff; color:var(--indigo); box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.switch{position:relative; width:40px; height:24px; border-radius:999px; background:#d5d7e1; border:none; padding:0;
+  flex:none; transition:background .2s}
+.switch:hover{background:#c9cbd6}
+.switch:after{content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.2); transition:transform .2s}
+.switch[aria-checked=true], .switch[aria-checked=true]:hover{background:var(--indigo)}
+.switch[aria-checked=true]:after{transform:translateX(16px)}
+.toggle-row{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; padding:13px 14px;
+  border:1px solid var(--line); border-radius:12px; background:#fbfbfd}
+.toggle-row b{font-size:13.5px; color:var(--ink)}
+.toggle-row p{margin:3px 0 0; font-size:12.5px; color:var(--muted); line-height:1.45}
+.spinner{width:14px; height:14px; border:2px solid #ffffff66; border-top-color:#fff; border-radius:50%;
+  animation:spin .7s linear infinite; display:none}
+.busy .spinner{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1f1d3a; color:#fff;
+  padding:11px 16px; border-radius:12px; font-size:13px; box-shadow:0 10px 30px -10px #0008; max-width:min(680px, calc(100vw - 32px));
+  display:none; z-index:60}
+footer{max-width:1560px; margin:0 auto; padding:0 28px 28px; color:var(--muted); font-size:12px}
+.mono{font-family:var(--mono); font-size:12px}
+.muted{color:var(--muted)}
+.empty{color:var(--muted); font-size:13px; font-style:italic}
 
-.wallet{display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line)}
+/* ---------------------------------------------------------------- setup */
+.setup{position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:24px; overflow:auto;
+  background:radial-gradient(900px 520px at 85% -10%, #e6e1ff 0, transparent 60%),
+             radial-gradient(800px 480px at -10% 110%, #d9f3ee 0, transparent 60%), var(--bg)}
+.setup-card{width:min(500px,100%); background:#fff; border:1px solid var(--line); border-radius:22px; padding:34px 34px 26px;
+  box-shadow:0 40px 90px -40px rgba(20,22,31,.45), 0 2px 8px rgba(20,22,31,.04); margin:auto; animation:rise .35s ease}
+@keyframes rise{from{opacity:0; transform:translateY(8px)}}
+.setup .brand{font-size:24px}
+.setup h1{font-size:25px; line-height:1.22; letter-spacing:-.025em; margin:18px 0 10px; font-weight:750; text-wrap:balance}
+.setup .lede{color:var(--muted); margin:0 0 18px; font-size:14px}
+.minipath{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:11.5px; font-weight:600; color:var(--ink2); margin:0 0 22px}
+.minipath span{display:inline-flex; align-items:center; gap:6px; padding:4px 9px; border-radius:999px; border:1px solid var(--line); background:#fbfbfd}
+.minipath span i{width:7px; height:7px; border-radius:50%; background:var(--c)}
+.minipath b{color:#c0c3cf; font-weight:500}
+.keyfield{position:relative}
+.keyfield input{padding-right:78px; font-family:var(--mono); font-size:13px; height:46px}
+.keyfield .eye{position:absolute; right:7px; top:7px; height:32px; padding:0 10px; font-size:12px; border-radius:8px}
+.setup .toggle-row{margin:14px 0 16px}
+.wide{width:100%; justify-content:center; padding:12px; font-size:14.5px}
+.formerr{background:#fff4f6; border:1px solid #ffd0da; color:#9f1239; border-radius:10px; padding:9px 12px; font-size:12.5px; margin:0 0 14px; line-height:1.45}
+.trust{display:flex; gap:10px; align-items:flex-start; font-size:12.5px; color:#115e59; background:#f0fdf9; border:1px solid #b8efe2;
+  border-radius:12px; padding:11px 13px; margin:16px 0 0; line-height:1.45}
+.trust .ic{margin-top:2px; width:15px; height:15px}
+.setup-foot{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:18px; font-size:12.5px; color:var(--muted)}
+@media (max-width:520px){ .setup{padding:12px; align-items:flex-start} .setup-card{padding:24px 20px 20px; border-radius:18px} .setup h1{font-size:21px}
+  .minipath{gap:3px; font-size:10px; flex-wrap:nowrap} .minipath span{padding:3px 6px; gap:4px} .minipath span i{width:6px; height:6px} }
+
+/* ---------------------------------------------------------------- ask view (unchanged layout) */
+main.ask{display:grid; grid-template-columns:minmax(400px, 5fr) 7fr; gap:22px; padding:22px 28px 40px;
+  max-width:1560px; margin:0 auto}
+@media (max-width:1050px){ main.ask{grid-template-columns:1fr} }
+.col{display:flex; flex-direction:column; gap:16px; min-width:0}
+.wallet{display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); flex-wrap:wrap}
 .creds{display:flex; gap:5px; flex-wrap:wrap}
-.cred{width:16px; height:16px; border-radius:4px; background:linear-gradient(135deg,#fcd34d,#f59e0b);
-  box-shadow:inset 0 -2px 0 #0000001a}
+.cred{width:16px; height:16px; border-radius:4px; background:linear-gradient(135deg,#fcd34d,#f59e0b); box-shadow:inset 0 -2px 0 #0000001a}
 .cred.spent{background:#e5e7eb; box-shadow:none}
-
 .txt{font-size:14px; line-height:1.75; color:var(--ink2); white-space:pre-wrap; word-wrap:break-word}
 mark{border-radius:5px; padding:1px 4px; font-weight:600}
 mark.o{background:#ffe4e9; color:#be123c}
@@ -80,49 +173,52 @@ mark.restored{background:#ccfbf1; color:#0f766e}
 .legend{display:flex; gap:12px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); margin-top:10px}
 .legend span{display:inline-flex; gap:6px; align-items:center}
 .sw{width:10px; height:10px; border-radius:3px; display:inline-block}
-
 .answer{font-size:14.5px; line-height:1.65; color:var(--ink)}
 .answer p{margin:0 0 10px} .answer ul{margin:0 0 10px; padding-left:20px} .answer h4{margin:12px 0 6px}
 .answer code{font-family:var(--mono); font-size:12.5px; background:#f4f4f8; padding:1px 5px; border-radius:5px}
-.timing{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+.timing{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:center}
 .timing .pill{font-weight:500}
 .timing b{color:var(--ink)}
-
+.tracelink{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--indigo);
+  padding:5px 11px; border-radius:999px; background:#eef0ff; border:1px solid #dcdcfb; white-space:nowrap; transition:background .15s}
+.tracelink:hover{text-decoration:none; background:#e4e6ff}
+.tracelink .ic{width:13px; height:13px; transition:transform .15s}
+.tracelink:hover .ic{transform:translateX(2px)}
+.card h2 .tracelink{margin-left:auto}
 table.vault{width:100%; border-collapse:collapse; font-size:13px}
-.vault td{padding:7px 4px; border-bottom:1px solid #f0f0f4}
+.vault td{padding:7px 4px; border-bottom:1px solid var(--line2); overflow-wrap:anywhere}
 .vault td:first-child{font-family:var(--mono); color:#6d28d9}
 .vault td.arrow{color:var(--muted); width:24px; text-align:center}
 .vault td:nth-child(3){font-weight:600}
 .vault td:last-child{color:var(--muted); text-align:right; font-size:12px}
-.empty{color:var(--muted); font-size:13px; font-style:italic}
-
-/* the path */
 .flow{display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:12.5px; font-weight:600; color:var(--ink2)}
 .flow .node{display:inline-flex; align-items:center; gap:7px; padding:6px 11px; border-radius:999px; background:#fff;
   border:1px solid var(--line); transition:all .25s}
 .flow .node i{width:9px; height:9px; border-radius:50%; background:var(--c)}
 .flow .sep{color:#c0c3cf}
-.flow .node.live{border-color:var(--c); box-shadow:0 0 0 4px color-mix(in srgb, var(--c) 18%, transparent);
-  transform:translateY(-1px)}
+.flow .node.live{border-color:var(--c); box-shadow:0 0 0 4px color-mix(in srgb, var(--c) 18%, transparent); transform:translateY(-1px)}
 .sees{display:grid; grid-template-columns:1.6fr 1fr; gap:16px}
 @media (max-width:700px){ .sees{grid-template-columns:1fr} }
 .h6{font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:0 0 6px}
 .h6.y{color:var(--teal)} .h6.n{color:var(--coral)}
-.kv{display:grid; grid-template-columns:118px 1fr; gap:4px 10px; font-size:13px; align-items:baseline}
+.kv{display:grid; grid-template-columns:118px 1fr; gap:4px 10px; font-size:13px; align-items:baseline; margin:0}
 .kv dt{color:var(--muted)} .kv dd{margin:0; min-width:0; overflow-wrap:anywhere}
-.mono{font-family:var(--mono); font-size:12px}
 .never{list-style:none; margin:0; padding:0; font-size:13px; color:var(--ink2)}
 .never li{padding:2px 0} .never li:before{content:"✕"; color:var(--coral); font-weight:700; margin-right:8px; font-size:11px}
-.badge{display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:700}
+.badge{display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:6px; font-size:12px; font-weight:700; white-space:nowrap}
 .badge.acc{background:#ccfbf1; color:#0f766e} .badge.rej{background:#ffe4e9; color:#be123c}
+.badge.neu{background:#f1f1f6; color:var(--ink2)} .badge.amb{background:#fef3c7; color:#92400e}
 .callout{margin-top:12px; padding:10px 12px; border-radius:10px; font-size:12.5px; background:#f7f8fb;
-  border:1px solid var(--line); color:var(--ink2)}
+  border:1px solid var(--line); color:var(--ink2); line-height:1.5; overflow-wrap:anywhere}
 .callout b{color:var(--ink)}
 .callout.good{background:#f0fdf9; border-color:#b8efe2}
 .callout.bad{background:#fff4f6; border-color:#ffd0da}
-pre{margin:0; font-family:var(--mono); font-size:11.8px; line-height:1.55; background:#0f1220; color:#e3e6f3;
+.callout.warn{background:#fffbeb; border-color:#fde68a}
+pre{margin:0; font-family:var(--mono); font-size:11.8px; line-height:1.6; background:#0f1220; color:#e3e6f3;
   border-radius:12px; padding:12px 14px; max-height:300px; overflow:auto; white-space:pre-wrap; word-break:break-word}
-pre .k{color:#a5b4fc} pre .s{color:#86efac} pre .h{color:#fda4af} pre .c{color:#7c8199}
+pre .k, pre .jk{color:#a5b4fc} pre .s, pre .js{color:#86efac} pre .h{color:#fda4af} pre .c{color:#7c8199}
+pre .jn{color:#fcd34d} pre .jb{color:#f9a8d4}
+pre mark.ms{background:#5b21b6; color:#f5f3ff; padding:0 3px; border-radius:4px; font-weight:600}
 .compare{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
 .compare > div{border-radius:10px; padding:10px 12px; font-size:12.5px; border:1px solid var(--line)}
 .compare .without{background:#fff4f6; border-color:#ffd0da}
@@ -130,26 +226,339 @@ pre .k{color:#a5b4fc} pre .s{color:#86efac} pre .h{color:#fda4af} pre .c{color:#
 .compare h5{margin:0 0 6px; font-size:11px; letter-spacing:.06em; text-transform:uppercase}
 .compare .without h5{color:#be123c} .compare .with h5{color:#6d28d9}
 .compare ul{margin:0; padding-left:16px}
-.toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1f1d3a; color:#fff;
-  padding:11px 16px; border-radius:12px; font-size:13px; box-shadow:0 10px 30px -10px #0008; max-width:680px;
-  display:none; z-index:20}
-.spinner{width:14px; height:14px; border:2px solid #ffffff66; border-top-color:#fff; border-radius:50%;
-  animation:spin .7s linear infinite; display:none}
-.busy .spinner{display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-footer{max-width:1560px; margin:0 auto; padding:0 28px 28px; color:var(--muted); font-size:12px}
+@media (max-width:520px){ .compare{grid-template-columns:1fr} .kv{grid-template-columns:96px 1fr} }
+
+/* ---------------------------------------------------------------- observability */
+.obs{display:grid; grid-template-columns:280px minmax(0,1fr); gap:24px; padding:22px 24px 48px; max-width:1560px; margin:0 auto;
+  align-items:start; animation:fade .25s ease}
+@keyframes fade{from{opacity:0}}
+.obs.none{grid-template-columns:minmax(0,1fr)}
+.rail{position:sticky; top:74px; background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow);
+  display:flex; flex-direction:column; max-height:calc(100vh - 96px); overflow:hidden}
+.rail-h{display:flex; align-items:center; gap:8px; padding:13px 16px; border-bottom:1px solid var(--line); font-size:13px; font-weight:700}
+.rail-h .count{background:#f1f1f6; color:var(--ink2)}
+kbd{font-family:var(--mono); font-size:10.5px; color:var(--muted); border:1px solid var(--line); border-bottom-width:2px; border-radius:5px;
+  padding:0 5px; background:#fbfbfd; line-height:16px}
+.rail-list{overflow:auto; padding:6px; display:flex; flex-direction:column; gap:2px}
+.ti{display:block; border:1px solid transparent; border-radius:11px; padding:10px 12px 10px 14px; color:var(--ink); position:relative;
+  transition:background .12s, border-color .12s}
+.ti:hover{background:#f7f7fb; text-decoration:none}
+.ti.sel{background:#f4f3ff; border-color:#dddafc}
+.ti.sel:before{content:""; position:absolute; left:4px; top:12px; bottom:12px; width:3px; border-radius:3px; background:var(--indigo)}
+.ti-top{display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+.ti-top b{color:var(--ink2); font-weight:600}
+.ti-p{font-size:13px; line-height:1.4; margin:5px 0 6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink)}
+.ti-meta{display:flex; gap:6px; align-items:center; font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden}
+.ti-meta .mono{font-size:11px}
+.sdot{width:8px; height:8px; border-radius:50%; background:var(--teal); flex:none}
+.sdot.refused{background:var(--amber)} .sdot.error{background:var(--coral)}
+.tg{font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:1px 6px; border-radius:5px; background:#fef3c7; color:#92400e}
+.tg.v{background:#ccfbf1; color:#0f766e} .tg.x{background:#ffe4e9; color:#be123c}
+@media (max-width:1099px){
+  .obs{grid-template-columns:minmax(0,1fr); padding:16px; gap:16px}
+  .rail{position:static; max-height:none}
+  .rail-h kbd{display:none}
+  .rail-list{flex-direction:row; overflow-x:auto; gap:8px; padding:10px; scroll-snap-type:x proximity}
+  .ti{flex:0 0 250px; border-color:var(--line); scroll-snap-align:start}
+}
+
+.th-meta{display:flex; align-items:center; gap:8px 10px; flex-wrap:wrap; font-size:12.5px; color:var(--muted)}
+.status{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px;
+  background:#ccfbf1; color:#0f766e; text-transform:uppercase; letter-spacing:.05em}
+.status.refused{background:#fef3c7; color:#92400e} .status.error{background:#ffe4e9; color:#be123c}
+.status i{width:6px; height:6px; border-radius:50%; background:currentColor}
+.kind{font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:#f1f1f6; color:var(--ink2); text-transform:uppercase; letter-spacing:.05em}
+.th-actions{margin-left:auto; display:flex; gap:8px}
+@media (max-width:640px){ .th-meta .sep{display:none} }
+.th-prompt{font-size:19px; line-height:1.5; font-weight:600; letter-spacing:-.012em; margin:12px 0 8px; color:var(--ink);
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
+.th-prompt mark{padding:0 4px}
+.story{font-size:13.5px; color:var(--ink2); margin:0 0 18px}
+.story b{color:var(--ink)}
+
+#obsmain{min-width:0; container-type:inline-size}
+.kpis{display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:10px; margin-bottom:16px}
+@container (max-width:1020px){ .kpis{grid-template-columns:repeat(4, minmax(0,1fr))} .kpi.wide{grid-column:span 2} }
+@container (max-width:560px){ .kpis{grid-template-columns:repeat(2, minmax(0,1fr))} }
+.kpi{background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px 13px 11px; box-shadow:0 1px 2px rgba(20,22,31,.04); min-width:0}
+.kpi .l{font-size:12px; font-weight:600; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.kpi .v{font-size:22px; font-weight:700; letter-spacing:-.02em; margin:4px 0 1px; font-variant-numeric:tabular-nums; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis}
+.kpi .v small{font-size:13px; font-weight:600; color:var(--muted); letter-spacing:0}
+.kpi .s{font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.kpi.accent{border-color:#a7eadb; background:linear-gradient(180deg,#effcf8,#fff 70%)}
+.kpi.accent .v{color:#0f766e}
+.kpi.good .v{color:#0f766e} .kpi.bad .v{color:#be123c}
+.kpi button.link{border:none; background:none; padding:0; color:var(--indigo); font-size:11.5px; font-weight:700}
+.meter{height:5px; border-radius:99px; background:#ece8fd; margin-top:8px; overflow:hidden}
+.meter i{display:block; height:100%; background:var(--teal); min-width:3px; border-radius:99px}
+
+.section-h{display:flex; align-items:baseline; gap:4px 12px; margin:28px 0 12px; flex-wrap:wrap}
+.section-h h2{white-space:nowrap}
+.section-h h2{font-size:17px; letter-spacing:-.015em; margin:0}
+.section-h p{margin:0; color:var(--muted); font-size:12.5px}
+.card-h{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px}
+.card-h h2{margin:0}
+.card-h .hint{margin:0}
+
+/* waterfall */
+.wf{padding-bottom:12px}
+.wf-axis, .wf-row{display:grid; grid-template-columns:250px minmax(0,1fr)}
+.wf-axis{height:24px; font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; border-bottom:1px solid var(--line); margin-bottom:4px}
+.ticks{position:relative; margin:0 14px 0 4px}
+.tk{position:absolute; bottom:5px; transform:translateX(-50%); white-space:nowrap}
+.tk.first{transform:none} .tk.last{transform:translateX(-100%)}
+.wf-row{min-height:34px; border-radius:9px; cursor:pointer; align-items:center; transition:background .12s}
+.wf-row:hover{background:#f6f6fb}
+.wf-label{display:flex; align-items:center; gap:9px; padding:0 10px; min-width:0; font-size:13px}
+.wf-label .n{width:20px; height:20px; border-radius:50%; background:var(--c); color:#fff; font-size:10.5px; font-weight:700;
+  display:grid; place-items:center; flex:none}
+.wf-label .t{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--ink); font-weight:500}
+.wf-label .pn{margin-left:auto; font-size:11.5px; color:var(--muted); white-space:nowrap}
+.track{position:relative; height:34px; margin:0 14px 0 4px}
+.track .g{position:absolute; top:0; bottom:0; width:1px; background:#efeff5}
+.track .brk{position:absolute; top:0; bottom:0; background:repeating-linear-gradient(135deg, transparent 0 5px, #ede9fe55 5px 10px)}
+.bar{position:absolute; top:10px; height:14px; border-radius:4px; background:var(--c); min-width:4px; transform-origin:left center;
+  animation:grow .55s cubic-bezier(.2,.75,.2,1) both; box-shadow:inset 0 -1px 0 rgba(0,0,0,.12)}
+.bar.err{background:repeating-linear-gradient(135deg, #F43F5E 0 6px, #f8566f 6px 12px)}
+.bar.comp{background:repeating-linear-gradient(135deg, var(--c) 0 7px, color-mix(in srgb, var(--c) 75%, #fff) 7px 14px)}
+.wf-row:hover .bar{filter:brightness(1.08)}
+@keyframes grow{from{transform:scaleX(0)}}
+.bl{position:absolute; top:50%; transform:translateY(-50%); font-size:11.5px; font-weight:650; color:var(--ink2); white-space:nowrap;
+  font-variant-numeric:tabular-nums; pointer-events:none}
+.bl.in{color:#fff; text-align:center; text-shadow:0 1px 1px rgba(0,0,0,.2)}
+.bl.err{color:#be123c}
+.bl.in.err{color:#fff; text-shadow:0 1px 2px rgba(80,0,20,.45)}
+.wf-foot{display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--line2); font-size:11.5px; color:var(--muted)}
+.wf-foot span{display:inline-flex; align-items:center; gap:6px}
+.wf-foot i{width:9px; height:9px; border-radius:3px; background:var(--c)}
+.tip{position:fixed; z-index:45; pointer-events:none; background:#14161F; color:#e7e9f3; border-radius:10px; padding:9px 11px; font-size:12px;
+  box-shadow:0 12px 30px -10px rgba(0,0,0,.5); max-width:300px; line-height:1.45}
+.tip b{color:#fff; display:block; margin-bottom:2px}
+.tip .m{color:#a3a8bf}
+@media (max-width:700px){
+  .wf-axis, .wf-row{grid-template-columns:minmax(0,1fr)}
+  .wf-axis > div:first-child{display:none}
+  .wf-row{padding:6px 0 0}
+  .wf-label{padding:0 6px}
+  .track{height:28px; margin:0 6px}
+  .bar{top:8px; height:12px}
+  .ticks{margin:0 6px}
+}
+
+/* prove it */
+.prove{border-top:3px solid var(--teal)}
+.prove-h{display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap}
+.prove-h .ico{width:38px; height:38px; border-radius:11px; display:grid; place-items:center; background:#ccfbf1; color:#0f766e; flex:none}
+.prove-h .ico .ic{width:20px; height:20px}
+.prove-h h2{margin:0 0 2px}
+.prove-h p{margin:0; color:var(--muted); font-size:12.5px; max-width:640px}
+.prove-h .act{margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:6px}
+.why{font-size:12px; color:var(--muted); max-width:340px; text-align:right}
+.verdict{display:flex; gap:16px; align-items:center; padding:16px 18px; border-radius:14px; margin-top:16px;
+  background:linear-gradient(135deg,#ecfdf7,#f3fdfb); border:1px solid #a7eadb; animation:rise .35s ease}
+.verdict .vi{width:44px; height:44px; border-radius:50%; background:var(--teal); color:#fff; display:grid; place-items:center; flex:none;
+  box-shadow:0 0 0 6px #0d948818}
+.verdict .vi .ic{width:22px; height:22px; stroke-width:2.4}
+.verdict .big{font-size:22px; font-weight:800; letter-spacing:-.02em; color:#0f766e; line-height:1.2}
+.verdict .sub{font-size:12.5px; color:#2f6f68; margin-top:2px; overflow-wrap:anywhere}
+.verdict > div:last-child{min-width:0}
+.verdict.bad{background:#fff4f6; border-color:#ffd0da} .verdict.bad .big{color:#be123c} .verdict.bad .vi{background:var(--coral); box-shadow:0 0 0 6px #f43f5e18}
+.verdict.bad .sub{color:#9f1239}
+.pgrid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; margin-top:16px}
+@media (max-width:900px){ .pgrid{grid-template-columns:minmax(0,1fr)} .prove-h .act{margin-left:0; align-items:flex-start} .why{text-align:left} }
+.ids{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; margin-top:16px; padding-top:14px; border-top:1px solid var(--line2); font-size:12.5px}
+.idbox{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:10px; padding:3px 3px 3px 10px; background:#fbfbfd; max-width:100%; min-width:0}
+.idbox > span{color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; white-space:nowrap}
+.idbox code{font-family:var(--mono); font-size:12px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+.copy{padding:3px 9px; font-size:11.5px; border-radius:7px; gap:5px; white-space:nowrap; flex:none}
+.copy .ic{width:12px; height:12px}
+.copy.done{color:#0f766e; border-color:#a7eadb; background:#f0fdf9}
+.extlinks{display:flex; gap:14px; flex-wrap:wrap; margin-left:auto}
+.extlinks a{display:inline-flex; align-items:center; gap:5px; font-weight:600; font-size:12.5px}
+.extlinks .ic{width:12px; height:12px}
+
+/* journey */
+.journey{position:relative; padding-left:50px}
+.journey:before{content:""; position:absolute; left:18px; top:20px; bottom:20px; width:2px; border-radius:2px; opacity:.4;
+  background:linear-gradient(180deg, var(--device) 0 33%, var(--relay) 40%, var(--gateway) 50%, var(--lab) 62%, var(--gateway) 72%, var(--device) 82%)}
+.step{position:relative; background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px 20px; margin-bottom:14px;
+  scroll-margin-top:84px; box-shadow:var(--shadow); transition:box-shadow .4s, border-color .4s}
+.step .sn{position:absolute; left:-50px; top:15px; width:38px; height:38px; border-radius:50%; background:#fff; border:2px solid var(--c);
+  color:var(--c); font-weight:800; display:grid; place-items:center; font-size:13px; box-shadow:0 0 0 4px var(--bg)}
+.step.err .sn{border-color:var(--coral); color:var(--coral)}
+.step.flash{border-color:var(--c); box-shadow:0 0 0 4px color-mix(in srgb, var(--c) 20%, transparent), var(--shadow)}
+.step-h{display:flex; align-items:flex-start; gap:10px 12px; margin-bottom:14px; flex-wrap:wrap}
+.step-h .tt{flex:1; min-width:220px}
+.step-h h3{margin:0; font-size:15.5px; letter-spacing:-.01em}
+.step-h p{margin:3px 0 0; color:var(--muted); font-size:12.5px; line-height:1.45}
+.party{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:color-mix(in srgb, var(--c) 82%, #000);
+  background:color-mix(in srgb, var(--c) 9%, #fff); border:1px solid color-mix(in srgb, var(--c) 24%, #fff); padding:3px 9px; border-radius:999px; white-space:nowrap}
+.party i{width:7px; height:7px; border-radius:50%; background:var(--c)}
+.dur{font-size:12px; font-weight:700; color:var(--ink2); font-variant-numeric:tabular-nums; background:#f4f4f8; padding:3px 9px; border-radius:7px; white-space:nowrap}
+.io{display:grid; grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr); gap:10px}
+.io-arrow{display:grid; place-items:center; color:#b4b8c8}
+.io-arrow .ic{width:18px; height:18px}
+.io-col{min-width:0; display:flex; flex-direction:column; container-type:inline-size}
+.io-l{font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 7px; display:flex; gap:8px; align-items:center}
+.io-l em{font-style:normal; font-weight:600; letter-spacing:0; text-transform:none; color:var(--muted); font-size:11.5px}
+.box{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:#fbfbfd; min-width:0}
+.box .txt{font-size:13.5px; line-height:1.7}
+.more{margin-top:14px}
+@media (max-width:900px){
+  .io{grid-template-columns:minmax(0,1fr)}
+  .io-arrow{height:18px} .io-arrow .ic{transform:rotate(90deg)}
+}
+@media (max-width:640px){
+  .journey{padding-left:0} .journey:before{display:none}
+  .step{padding:16px 14px} .step .sn{position:static; width:30px; height:30px; font-size:12px; box-shadow:none}
+}
+
+table.t{width:100%; border-collapse:collapse; font-size:13px}
+.t th{font-size:10.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); text-align:left; font-weight:700; padding:7px 10px;
+  border-bottom:1px solid var(--line); white-space:nowrap}
+.t td{padding:8px 10px; border-bottom:1px solid var(--line2); vertical-align:top; overflow-wrap:break-word}
+@media (max-width:640px){ .t .c-kind, .t .arr{display:none} .t th, .t td{padding:7px 8px} }
+.t tr:last-child td{border-bottom:none}
+.t .arr{color:#b4b8c8; width:20px; padding-left:0; padding-right:0; text-align:center}
+.tablewrap{border:1px solid var(--line); border-radius:12px; overflow:auto}
+.tablewrap.narrow{max-width:640px}
+.chips{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.chip{display:inline-flex; align-items:center; gap:6px; padding:4px 9px; border-radius:8px; font-size:12px; border:1px solid var(--line);
+  background:#fff; color:var(--ink2); max-width:100%; min-width:0; overflow-wrap:anywhere; flex-wrap:wrap}
+.chip .ic{width:12px; height:12px}
+.chip.ok{background:#f0fdf9; border-color:#b8efe2; color:#0f766e}
+.chip.bad{background:#fff4f6; border-color:#ffd0da; color:#be123c}
+.chip.vi{background:#f5f3ff; border-color:#ddd6fe; color:#6d28d9}
+.chip b{font-weight:700}
+.lbl{font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:14px 0 7px}
+.big-mono{font-family:var(--mono); font-size:14px; color:var(--ink); word-break:break-all}
+
+.code{border-radius:12px; overflow:hidden; background:#0f1220; border:1px solid #1b1f33; min-width:0}
+.code > summary{display:flex; align-items:center; gap:8px; padding:8px 10px 8px 12px; background:#161a2c; color:#a3a8c3; font-size:11.5px;
+  font-family:var(--mono); cursor:pointer; list-style:none; user-select:none}
+.code > summary::-webkit-details-marker{display:none}
+.code > summary .chev{width:12px; height:12px; transition:transform .15s; color:#6d7394}
+.code > summary .ttl{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.code > summary .copy{flex:none}
+.code[open] > summary{border-bottom:1px solid #23283f}
+.code[open] > summary .chev{transform:rotate(90deg)}
+.code pre{border-radius:0; max-height:360px}
+.code + .code{margin-top:10px}
+.copy.dark{background:transparent; border-color:#2c3252; color:#c9cde0}
+.copy.dark:hover{background:#20253b}
+.copy.dark.done{color:#5eead4; border-color:#115e59; background:transparent}
+
+.hex{font-family:var(--mono); font-size:11.5px; line-height:1.75; background:#0f1220; color:#c9cde0; border-radius:12px; padding:12px 14px;
+  overflow-x:auto; white-space:pre; border:1px solid #1b1f33}
+.hex .off{color:#4f5675; user-select:none}
+.hex .k{color:#7dd3fc} .hex .nn{color:#fcd34d} .hex .ct{color:#c4b5fd}
+.hex .asc{color:#4f5675}
+.hex .more{color:#7c8199; font-style:italic}
+@container (max-width:540px){ .hex .asc{display:none} }
+.hex.tall{max-height:300px; overflow-y:auto}
+.hexkey{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); margin-top:8px}
+.hexkey span{display:inline-flex; align-items:center; gap:6px}
+.hexkey i{width:9px; height:9px; border-radius:3px}
+.sizes{display:flex; align-items:stretch; gap:6px; flex-wrap:wrap}
+.size{display:inline-flex; flex-direction:column; padding:7px 11px; border-radius:10px; border:1px solid var(--line); background:#fff; line-height:1.25}
+.size b{font-size:13.5px; font-variant-numeric:tabular-nums}
+.size span{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:700}
+.size.hi{border-color:#c7d2fe; background:#eef2ff}
+.sizes .arr{display:grid; place-items:center; color:#b4b8c8}
+.diff{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px}
+.pane{border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; min-width:0; background:#fff}
+.pane-h{padding:8px 12px; font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; border-bottom:1px solid var(--line);
+  display:flex; justify-content:space-between; gap:8px}
+.pane-h em{font-style:normal; font-weight:600; letter-spacing:0; text-transform:none}
+.pane.l .pane-h{background:#f6f4ff; color:#6d28d9} .pane.r .pane-h{background:#f0fdf9; color:#0f766e}
+.pane .txt{padding:12px 14px; max-height:400px; overflow:auto; font-size:13px; line-height:1.7; position:relative}
+@media (max-width:900px){ .diff{grid-template-columns:minmax(0,1fr)} }
+
+.emptystate{grid-column:1/-1; max-width:560px; margin:56px auto; text-align:center; background:#fff; border:1px solid var(--line);
+  border-radius:20px; padding:40px 32px; box-shadow:var(--shadow)}
+.emptystate svg.art{width:220px; height:auto; margin:0 auto 18px; display:block}
+.emptystate h2{margin:0 0 6px; font-size:19px; letter-spacing:-.015em}
+.emptystate p{color:var(--muted); margin:0 0 20px}
+.emptystate .primary{display:inline-flex}
+.emptystate a.primary{color:#fff; text-decoration:none; padding:10px 16px; border-radius:11px; background:var(--indigo); font-weight:600;
+  align-items:center; gap:8px; box-shadow:0 6px 16px -8px #4f46e5aa}
+.emptystate a.primary:hover{background:#4338ca}
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">Lethe<i>.</i></div>
+<!-- ============================ setup ============================ -->
+<div class="setup" id="setup" hidden>
+  <div class="setup-card" role="dialog" aria-labelledby="setup-title">
+    <div class="brand">Lethe<i>.</i></div>
+    <h1 id="setup-title">Your question reaches OpenAI. Your names, places and IDs never do.</h1>
+    <p class="lede">Connect an OpenAI key to run the whole private path on this machine, then trace every step it took.</p>
+    <div class="minipath" aria-hidden="true">
+      <span style="--c:var(--device)"><i></i>Your device</span><b>→</b>
+      <span style="--c:var(--relay)"><i></i>Relay</span><b>→</b>
+      <span style="--c:var(--gateway)"><i></i>Gateway</span><b>→</b>
+      <span style="--c:var(--lab)"><i></i>OpenAI</span>
+    </div>
+    <div class="formerr" id="keyerr" role="alert" hidden></div>
+    <label class="k" for="key" style="margin-top:0">OpenAI API key</label>
+    <div class="keyfield">
+      <input id="key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-…" aria-describedby="trust">
+      <button type="button" class="eye small" id="eye" aria-label="Show key" aria-pressed="false">
+        <svg class="ic" viewBox="0 0 20 20"><path d="M1.5 10S5 4 10 4s8.5 6 8.5 6-3.5 6-8.5 6S1.5 10 1.5 10z"/><circle cx="10" cy="10" r="2.5"/></svg><span>Show</span>
+      </button>
+    </div>
+    <div class="toggle-row">
+      <div><b id="store-l">Verification mode</b><p>OpenAI keeps each request for 30 days so you can check what it received. Turn off for normal use.</p></div>
+      <button type="button" class="switch" id="storeswitch" role="switch" aria-checked="true" aria-labelledby="store-l"></button>
+    </div>
+    <button class="primary wide" id="connect" type="button"><span class="spinner"></span><span>Connect</span></button>
+    <p class="trust" id="trust"><svg class="ic" viewBox="0 0 20 20"><rect x="4" y="9" width="12" height="8.5" rx="2"/><path d="M7 9V6.5a3 3 0 016 0V9"/></svg>
+      <span>Your key stays in this container's memory. It is never written to disk or sent anywhere except api.openai.com.</span></p>
+    <div class="setup-foot">
+      <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">Get a key on platform.openai.com</a>
+      <span><a href="#" id="dryrun">Try a dry run without a key</a><a href="#" id="setupcancel" hidden>Cancel</a></span>
+    </div>
+  </div>
+</div>
+
+<header class="top">
+  <a class="brand" href="#/">Lethe<i>.</i></a>
+  <nav class="tabs" aria-label="Views">
+    <a class="tab" id="nav-ask" href="#/">Ask</a>
+    <a class="tab" id="nav-obs" href="#/trace">Observability <span class="count" id="tracecount">0</span></a>
+  </nav>
   <div class="tag">Local demo · watch what every party in the path can see</div>
   <div class="grow"></div>
   <span class="pill" id="detector"><span class="dot"></span><span>Scrubber</span></span>
-  <span class="pill" id="provider"><span class="dot"></span><span>…</span></span>
+  <div class="keywrap">
+    <button class="pill keybtn" id="keybtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="settings">
+      <span class="dot"></span><span id="keylabel">…</span><span class="vt" id="keyvt"></span>
+      <svg class="ic" viewBox="0 0 16 16" style="width:12px;height:12px;color:var(--muted)"><path d="M4 6l4 4 4-4"/></svg>
+    </button>
+    <div class="popover" id="settings" role="dialog" aria-label="Key settings" hidden>
+      <div class="pop-h"><b>Connection</b><span class="grow"></span><span class="badge" id="pp-state"></span></div>
+      <dl class="kv">
+        <dt>Lab</dt><dd id="pp-provider"></dd>
+        <dt>Key</dt><dd class="mono" id="pp-key"></dd>
+        <dt>From</dt><dd id="pp-src"></dd>
+        <dt>Models</dt><dd id="pp-models"></dd>
+      </dl>
+      <div class="toggle-row" style="margin-top:14px">
+        <div><b id="pp-store-l">Verification mode</b><p id="pp-store-p">OpenAI keeps each request for 30 days so you can check what it received. Turn off for normal use.</p></div>
+        <button type="button" class="switch" id="pp-store" role="switch" aria-checked="true" aria-labelledby="pp-store-l"></button>
+      </div>
+      <div class="row">
+        <button class="small" id="pp-change">Change key</button>
+        <button class="small danger" id="pp-forget">Forget key</button>
+      </div>
+      <p class="fine"><svg class="ic" viewBox="0 0 20 20" style="width:13px;height:13px;margin-top:1px"><rect x="4" y="9" width="12" height="8.5" rx="2"/><path d="M7 9V6.5a3 3 0 016 0V9"/></svg>
+        The key lives in this server's memory only. Restarting the container forgets it.</p>
+    </div>
+  </div>
 </header>
 
-<main>
+<!-- ============================ ask view ============================ -->
+<main class="ask" id="view-ask">
   <!-- ============================ your device ============================ -->
   <section class="col">
     <div class="card role" style="--c:var(--sky)">
@@ -163,7 +572,7 @@ footer{max-width:1560px; margin:0 auto; padding:0 28px 28px; color:var(--muted);
         <div class="seg" id="models"></div>
         <div class="grow"></div>
         <button id="newchat">New chat</button>
-        <button class="primary row" id="ask" style="gap:8px"><span class="spinner"></span><span>Ask privately</span></button>
+        <button class="primary" id="ask" style="margin-left:auto"><span class="spinner"></span><span>Ask privately</span></button>
       </div>
       <div class="wallet">
         <span class="h6" style="margin:0;color:var(--amber)">Credentials</span>
@@ -189,7 +598,8 @@ footer{max-width:1560px; margin:0 auto; padding:0 28px 28px; color:var(--muted);
     </div>
 
     <div class="card">
-      <h2>Answer <small style="font-weight:500;color:var(--muted);font-size:12.5px" id="turns"></small></h2>
+      <h2>Answer <small style="font-weight:500;color:var(--muted);font-size:12.5px" id="turns"></small>
+        <a class="tracelink" id="tracelink" href="#/trace" hidden>Open trace <svg class="ic" viewBox="0 0 20 20"><path d="M4 10h12m-5-5l5 5-5 5"/></svg></a></h2>
       <p class="hint">Real names are put back on your device. <a href="#" id="rawtoggle">Show what the model wrote</a></p>
       <div class="answer" id="answer"><span class="empty">—</span></div>
       <div class="timing" id="timing"></div>
@@ -268,18 +678,44 @@ footer{max-width:1560px; margin:0 auto; padding:0 28px 28px; color:var(--muted);
     </div>
   </section>
 </main>
+
+<!-- ============================ observability view ============================ -->
+<main class="obs" id="view-obs" hidden>
+  <aside class="rail" id="rail">
+    <div class="rail-h">Traces <span class="count" id="railcount">0</span><span class="grow"></span><kbd>↑</kbd><kbd>↓</kbd></div>
+    <div class="rail-list" id="traces" role="listbox" aria-label="Traces"></div>
+  </aside>
+  <section id="obsmain" aria-live="polite"></section>
+</main>
+
 <footer>Demo-grade cryptography, not audited: RSA-FDH blind signatures (the idea behind Privacy Pass), X25519 + ChaCha20-Poly1305 sealing in the shape of Oblivious HTTP, padding to fixed sizes. All five parties run in one local process so you can inspect them.</footer>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status"></div>
+<div class="tip" id="tip" hidden></div>
 
 <script>
-const $ = s => document.querySelector(s);
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let state = {model:null, showRaw:false, last:null, account:"", card:""};
+const svg = d => `<svg class="ic" viewBox="0 0 20 20">${d}</svg>`;
+const I = {
+  arrow: svg('<path d="M4 10h12m-5-5l5 5-5 5"/>'),
+  check: svg('<path d="M4.5 10.5l3.5 3.5 7.5-8"/>'),
+  x: svg('<path d="M5.5 5.5l9 9m0-9l-9 9"/>'),
+  copy: svg('<rect x="7" y="7" width="10" height="10" rx="2"/><path d="M13 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2"/>'),
+  ext: svg('<path d="M8.5 4H4.5v11.5H16v-4M11.5 3.5h5v5M16.5 3.5L9 11"/>'),
+  down: svg('<path d="M10 3.5v10m-4.5-4.5L10 13.5 14.5 9M4 16.5h12"/>'),
+  shield: svg('<path d="M10 2.5l6 2.3v4.8c0 4-2.7 6.6-6 7.9-3.3-1.3-6-3.9-6-7.9V4.8z"/><path d="M7.3 10l2 2 3.6-4"/>'),
+  chev: '<svg class="ic chev" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4"/></svg>',
+};
+const PARTY = {device:{name:"Your device", c:"#0EA5E9"}, issuer:{name:"Issuer", c:"#65A30D"},
+               relay:{name:"Relay", c:"#0D9488"}, gateway:{name:"Gateway", c:"#4F46E5"}, lab:{name:"Lab", c:"#7C3AED"}};
+let state = {model:null, showRaw:false, last:null, account:"", card:"", status:null, traces:[], cache:new Map(), sel:null,
+             wf:"real", count:0, current:null};
 
 async function api(path, body){
   const r = await fetch(path, {method: body ? "POST" : "GET", headers:{"Content-Type":"application/json"},
                                 body: body ? JSON.stringify(body) : undefined});
-  const j = await r.json();
+  const j = await r.json().catch(() => ({error: r.statusText}));
   if(!r.ok) throw new Error(j.error || r.statusText);
   return j;
 }
@@ -289,9 +725,9 @@ function segs(list, cls){
   return list.map(s => !s.k ? esc(s.t) :
     `<mark class="${cls === "s" && s.r === false ? "g" : cls}" title="${esc(s.k)}">${esc(s.t)}</mark>`).join("");
 }
+function restoredHtml(text){ return esc(text).replace(/([\s\S]*?)/g, '<mark class="restored">$1</mark>'); }
 function md(text){
-  let h = esc(text).replace(/(.*?)/g, '<mark class="restored">$1</mark>')
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
+  let h = restoredHtml(text).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<code>$1</code>");
   let out = "", list = false;
   for(const line of h.split("\n")){
     const li = line.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)/), hd = line.match(/^#{1,6}\s+(.*)/);
@@ -307,23 +743,81 @@ function json(o){
     .replace(/:\s(&quot;.*?&quot;)/g, ': <span class="s">$1</span>');
 }
 
+// ---------------------------------------------------------------- formatting
+function fmtMs(ms){
+  if(ms == null || isNaN(ms)) return "—";
+  if(ms === 0) return "0 ms";
+  if(ms < 0.001) return "<1 µs";
+  if(ms < 0.1) return Math.max(1, Math.round(ms * 1000)) + " µs";
+  if(ms < 1) return ms.toFixed(2) + " ms";
+  if(ms < 100) return ms.toFixed(1) + " ms";
+  if(ms < 1000) return Math.round(ms) + " ms";
+  return (ms / 1000).toFixed(2) + " s";
+}
+const fmtB = n => n == null ? "—" : Number(n).toLocaleString() + " B";
+const plural = (n, w, ws) => `${n} ${n === 1 ? w : (ws || w + "s")}`;
+const clock = ts => new Date(ts * 1000).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:false});
+const trunc = (s, n) => s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s;
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function hl(text, terms, cls){  // escape text, then mark every term
+  const e = esc(text), ts = [...new Set((terms || []).filter(t => t && t.length > 1))].sort((a, b) => b.length - a.length);
+  return ts.length ? e.replace(new RegExp(ts.map(t => reEsc(esc(t))).join("|"), "g"), m => `<mark class="${cls}">${m}</mark>`) : e;
+}
+function jsonHtml(value, terms){
+  const s = typeof value === "string" ? value : JSON.stringify(value, null, 2);
+  const re = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*")(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g;
+  let out = "", last = 0, m;
+  while((m = re.exec(s))){
+    out += esc(s.slice(last, m.index));
+    if(m[1]) out += m[2] ? `<span class="jk">${esc(m[1])}</span>${m[2]}` : `<span class="js">${hl(m[1], terms, "ms")}</span>`;
+    else out += `<span class="${/^[-\d]/.test(m[0]) ? "jn" : "jb"}">${m[0]}</span>`;
+    last = re.lastIndex;
+  }
+  return out + esc(s.slice(last));
+}
+const pretty = text => { try{ return JSON.stringify(JSON.parse(text), null, 2); }catch(e){ return text; } };
+
+// copy buttons: register text, render a button, one delegated handler
+const copies = new Map(); let uid = 0;
+function copyBtn(text, {dark = false, label = "Copy"} = {}){
+  const id = "cp" + (++uid); copies.set(id, text);
+  return `<button type="button" class="copy small${dark ? " dark" : ""}" data-copy="${id}" aria-label="${esc(label)}">${I.copy}<span>${dark ? "Copy" : esc(label)}</span></button>`;
+}
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); return true; }
+  catch(e){
+    const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok;
+  }
+}
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-copy]"); if(!b) return;
+  e.preventDefault(); e.stopPropagation();
+  if(await copyText(copies.get(b.dataset.copy) || "")){
+    const span = b.querySelector("span"), was = span.textContent;
+    b.classList.add("done"); span.textContent = "Copied";
+    setTimeout(() => { b.classList.remove("done"); span.textContent = was; }, 1300);
+  }
+});
+function codeBlock(title, html, {open = true, copy = null, max = null} = {}){
+  return `<details class="code"${open ? " open" : ""}><summary>${I.chev}<span class="ttl">${title}</span>${copy != null ? copyBtn(copy, {dark:true}) : ""}</summary>` +
+         `<pre${max ? ` style="max-height:${max}px"` : ""}>${html}</pre></details>`;
+}
+
+// ================================================================ ask view
 function renderViews(v){
-  // wallet
   const total = v.wallet.unspent + v.wallet.spent;
   $("#creds").innerHTML = Array.from({length: total}, (_, i) => `<i class="cred ${i < v.wallet.spent ? "spent" : ""}"></i>`).join("");
   $("#credtext").textContent = total ? `${v.wallet.unspent} unspent · ${v.wallet.spent} spent` : "none yet";
-  // issuer
   if(v.issuer) kv($("#issuer"), [
     ["Account", esc(v.issuer.account)], ["Card", esc(v.issuer.card)],
     ["Signed, blind", `<span class="mono">${v.issuer.blinded.slice(0,3).map(esc).join("<br>")}</span>${v.issuer.blinded.length>3?`<br><span class="tag">+${v.issuer.blinded.length-3} more</span>`:""}`],
     ["Key", `<span class="mono">${esc(v.issuer.key_id)}</span> <span class="tag">one key for everyone</span>`]]);
-  // relay
   if(v.relay) kv($("#relay"), [
     ["Your IP", `<b>${esc(v.relay.client_ip)}</b> <span class="tag">your real IP in production</span>`],
     ["Sealed request", `${v.relay.request_bytes.toLocaleString()} bytes <span class="tag">padded to a fixed size</span>`],
     ["First bytes", `<span class="mono">${esc(v.relay.preview.slice(0,40))}…</span>`],
     ["Destination", esc(v.relay.target)]]);
-  // gateway
   if(v.gateway){
     const g = v.gateway, lastUser = [...g.messages].reverse().find(m => m.role === "user");
     kv($("#gateway"), [
@@ -333,7 +827,6 @@ function renderViews(v){
       ["Prompt", `<span style="color:#6d28d9">${esc(lastUser ? lastUser.content : "")}</span>`],
       ["Context", `${g.messages.length} message${g.messages.length===1?"":"s"} in this chat, nothing else`]]);
   }
-  // lab
   if(v.lab){
     const l = v.lab;
     $("#lab").innerHTML = `<span class="h">${esc(l.request)}</span>\n` +
@@ -343,17 +836,16 @@ function renderViews(v){
       ? `response <span class="mono">${esc(l.response_id)}</span> · request <span class="mono">${esc(l.request_id || "")}</span> · ${l.stored ? "stored by OpenAI, so it can be checked" : "store=false: OpenAI kept nothing to check"}`
       : "Dry run: nothing was sent.";
   }
-  // link test
   if(state.last && state.last.spent_credential && v.issuer_saw.length){
     $("#linktest").className = "callout good";
     $("#linktest").innerHTML = `<b>Link test.</b> The issuer signed <span class="mono">${esc(v.issuer_saw[0])}</span> and ${v.issuer_saw.length-1} others. ` +
       `The gateway was handed <span class="mono">${esc(state.last.spent_credential)}</span>. They share nothing, so even the issuer and gateway together cannot tell which subscriber asked.`;
   }
-  // vault
   $("#vault").innerHTML = v.vault.length ? `<table class="vault">${v.vault.map(r =>
     `<tr><td>${esc(r.standin)}</td><td class="arrow">→</td><td>${esc(r.original)}</td><td>${esc(r.kind)}</td></tr>`).join("")}</table>`
     : '<span class="empty">Empty.</span>';
   $("#turns").textContent = v.turns ? `· turn ${v.turns} of this chat` : "";
+  if(v.trace_count != null) setCount(v.trace_count);
 }
 
 function renderResult(r){
@@ -366,6 +858,8 @@ function renderResult(r){
     : "Nothing personal found. Add terms to “Always hide” if needed.";
   $("#without").innerHTML = `<li>your account: <b>${esc(state.account)}</b></li><li>your card: <b>${esc(state.card)}</b></li>` +
     `<li>your IP</li><li>${found.length ? found.slice(0,3).map(f => `<b>${esc(f.original)}</b>`).join(", ") + (found.length>3?" and more":"") : "your real words"}</li><li>every past chat, linked</li>`;
+  const link = $("#tracelink");
+  link.hidden = !r.trace_id; if(r.trace_id) link.href = "#/trace/" + r.trace_id;
   if(r.error){ $("#answer").innerHTML = `<div class="callout bad">${esc(r.error)}</div>`; $("#timing").innerHTML=""; return; }
   renderAnswer();
   const t = r.timing, u = r.usage || {};
@@ -387,10 +881,10 @@ function renderAnswer(){
 let pulseTimer = null;
 function pulse(on){
   const ids = ["#f-you", "#f-relay", "#f-gw", "#f-lab"]; let i = 0;
-  clearInterval(pulseTimer); document.querySelectorAll(".flow .node").forEach(n => n.classList.remove("live"));
+  clearInterval(pulseTimer); $$(".flow .node").forEach(n => n.classList.remove("live"));
   if(!on) return;
   pulseTimer = setInterval(() => {
-    document.querySelectorAll(".flow .node").forEach(n => n.classList.remove("live"));
+    $$(".flow .node").forEach(n => n.classList.remove("live"));
     const step = i % 7; const idx = step < 4 ? step : 6 - step; $(ids[idx]).classList.add("live"); i++;
   }, 260);
 }
@@ -404,24 +898,511 @@ async function ask(){
   finally{ btn.disabled = false; btn.classList.remove("busy"); pulse(false); }
 }
 
-async function init(){
-  const s = await api("/api/status");
-  state.account = s.account; state.card = s.card;
-  const p = $("#provider");
-  p.className = "pill " + (s.has_key ? "ok" : "warn");
-  p.lastElementChild.textContent = s.has_key ? `${s.provider} · key loaded` : "Dry run · add a key to demo/.env";
+// ================================================================ key setup and settings
+function setCount(n){
+  const el = $("#tracecount");
+  if(n > state.count){ el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+  state.count = n; el.textContent = n; $("#railcount").textContent = n;
+}
+const setSwitch = (el, on) => el.setAttribute("aria-checked", on ? "true" : "false");
+const switchOn = el => el.getAttribute("aria-checked") === "true";
+function needsSetup(s){ return !s.has_key && sessionStorage.getItem("lethe.dry") !== "1"; }
+function showSetup(show, {cancellable = false} = {}){
+  $("#setup").hidden = !show; document.body.classList.toggle("locked", show);
+  $("#setupcancel").hidden = !cancellable; $("#dryrun").hidden = cancellable;
+  $("#keyerr").hidden = true;
+  if(show){ setSwitch($("#storeswitch"), state.status ? state.status.store : true); setTimeout(() => $("#key").focus(), 60); }
+}
+function applyStatus(s){
+  state.status = s; state.account = s.account; state.card = s.card;
+  const kb = $("#keybtn");
+  kb.className = "pill keybtn " + (s.has_key ? "ok" : "warn");
+  $("#keylabel").innerHTML = s.has_key ? `${esc(s.provider)}<span class="kl-detail"> · <span class="mono">${esc(s.masked_key)}</span></span>` : "Dry run · add a key";
+  const vt = $("#keyvt"), openai = s.has_key && s.provider === "OpenAI";
+  vt.hidden = !openai; vt.className = "vt" + (s.store ? "" : " off"); vt.textContent = s.store ? "Verification on" : "Verification off";
   $("#detector").className = "pill ok"; $("#detector").lastElementChild.textContent = "Scrubber: " + s.detector;
   $("#labname").textContent = s.has_key ? `${s.provider}, reached through the gateway` : "not called in dry run";
-  if(s.has_key && s.provider === "OpenAI") p.lastElementChild.textContent += s.store ? " · store on, verifiable" : " · store off";
-  const names = Object.keys(s.models); state.model = names[0];
+  // settings popover
+  $("#pp-state").className = "badge " + (s.has_key ? "acc" : "amb"); $("#pp-state").textContent = s.has_key ? "Connected" : "Dry run";
+  $("#pp-provider").textContent = s.has_key ? s.provider : "None: requests are built but not sent";
+  $("#pp-key").textContent = s.masked_key || "—";
+  $("#pp-src").textContent = !s.has_key ? "—" : s.key_source === "browser" ? "pasted in this browser" : "server environment";
+  $("#pp-models").textContent = Object.keys(s.models).join(", ");
+  setSwitch($("#pp-store"), s.store); $("#pp-store").disabled = s.provider === "OpenRouter";
+  $("#pp-store-p").textContent = s.provider === "OpenRouter" ? "Available with an OpenAI key." :
+    "OpenAI keeps each request for 30 days so you can check what it received. Turn off for normal use.";
+  $("#pp-change").textContent = s.has_key ? "Change key" : "Add key"; $("#pp-forget").hidden = !s.has_key;
+  // models
+  const names = Object.keys(s.models); if(!names.includes(state.model)) state.model = names[0];
   $("#models").innerHTML = names.map(n => `<button data-m="${esc(n)}" title="${esc(s.models[n])}">${esc(n)}</button>`).join("");
-  const mark = () => document.querySelectorAll("#models button").forEach(b => b.classList.toggle("on", b.dataset.m === state.model));
-  $("#models").onclick = e => { if(e.target.dataset.m){ state.model = e.target.dataset.m; mark(); } }; mark();
+  $$("#models button").forEach(b => b.classList.toggle("on", b.dataset.m === state.model));
   renderViews(s);
 }
+async function connect(){
+  const key = $("#key").value.trim(), err = $("#keyerr"), btn = $("#connect");
+  if(!key){ err.textContent = "Paste your OpenAI API key first."; err.hidden = false; $("#key").focus(); return; }
+  err.hidden = true; btn.disabled = true; btn.classList.add("busy"); btn.lastElementChild.textContent = "Checking with OpenAI…";
+  try{
+    const s = await api("/api/key", {key, store: switchOn($("#storeswitch"))});
+    $("#key").value = ""; sessionStorage.removeItem("lethe.dry");
+    showSetup(false); applyStatus(s);
+    toast(`Connected ${s.masked_key}. Models: ${Object.keys(s.models).join(", ")}.`);
+  }catch(e){ err.textContent = e.message; err.hidden = false; $("#key").select(); }
+  finally{ btn.disabled = false; btn.classList.remove("busy"); btn.lastElementChild.textContent = "Connect"; }
+}
+function togglePopover(open){
+  const p = $("#settings"); open = open ?? p.hidden;
+  p.hidden = !open; $("#keybtn").setAttribute("aria-expanded", String(open));
+}
 
+// ================================================================ observability
+const spanData = (t, key) => (t.spans.find(s => s.key === key) || {}).data || {};
+const partyName = (s, t) => s.party === "lab" ? (s.data.provider && s.data.provider !== "Dry run" ? s.data.provider : "Lab") : PARTY[s.party].name;
+function standinTerms(t){
+  const d = spanData(t, "detect");
+  return [...(d.entities || []).map(e => e.standin), ...(d.chat_standins || [])];
+}
+
+function route(){
+  const m = (location.hash || "#/").match(/^#\/trace(?:\/([\w-]+))?/);
+  const obs = !!m, was = !$("#view-obs").hidden;
+  $("#view-ask").hidden = obs; $("#view-obs").hidden = !obs;
+  $("#nav-ask").classList.toggle("on", !obs); $("#nav-obs").classList.toggle("on", obs);
+  $("#nav-ask").setAttribute("aria-current", obs ? "false" : "page"); $("#nav-obs").setAttribute("aria-current", obs ? "page" : "false");
+  $("#tip").hidden = true;
+  if(obs !== was) window.scrollTo({top:0, behavior:"instant"});
+  if(obs) openObs(m[1]).catch(e => toast(e.message));
+}
+
+async function openObs(id){
+  const {traces} = await api("/api/traces");
+  state.traces = traces; setCount(traces.length);
+  $("#rail").hidden = !traces.length; $("#view-obs").classList.toggle("none", !traces.length);
+  if(!traces.length){ renderEmpty(); return; }
+  const want = id && traces.some(t => t.id === id) ? id : traces[0].id;
+  if(id && want !== id) toast("That trace is gone: traces live in memory and reset when the server restarts.");
+  if(want !== id) history.replaceState(null, "", "#/trace/" + want);
+  renderRail();
+  await selectTrace(want);
+}
+function renderRail(){
+  $("#traces").innerHTML = state.traces.map(t => `
+    <a class="ti" href="#/trace/${t.id}" data-id="${t.id}" role="option" aria-selected="false">
+      <div class="ti-top"><i class="sdot ${t.status}" title="${t.status}"></i><span>${clock(t.created_at)}</span>
+        ${t.kind === "replay" ? '<span class="tg">replay</span>' : ""}${t.verified === "clean" ? '<span class="tg v">verified</span>' : t.verified === "found" ? '<span class="tg x">leak</span>' : ""}
+        <span class="grow"></span><b>${fmtMs(t.total_ms)}</b></div>
+      <div class="ti-p">${esc(trunc(t.prompt, 50))}</div>
+      <div class="ti-meta"><span class="mono">${esc(t.model)}</span><span>·</span><span>${plural(t.hidden_count, "hidden", "hidden")}</span></div>
+    </a>`).join("");
+  markRail();
+}
+function markRail(){
+  $$("#traces .ti").forEach(a => { const on = a.dataset.id === state.sel; a.classList.toggle("sel", on); a.setAttribute("aria-selected", String(on)); });
+  const sel = $(`#traces .ti.sel`); if(sel) sel.scrollIntoView({block:"nearest", inline:"nearest"});
+}
+async function selectTrace(id){
+  state.sel = id; markRail();
+  let t = state.cache.get(id);
+  if(!t){ t = await api("/api/traces/" + id); state.cache.set(id, t); }
+  if(state.sel === id) renderTrace(t);
+}
+function renderEmpty(){
+  const bars = [[0, 18, "#0EA5E9"], [14, 10, "#0EA5E9"], [22, 14, "#0D9488"], [32, 12, "#4F46E5"], [40, 120, "#7C3AED"], [158, 12, "#4F46E5"], [168, 16, "#0EA5E9"]];
+  $("#obsmain").innerHTML = `<div class="emptystate">
+    <svg class="art" viewBox="0 0 220 120" aria-hidden="true">${bars.map(([x, w, c], i) =>
+      `<rect x="${10 + x}" y="${10 + i * 15}" width="${w}" height="9" rx="3" fill="${c}" opacity="${0.35 + i * 0.07}"/>`).join("")}
+      <line x1="10" y1="2" x2="10" y2="118" stroke="#e6e7ee"/></svg>
+    <h2>No traces yet</h2>
+    <p>Every question you ask is traced here: each step it took, how long it took, and the exact bytes each party saw.</p>
+    <a class="primary" href="#/">Ask a question ${I.arrow}</a></div>`;
+}
+
+const LEDE = {
+  detect: "Rules run on this machine and swap names, contacts and IDs before anything is sealed.",
+  credential: "Proof that someone paid, with nothing tying it to who. The issuer signed it blind, so it cannot recognise it now.",
+  seal: "Sealed to the gateway's public key and padded to a fixed size. Only the gateway can open it.",
+  relay: "The relay knows who is connecting but holds a blob it cannot read. It drops your IP before passing it on.",
+  open: "The gateway opens the seal and checks the credential. It sees the scrubbed question, never who sent it.",
+  lab: "The exact HTTP request the gateway sent, and what came back.",
+  seal_back: "The answer is sealed with a key only your device can derive, padded, and sent back through the relay.",
+  open_back: "Your device opens the reply. Nothing between here and the gateway could read it.",
+  restore: "The vault on your device swaps the stand-ins back. The model never saw the real names.",
+  resend: "Someone who captured the sealed bytes on the wire tries to spend them again.",
+};
+const SIZE = (label, n, hi) => `<div class="size${hi ? " hi" : ""}"><span>${label}</span><b>${fmtB(n)}</b></div>`;
+const ARROW = `<div class="arr">${I.arrow}</div>`;
+function io(inL, inHtml, outL, outHtml){
+  return `<div class="io"><div class="io-col"><div class="io-l">In <em>${inL}</em></div>${inHtml}</div>
+    <div class="io-arrow">${I.arrow}</div><div class="io-col"><div class="io-l">Out <em>${outL}</em></div>${outHtml}</div></div>`;
+}
+const box = html => `<div class="box">${html}</div>`;
+const dl = rows => `<dl class="kv" style="grid-template-columns:auto 1fr">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>`;
+function hexdump(hex, regions, total){
+  const per = ($("#obsmain").clientWidth || 900) < 600 ? 8 : 16, half = per / 2;
+  const bytes = hex.match(/../g) || [], cls = [];
+  for(const [len, c] of regions) for(let i = 0; i < len; i++) cls.push(c);
+  const rows = [];
+  for(let i = 0; i < bytes.length; i += per){
+    const chunk = bytes.slice(i, i + per);
+    let hx = "", asc = "";
+    chunk.forEach((b, j) => {
+      const v = parseInt(b, 16);
+      hx += `<span class="${cls[i + j] || "ct"}">${b}</span>` + (j === half - 1 ? "  " : " ");
+      asc += v > 32 && v < 127 ? esc(String.fromCharCode(v)) : "·";
+    });
+    hx += " ".repeat((per - chunk.length) * 3 + (chunk.length <= half ? 1 : 0));
+    rows.push(`<span class="off">${i.toString(16).padStart(4, "0")}  </span>${hx} <span class="asc">${asc}</span>`);
+  }
+  if(total > bytes.length) rows.push(`<span class="more">… ${(total - bytes.length).toLocaleString()} more bytes of ciphertext</span>`);
+  return `<div class="hex${per === 8 ? " tall" : ""}" role="img" aria-label="Hex dump of the sealed bytes">${rows.join("\n")}</div>`;
+}
+const HEXKEY = (items) => `<div class="hexkey">${items.map(([c, l]) => `<span><i style="background:${c}"></i>${l}</span>`).join("")}</div>`;
+
+const STEP = {
+  detect(d){
+    const rows = (d.entities || []).map(e => `<tr><td><mark class="o">${esc(e.original)}</mark></td><td class="muted c-kind">${esc(e.kind)}</td>
+      <td class="arr">${I.arrow}</td><td><mark class="${e.reversible ? "s" : "g"}">${esc(e.standin)}</mark></td>
+      <td>${e.reversible ? '<span class="badge acc">swapped back</span>' : `<span class="badge neu">${e.standin.startsWith("[") ? "removed" : "generalised"}</span>`}</td></tr>`).join("");
+    return io("you wrote", box(`<div class="txt">${segs(d.orig_segments, "o")}</div>`),
+              "leaves your device", box(`<div class="txt">${segs(d.scrub_segments, "s")}</div>`)) +
+      `<div class="more">${rows ? `<div class="tablewrap"><table class="t"><thead><tr><th>Original</th><th class="c-kind">Kind</th><th class="arr"></th><th>Sent as</th><th>In the answer</th></tr></thead><tbody>${rows}</tbody></table></div>`
+        : '<div class="callout">Nothing personal found. Add terms to “Always hide” on the Ask page if needed.</div>'}
+      <div class="chips" style="margin-top:10px"><span class="chip">Detector: <b>${esc(d.detector)}</b></span>
+        <span class="chip">${plural((d.entities || []).length, "detail")} found in <b>${fmtMs(d.scrub_ms)}</b></span>
+        ${(d.always_hide || []).length ? `<span class="chip">Always hide: <b>${esc(d.always_hide.join(", "))}</b></span>` : ""}</div></div>`;
+  },
+  credential(d){
+    const iss = d.issuer || {}, w = d.wallet || {unspent:0, spent:0};
+    const dots = Array.from({length: w.unspent + w.spent}, (_, i) => `<i class="cred ${i < w.spent ? "spent" : ""}"></i>`).join("");
+    return io("what the issuer saw, at subscribe", box(dl([
+        ["Account", esc(iss.account)], ["Card", esc(iss.card)],
+        ["Signed blind", `<span class="mono">${(iss.blinded || []).slice(0, 3).map(esc).join("<br>")}</span>${(iss.blinded || []).length > 3 ? `<br><span class="muted">+${iss.blinded.length - 3} more</span>` : ""}`],
+        ["Issuer key", `<span class="mono">${esc(iss.key_id)}</span> <span class="muted">one key for everyone</span>`]])),
+      "spent on this request", box(`<div class="big-mono">${esc(d.credential)}</div>
+        <div class="muted" style="font-size:12px;margin:4px 0 12px">unblinded signature, never seen by the issuer</div>
+        <div class="row" style="gap:8px"><div class="creds">${dots}</div><span class="muted" style="font-size:12px">${w.unspent} unspent · ${w.spent} spent</span></div>`)) +
+      `<div class="callout good"><b>Link test.</b> The issuer signed <span class="mono">${esc((iss.blinded || [""])[0])}</span> and ${Math.max((iss.blinded || []).length - 1, 0)} others.
+        The gateway will receive <span class="mono">${esc(d.credential)}</span>. The values share nothing, so even the issuer and gateway together cannot say which subscriber asked.</div>`;
+  },
+  seal(d, t){
+    const hex = d.ephemeral_pk + d.nonce + d.ciphertext_head;
+    return io(`plaintext · ${fmtB(d.plaintext_bytes)}`,
+        codeBlock("inner request, as built · credential shortened", jsonHtml(pretty(d.plaintext), standinTerms(t)), {copy: pretty(d.plaintext)}),
+        `sealed · ${fmtB(d.sealed_bytes)}`,
+        hexdump(hex, [[32, "k"], [12, "nn"]], d.sealed_bytes) +
+        HEXKEY([["#7dd3fc", "ephemeral X25519 key · 32 B"], ["#fcd34d", "nonce · 12 B"], ["#c4b5fd", "ciphertext + tag"]])) +
+      `<div class="more"><div class="sizes">${SIZE("plaintext", d.plaintext_bytes)}${ARROW}${SIZE("padded", d.padded_bytes)}${ARROW}${SIZE("ciphertext + tag", d.ciphertext_bytes)}${ARROW}${SIZE("on the wire", d.sealed_bytes, true)}</div>
+        <div class="chips" style="margin-top:10px"><span class="chip">${esc(d.algorithm)}</span><span class="chip">SHA-256 of plaintext <b class="mono">${esc(d.plaintext_sha256)}</b></span>
+        <span class="chip">every question of this size looks the same on the wire</span></div></div>`;
+  },
+  relay(d){
+    return io("from your device", box(dl([
+        ["Your IP", `<b>${esc(d.client_ip)}</b> <span class="muted">your real IP in production</span>`],
+        ["Sealed bytes", `${fmtB(d.bytes_in)} <span class="muted">padded, unreadable</span>`],
+        ["First bytes", `<span class="mono">${esc(d.preview.slice(0, 32))}…</span>`]])),
+      "to the gateway", box(dl([
+        ["Forwards", fmtB(d.forwards_bytes)], ["Your IP", '<span class="badge acc">stripped</span>'],
+        ["To", esc(d.target)], ["Carries back", fmtB(d.bytes_back)]]))) +
+      `<div class="more chips"><span class="lbl" style="margin:0 6px 0 0">Cannot see</span>${["the prompt", "the credential", "which lab or model", "the answer"].map(x => `<span class="chip bad">${I.x}${x}</span>`).join("")}</div>`;
+  },
+  open(d, t){
+    const seal = spanData(t, "seal"), same = seal.plaintext_sha256 && seal.plaintext_sha256 === d.plaintext_sha256;
+    const verdict = {valid: '<span class="badge acc">valid · now spent</span>', spent: '<span class="badge rej">already spent · refused</span>',
+                     invalid: '<span class="badge rej">invalid signature · refused</span>'}[d.check];
+    return io("from the relay", box(dl([["Came from", esc(d.came_from)], ["Sealed bytes", fmtB(d.bytes_in)],
+                                          ["Opened", `${fmtB(d.bytes_opened)} <span class="muted">after removing padding</span>`]])),
+        "decrypted", codeBlock(`decrypted · ${fmtB(d.bytes_opened)}`, jsonHtml(pretty(d.plaintext), standinTerms(t)), {copy: pretty(d.plaintext), max: 260})) +
+      `<div class="more">${d.error ? `<div class="callout bad" style="margin:0 0 10px"><b>Refused.</b> ${esc(d.error)}</div>` : ""}
+        <div class="chips"><span class="chip">Credential ${verdict}</span><span class="chip">tag <b class="mono">${esc(d.credential_tag)}</b></span>
+        <span class="chip">${plural(d.spent_total, "credential")} spent so far</span>
+        ${same ? `<span class="chip ok">${I.check}same bytes the device sealed · SHA-256 <b class="mono">${esc(d.plaintext_sha256)}</b></span>` : `<span class="chip">SHA-256 <b class="mono">${esc(d.plaintext_sha256)}</b></span>`}
+        <span class="chip bad">${I.x}no IP, account or card</span></div></div>`;
+  },
+  lab(d, t){
+    const terms = standinTerms(t);
+    const req = `<span class="h">${esc(d.request_line)}</span>\n` + Object.entries(d.headers).map(([k, v]) => `<span class="jk">${esc(k)}</span>: ${esc(v)}`).join("\n") +
+      "\n\n" + jsonHtml(d.body, terms);
+    const reqText = `${d.request_line}\n${Object.entries(d.headers).map(([k, v]) => `${k}: ${v}`).join("\n")}\n\n${JSON.stringify(d.body, null, 2)}`;
+    const inHtml = codeBlock(`${esc(d.request_line.split(" ").slice(0, 2).join(" "))} · ${fmtB(d.request_bytes)}`, req, {copy: reqText, max: 420});
+    let outHtml;
+    if(d.dry_run) outHtml = `<div class="callout warn" style="margin:0"><b>Dry run.</b> Nothing was sent. Connect an OpenAI key to send exactly the request on the left.</div>`;
+    else if(d.error) outHtml = `<div class="callout bad" style="margin:0"><b>The lab returned an error.</b><br>${esc(d.error)}</div>`;
+    else {
+      const rh = Object.entries(d.response_headers || {}).map(([k, v]) => `<span class="jk">${esc(k)}</span>: ${esc(v)}`).join("\n");
+      outHtml = codeBlock(`HTTP ${d.http_status} · ${fmtMs(d.latency_ms)}`, `<span class="h">HTTP/1.1 ${d.http_status} OK</span>\n${rh}\n\n<span class="c">// output_text, with stand-ins</span>\n${hl(d.answer_raw, terms, "ms")}`,
+                          {copy: d.answer_raw, max: 420}) +
+        codeBlock("full response JSON", jsonHtml(d.response, terms), {open: false, copy: JSON.stringify(d.response, null, 2), max: 420});
+    }
+    const u = d.usage || {};
+    return io(`what ${esc(d.provider === "Dry run" ? "the lab" : d.provider)} received`, inHtml, "what came back", outHtml) +
+      `<div class="more chips">${d.response_id ? `<span class="chip">response <b class="mono">${esc(d.response_id)}</b></span>` : ""}
+        ${d.request_id ? `<span class="chip">x-request-id <b class="mono">${esc(d.request_id)}</b></span>` : ""}
+        ${d.processing_ms ? `<span class="chip">openai-processing-ms <b>${Number(d.processing_ms).toLocaleString()}</b></span>` : ""}
+        ${u.prompt_tokens != null ? `<span class="chip">tokens <b>${u.prompt_tokens} in · ${u.completion_tokens} out</b></span>` : ""}
+        ${d.provider === "OpenAI" ? `<span class="chip ${d.stored ? "ok" : ""}">store <b>${d.stored}</b>${d.stored ? " · kept 30 days, verifiable" : ""}</span>` : ""}
+        ${d.answered_by ? `<span class="chip">answered by <b class="mono">${esc(d.answered_by)}</b></span>` : ""}</div>`;
+  },
+  seal_back(d){
+    const what = {answer: "the answer", refusal: "the refusal", error: "the error"}[d.carries] || "the reply";
+    return io(`${what} as JSON · ${fmtB(d.answer_bytes)}`, box(dl([["Carries", esc(what)], ["Plaintext", fmtB(d.answer_bytes)],
+                                                                     ["Padded to", fmtB(d.padded_bytes)], ["Key", "derived from this request's seal; only your device has it"]])),
+        `sealed · ${fmtB(d.sealed_bytes)}`, hexdump(d.head, [[12, "nn"]], d.sealed_bytes) + HEXKEY([["#fcd34d", "nonce · 12 B"], ["#c4b5fd", "ciphertext + tag"]])) +
+      `<div class="more"><div class="sizes">${SIZE("plaintext", d.answer_bytes)}${ARROW}${SIZE("padded", d.padded_bytes)}${ARROW}${SIZE("ciphertext + tag", d.ciphertext_bytes)}${ARROW}${SIZE("on the wire", d.sealed_bytes, true)}</div></div>`;
+  },
+  open_back(d){
+    return io("from the relay", box(dl([["Sealed bytes", fmtB(d.bytes_in)], ["Algorithm", esc(d.algorithm)]])),
+      "decrypted on your device", box(dl([["Decrypted", `${fmtB(d.bytes_decrypted)} <span class="muted">after removing padding</span>`],
+                                           ["Contains", d.carries === "answer" ? "an answer" : `an error: ${esc(d.reply_error || "")}`]])));
+  },
+  restore(d){
+    const terms = (d.vault || []).map(v => v.standin);
+    const chips = (d.restorations || []).map(r => `<span class="chip vi"><b>${esc(r.standin)}</b>${I.arrow}<b style="color:#0f766e">${esc(r.original)}</b><span class="muted">×${r.count}</span></span>`).join("");
+    const vault = (d.vault || []).map(v => `<tr><td class="mono" style="color:#6d28d9">${esc(v.standin)}</td><td class="arr">${I.arrow}</td><td><b>${esc(v.original)}</b></td><td class="muted">${esc(v.kind)}</td></tr>`).join("");
+    return `<div class="diff">
+        <div class="pane l"><div class="pane-h"><span>What the model wrote</span><em>stand-ins</em></div><div class="txt" data-sync>${hl(d.answer_raw, terms, "s")}</div></div>
+        <div class="pane r"><div class="pane-h"><span>What you read</span><em>restored on device</em></div><div class="txt" data-sync>${restoredHtml(d.answer)}</div></div></div>
+      <div class="lbl">Put back</div><div class="chips">${chips || '<span class="muted" style="font-size:12.5px">The answer did not repeat any stand-in, so nothing needed swapping back.</span>'}</div>
+      <div class="lbl">The vault <span style="text-transform:none;letter-spacing:0;font-weight:500">· never leaves this device, rotates with every new chat</span></div>
+      ${vault ? `<div class="tablewrap narrow"><table class="t"><tbody>${vault}</tbody></table></div>` : '<span class="muted">Empty.</span>'}`;
+  },
+  resend(d, t){
+    return box(dl([["Re-sent", `${fmtB(d.sealed_bytes)}, byte for byte`], ["SHA-256", `<span class="mono">${esc(d.blob_sha256)}</span>`],
+                   ["Original", t.replay_of ? `<a href="#/trace/${esc(t.replay_of)}">trace ${esc(t.replay_of)}</a>` : "the last request"]])) +
+      `<div class="callout">The relay cannot tell a replay from a new question: both are sealed blobs of the same size. The gateway can: the credential inside was already spent.</div>`;
+  },
+};
+
+const SHORT = {detect: "Detect and swap", credential: "Spend credential", seal: "Seal request", relay: "Relay",
+               open: "Open and check", lab: "Model call", seal_back: "Seal answer", open_back: "Open answer",
+               restore: "Restore names", resend: "Re-send bytes"};
+function waterfallScale(t, mode){
+  const narrow = ($("#obsmain").clientWidth || 900) < 600;
+  const total = Math.max(t.summary.total_ms || 0, ...t.spans.map(s => s.start_ms + s.dur_ms), 0.01);
+  const lab = t.spans.find(s => s.key === "lab" && s.dur_ms > 1);
+  if(mode === "zoom" && lab){
+    const a = lab.start_ms, b = a + lab.dur_ms, pre = Math.max(a, 0.001), post = Math.max(total - b, 0.001), LAB = 16, rest = 100 - LAB;
+    const wPre = Math.min(Math.max(rest * pre / (pre + post), rest * .35), rest * .65), wPost = rest - wPre;
+    const x = ms => ms <= a ? ms / pre * wPre : ms <= b ? wPre + (ms - a) / (b - a) * LAB : wPre + LAB + Math.min((ms - b) / post, 1) * wPost;
+    const ticks = [[0, "0"], [wPre / 2, fmtMs(a / 2)], [wPre, fmtMs(a)], [wPre + LAB, fmtMs(b)], [100, "+" + fmtMs(total - b)]];
+    return {x, lab, brk: [wPre, wPre + LAB], ticks: narrow ? ticks.filter((_, i) => i !== 1 && i !== 3) : ticks};
+  }
+  const raw = total / (narrow ? 3 : 5), p = 10 ** Math.floor(Math.log10(raw)), m = raw / p, step = (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p;
+  const tick = v => v === 0 ? "0" : step >= 1000 ? `${+(v / 1000).toFixed(2)} s` : `${+v.toFixed(3)} ms`;
+  const ticks = []; for(let v = 0; v <= total * 1.0001; v += step) ticks.push([v / total * 100, tick(v)]);
+  return {x: ms => ms / total * 100, ticks, lab: null};
+}
+function waterfallHtml(t){
+  const sc = waterfallScale(t, state.wf), total = Math.max(t.summary.total_ms, 0.01);
+  const grid = sc.ticks.map(([at]) => `<i class="g" style="left:${at}%"></i>`).join("") + (sc.brk ? `<i class="brk" style="left:${sc.brk[0]}%;width:${sc.brk[1] - sc.brk[0]}%"></i>` : "");
+  const rows = t.spans.map((s, i) => {
+    const l = sc.x(s.start_ms), w = Math.max(sc.x(s.start_ms + s.dur_ms) - l, 0), c = PARTY[s.party].c;
+    const label = fmtMs(s.dur_ms) + (s.status === "error" ? (s.key === "open" ? " · refused" : " · error") : "") + (sc.lab === s ? " · compressed" : "");
+    const pos = w > 18 ? `left:${l}%;width:${w}%` : l + w < 74 ? `left:calc(${l}% + max(${w}%, 4px) + 8px)` : `right:calc(${100 - l}% + 8px)`;
+    return `<div class="wf-row" data-i="${i}" style="--c:${c}" tabindex="0" role="button" aria-label="${esc(s.title)}, ${label}. Jump to step">
+      <div class="wf-label"><span class="n">${i + 1}</span><span class="t">${esc(SHORT[s.key] || s.title)}</span><span class="pn">${esc(s.party === "lab" ? partyName(s, t) : s.party)}</span></div>
+      <div class="track">${grid}<div class="bar${s.status === "error" ? " err" : ""}${sc.lab === s ? " comp" : ""}" style="left:${l}%;width:${w}%;animation-delay:${i * 40}ms"></div>
+        <span class="bl${w > 18 ? " in" : ""}${s.status === "error" ? " err" : ""}" style="${pos}">${label}</span></div></div>`;
+  }).join("");
+  const parties = [...new Set(t.spans.map(s => s.party))];
+  return `<div class="card-h"><h2>Waterfall</h2><span class="hint">Every step on one clock. Hover for detail, click to jump to it.</span><span class="grow"></span>
+      <div class="seg" id="wfmode" role="group" aria-label="Time scale"><button data-m="real" class="${state.wf === "real" ? "on" : ""}">Real time</button>
+      <button data-m="zoom" class="${state.wf === "zoom" ? "on" : ""}" ${t.spans.some(s => s.key === "lab" && s.dur_ms > 1) ? "" : "disabled"}>Zoom Lethe steps</button></div></div>
+    <div class="wf-axis"><div></div><div class="ticks">${sc.ticks.map(([at, lbl], i, a) => `<span class="tk${i === 0 ? " first" : i === a.length - 1 ? " last" : ""}" style="left:${at}%">${lbl}</span>`).join("")}</div></div>
+    ${rows}
+    <div class="wf-foot">${parties.map(p => `<span style="--c:${PARTY[p].c}"><i></i>${p === "lab" ? partyName(t.spans.find(s => s.party === "lab"), t) : PARTY[p].name}</span>`).join("")}
+      <span class="grow"></span><span>${state.wf === "zoom" ? "Model time compressed so Lethe's steps are readable" : `Total ${fmtMs(total)} · model ${fmtMs(t.summary.lab_ms)} · Lethe ${fmtMs(t.summary.lethe_ms)}`}</span></div>`;
+}
+function spanFact(s){
+  const d = s.data;
+  return {detect: () => `${plural((d.entities || []).length, "detail")} swapped`, credential: () => `credential ${d.credential}`,
+          seal: () => `${fmtB(d.plaintext_bytes)} sealed into ${fmtB(d.sealed_bytes)}`, relay: () => `IP ${d.client_ip} stripped · ${fmtB(d.bytes_in)} forwarded`,
+          open: () => d.error || `credential ${d.check} · ${fmtB(d.bytes_opened)} opened`,
+          lab: () => d.dry_run ? "dry run: not sent" : d.error ? d.error.slice(0, 120) : `HTTP ${d.http_status} · ${d.response_id || ""}`,
+          seal_back: () => `${fmtB(d.answer_bytes)} sealed into ${fmtB(d.sealed_bytes)}`, open_back: () => `${fmtB(d.bytes_decrypted)} decrypted`,
+          restore: () => `${plural((d.restorations || []).length, "stand-in")} put back`, resend: () => `${fmtB(d.sealed_bytes)} re-sent`}[s.key]?.() || "";
+}
+
+function kpiVerify(t){
+  const lab = spanData(t, "lab"), v = t.verification;
+  if(v){
+    const ok = !v.originals_found.length;
+    return `<div class="kpi wide ${ok ? "good" : "bad"}" id="kpi-verify"><div class="l">Verification</div><div class="v">${ok ? "Verified" : "Leak found"}</div>
+      <div class="s" title="Private details found in the input OpenAI stored">${v.originals_found.length} of ${v.originals_checked} found</div></div>`;
+  }
+  const can = lab.response_id && lab.stored && lab.provider === "OpenAI";
+  const why = t.kind === "replay" ? "replay: never sent" : lab.dry_run ? "dry run: nothing sent" : !lab.provider ? "never reached the lab"
+    : lab.provider !== "OpenAI" ? "needs an OpenAI key" : !lab.response_id ? "the lab returned an error" : "sent with store off";
+  return `<div class="kpi wide" id="kpi-verify"><div class="l">Verification</div><div class="v" style="color:var(--muted)">${can ? "Not yet" : "—"}</div>
+    <div class="s">${can ? `<button class="link" data-go="prove">Verify now ${I.arrow}</button>` : esc(why)}</div></div>`;
+}
+function kpisHtml(t){
+  const s = t.summary, lab = spanData(t, "lab"), pct = s.total_ms ? s.lethe_ms / s.total_ms * 100 : 0, laborig = lab.provider && lab.provider !== "Dry run";
+  const k = (l, v, sub, {cls = "", extra = "", title = ""} = {}) =>
+    `<div class="kpi ${cls}"${title ? ` title="${esc(title)}"` : ""}><div class="l">${l}</div><div class="v">${v}</div><div class="s">${sub}</div>${extra}</div>`;
+  const n = x => x == null ? "—" : Number(x).toLocaleString();
+  const wire = (a, b) => Math.max(a, b) < 10000 ? `${n(a)}<small> / ${n(b)}</small>`
+    : `${(a / 1024).toFixed(1)}<small> / ${(b / 1024).toFixed(1)} KB</small>`;
+  return `<div class="kpis">
+    ${k("Total latency", fmtMs(s.total_ms), "end to end", {title: "From the first step on your device to the restored answer."})}
+    ${k("Lethe overhead", fmtMs(s.lethe_ms), s.lab_ms ? `${pct < 1 ? pct.toFixed(2) : pct.toFixed(1)}% of total` : "no model call", {cls: "accent",
+        title: "Everything except the model call: detect, credential, sealing, relay, gateway, restore.",
+        extra: s.lab_ms ? `<div class="meter"><i style="width:${Math.min(pct, 100)}%"></i></div>` : ""})}
+    ${k("Model latency", s.lab_ms ? fmtMs(s.lab_ms) : "—", lab.processing_ms ? `processing ${fmtMs(Number(lab.processing_ms))}` : lab.dry_run ? "dry run" : laborig ? esc(lab.provider) : "not called",
+        {title: "HTTP round trip to the lab, measured at the gateway. Processing is OpenAI's own openai-processing-ms header."})}
+    ${k("Tokens", s.tokens_in != null ? `${n(s.tokens_in)}<small> / ${n(s.tokens_out)}</small>` : "—", "in / out")}
+    ${k("Details hidden", s.hidden_count, t.kind === "replay" ? "replay: none new" : "swapped on device")}
+    ${k("Bytes on the wire", wire(s.wire_bytes_out, s.wire_bytes_back), "sealed, out / back",
+        {title: `Sealed and padded: ${n(s.wire_bytes_out)} B out, ${n(s.wire_bytes_back)} B back, as the relay carried them.`})}
+    ${kpiVerify(t)}</div>`;
+}
+
+function proveHtml(t){
+  const lab = spanData(t, "lab"), v = t.verification;
+  let why = null;
+  if(t.kind === "replay") why = `A replay never reaches OpenAI: the gateway refused it.${t.replay_of ? ` Verify the <a href="#/trace/${esc(t.replay_of)}">original request</a> instead.` : ""}`;
+  else if(lab.dry_run) why = "Dry run: nothing was sent to OpenAI. Connect a key from the key menu to verify.";
+  else if(!lab.provider) why = "This request never reached the lab.";
+  else if(lab.provider !== "OpenAI") why = `Verification uses OpenAI's stored responses. This request went to ${esc(lab.provider)}.`;
+  else if(!lab.response_id) why = "OpenAI returned an error, so there is nothing stored to check.";
+  else if(!lab.stored) why = "Sent with store=false, so OpenAI kept nothing to fetch. Turn on Verification mode in the key menu and ask again.";
+  let body = "";
+  if(v){
+    const ok = !v.originals_found.length, terms = standinTerms(t);
+    body = `<div class="verdict ${ok ? "" : "bad"}"><div class="vi">${ok ? I.check : I.x}</div><div>
+        <div class="big">${v.originals_found.length} of ${plural(v.originals_checked, "private detail")} found</div>
+        <div class="sub">in the input OpenAI stored for <span class="mono">${esc(v.response_id)}</span> · checked ${clock(v.checked_at)}${ok ? " · OpenAI holds stand-ins only" : ""}</div></div></div>
+      <div class="pgrid"><div>
+        <div class="lbl" style="margin-top:0">Searched for</div>
+        <div class="chips">${(v.originals || []).map(o => v.originals_found.includes(o) ? `<span class="chip bad">${I.x}<b>${esc(o)}</b> found</span>` : `<span class="chip ok">${I.check}${esc(o)}</span>`).join("") || '<span class="muted">nothing private in this chat</span>'}</div>
+        <div class="lbl">Stand-ins OpenAI holds instead</div>
+        <div class="chips">${v.standins_found.map(s => `<span class="chip vi">${esc(s)}</span>`).join("") || '<span class="muted" style="font-size:12.5px">none</span>'}</div>
+      </div><div>
+        ${codeBlock(`GET /v1/responses/{id}/input_items · ${plural(v.stored_input.length, "item")}`, hl(v.stored_input.join("\n\n"), terms, "ms"), {copy: v.stored_input.join("\n\n"), max: 240})}
+      </div></div>`;
+  }
+  const curl = lab.response_id ? `curl -s ${"https://api.openai.com/v1/responses/" + lab.response_id}/input_items -H "Authorization: Bearer $OPENAI_API_KEY"` : "";
+  const ids = lab.response_id ? `<div class="ids">
+      <span class="idbox"><span>Response</span><code>${esc(lab.response_id)}</code>${copyBtn(lab.response_id)}</span>
+      ${lab.request_id ? `<span class="idbox"><span>Request</span><code>${esc(lab.request_id)}</code>${copyBtn(lab.request_id)}</span>` : ""}
+      ${lab.provider === "OpenAI" ? `<span class="idbox"><span>Check yourself</span><code>curl …/input_items</code>${copyBtn(curl, {label: "Copy curl"})}</span>` : ""}
+      <span class="extlinks"><a href="https://platform.openai.com/logs?api=responses" target="_blank" rel="noopener">OpenAI Logs ${I.ext}</a>
+        <a href="https://platform.openai.com/usage" target="_blank" rel="noopener">Usage ${I.ext}</a></span></div>` : "";
+  return `<div class="prove-h"><div class="ico">${I.shield}</div><div style="flex:1;min-width:240px"><h2>Prove it</h2>
+      <p>Ask OpenAI for its own stored copy of this request, then search it for every private detail typed in this chat.</p></div>
+      <div class="act"><button class="primary" id="verifybtn" ${why ? "disabled" : ""}><span class="spinner"></span><span>${v ? "Check again" : "Verify with OpenAI"}</span></button>
+      ${why ? `<div class="why">${why}</div>` : ""}</div></div>${body}${ids}`;
+}
+
+function storyHtml(t){
+  const s = t.summary, lab = spanData(t, "lab"), seal = spanData(t, "seal"), restore = spanData(t, "restore");
+  if(t.kind === "replay") return `The captured request was re-sent byte for byte. The relay passed it on; the gateway <b>refused it</b> because its credential was already spent.`;
+  const parts = [`<b>${plural(s.hidden_count, "detail")}</b> hidden on your device`];
+  if(seal.sealed_bytes) parts.push(`sealed into <b>${fmtB(seal.sealed_bytes)}</b>`);
+  if(lab.dry_run) parts.push("not sent (dry run)");
+  else if(lab.response_id) parts.push(`answered by <b>${esc(lab.answered_by || t.model)}</b> in <b>${fmtMs(s.lab_ms)}</b>`);
+  else if(lab.error) parts.push("the lab returned an error");
+  if(restore.restorations && restore.restorations.length) parts.push(`<b>${plural(restore.restorations.length, "name")}</b> put back`);
+  else if(restore.answer != null) parts.push("restored on your device");
+  return parts.join(" · ") + ".";
+}
+
+function renderTrace(t){
+  state.current = t; copies.clear();
+  const detect = spanData(t, "detect"), stepIdx = {};
+  t.spans.forEach((s, i) => stepIdx[s.key] = i + 1);
+  const prompt = detect.orig_segments ? segs(detect.orig_segments, "o") : esc(t.prompt_original || "");
+  const steps = t.spans.map((s, i) => {
+    const c = PARTY[s.party].c, body = STEP[s.key] ? STEP[s.key](s.data, t) : `<pre>${jsonHtml(s.data)}</pre>`;
+    return `<article class="step${s.status === "error" ? " err" : ""}" id="step-${s.key}" style="--c:${c}">
+      <span class="sn">${i + 1}</span>
+      <div class="step-h"><div class="tt"><h3>${esc(s.title)}</h3><p>${LEDE[s.key] || ""}</p></div>
+        <span class="party"><i></i>${esc(partyName(s, t))}</span><span class="dur" title="starts at ${fmtMs(s.start_ms)}">${fmtMs(s.dur_ms)}</span></div>
+      ${body}</article>`;
+  }).join("");
+  $("#obsmain").innerHTML = `
+    <div class="th-meta"><span class="kind">${t.kind}</span><span class="status ${t.status}"><i></i>${t.status === "ok" ? "OK" : t.status}</span>
+      <span class="mono">${esc(t.id)}</span><span class="sep">·</span><span>${new Date(t.created_at * 1000).toLocaleString([], {dateStyle:"medium", timeStyle:"medium"})}</span>
+      <span class="sep">·</span><span class="mono">${esc(t.model)}</span>
+      <span class="th-actions"><button class="small" id="export">${I.down}Export trace JSON</button></span></div>
+    <h1 class="th-prompt">${prompt}</h1>
+    <p class="story">${storyHtml(t)}</p>
+    ${t.error && t.status === "error" ? `<div class="callout bad" style="margin:-6px 0 16px"><b>Error.</b> ${esc(t.error)}</div>` : ""}
+    ${kpisHtml(t)}
+    <section class="card wf" id="wf">${waterfallHtml(t)}</section>
+    <section class="card prove" id="prove" style="margin-top:16px">${proveHtml(t)}</section>
+    <div class="section-h"><h2>The journey</h2><p>${plural(t.spans.length, "step")}, in order. Each shows what came in and what went out, with the real bytes.</p></div>
+    <div class="journey">${steps}</div>`;
+  bindTrace(t);
+}
+
+function bindTrace(t){
+  $("#export").onclick = () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(t, null, 2)], {type: "application/json"}));
+    a.download = `lethe-${t.id}.json`; document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  };
+  bindWaterfall(t); bindProve(t);
+  const panes = $$("[data-sync]"), first = panes[1] && panes[1].querySelector("mark");
+  if(first && first.offsetTop > panes[1].clientHeight - 40) panes[1].scrollTop = first.offsetTop - 60;
+  if(first) panes[0].scrollTop = panes[1].scrollTop / Math.max(panes[1].scrollHeight - panes[1].clientHeight, 1) * (panes[0].scrollHeight - panes[0].clientHeight);
+  panes.forEach((p, i) => p.addEventListener("scroll", () => {
+    const o = panes[1 - i]; if(!o || p._quiet) return;
+    o._quiet = true; o.scrollTop = p.scrollTop / Math.max(p.scrollHeight - p.clientHeight, 1) * (o.scrollHeight - o.clientHeight);
+    requestAnimationFrame(() => o._quiet = false);
+  }));
+}
+function bindWaterfall(t){
+  $("#wfmode").onclick = e => { const b = e.target.closest("button"); if(!b || b.disabled) return; state.wf = b.dataset.m; $("#wf").innerHTML = waterfallHtml(t); bindWaterfall(t); };
+  const tip = $("#tip");
+  $$("#wf .wf-row").forEach(row => {
+    const s = t.spans[+row.dataset.i];
+    const go = () => { const el = $("#step-" + s.key); if(!el) return; el.scrollIntoView({behavior:"smooth", block:"start"});
+                       el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600); };
+    row.onclick = go; row.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); go(); } };
+    row.onmousemove = e => {
+      tip.hidden = false;
+      tip.innerHTML = `<b>${+row.dataset.i + 1}. ${esc(s.title)}</b><div>${esc(partyName(s, t))} · ${fmtMs(s.dur_ms)} · ${(s.dur_ms / Math.max(t.summary.total_ms, .01) * 100).toFixed(s.dur_ms / t.summary.total_ms < .01 ? 3 : 1)}% of total</div>
+        <div class="m">starts at ${fmtMs(s.start_ms)}</div><div class="m">${esc(spanFact(s))}</div>`;
+      const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 10), y = e.clientY + 16 + tip.offsetHeight > innerHeight ? e.clientY - tip.offsetHeight - 12 : e.clientY + 16;
+      tip.style.left = x + "px"; tip.style.top = y + "px";
+    };
+    row.onmouseleave = () => tip.hidden = true;
+  });
+}
+function bindProve(t){
+  const btn = $("#verifybtn"); if(!btn) return;
+  btn.onclick = async () => {
+    btn.disabled = true; btn.classList.add("busy"); btn.lastElementChild.textContent = "Asking OpenAI…";
+    try{
+      t.verification = await api("/api/verify", {trace_id: t.id});
+      state.cache.set(t.id, t);
+      $("#prove").innerHTML = proveHtml(t); bindProve(t);
+      $("#kpi-verify").outerHTML = kpiVerify(t);
+      const item = state.traces.find(x => x.id === t.id); if(item){ item.verified = t.verification.originals_found.length ? "found" : "clean"; renderRail(); }
+    }catch(e){ toast(e.message); btn.disabled = false; btn.classList.remove("busy"); btn.lastElementChild.textContent = "Verify with OpenAI"; }
+  };
+}
+document.addEventListener("click", e => {
+  const go = e.target.closest("[data-go]"); if(!go) return;
+  $("#" + go.dataset.go).scrollIntoView({behavior:"smooth", block:"center"});
+});
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape"){ togglePopover(false); return; }
+  if($("#view-obs").hidden || !state.traces.length || e.metaKey || e.ctrlKey || e.altKey) return;
+  if(e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || !$("#setup").hidden) return;
+  const i = state.traces.findIndex(x => x.id === state.sel), j = i + (e.key === "ArrowDown" ? 1 : -1);
+  if(i < 0 || j < 0 || j >= state.traces.length) return;
+  e.preventDefault();
+  history.replaceState(null, "", "#/trace/" + state.traces[j].id);
+  selectTrace(state.traces[j].id).catch(err => toast(err.message));
+});
+
+// ================================================================ wiring
 $("#ask").onclick = ask;
 $("#prompt").addEventListener("keydown", e => { if(e.key === "Enter" && (e.metaKey || e.ctrlKey)) ask(); });
+$("#models").onclick = e => { const b = e.target.closest("[data-m]"); if(b){ state.model = b.dataset.m; $$("#models button").forEach(x => x.classList.toggle("on", x === b)); } };
 $("#subscribe").onclick = async () => {
   $("#f-iss").classList.add("live");
   try{ renderViews(await api("/api/subscribe", {})); }catch(e){ toast(e.message); }
@@ -431,7 +1412,7 @@ $("#replay").onclick = async () => {
   try{
     const res = await api("/api/replay", {}); renderViews(res);
     const o = $("#replayout"); o.style.display = "block";
-    o.innerHTML = `<b>Refused.</b> ${esc(res.result.error)}`;
+    o.innerHTML = `<b>Refused.</b> ${esc(res.result.error)}` + (res.result.trace_id ? ` <a class="tracelink" style="margin-left:6px" href="#/trace/${res.result.trace_id}">Open trace ${I.arrow}</a>` : "");
   }catch(e){ toast(e.message); }
 };
 $("#newchat").onclick = async () => {
@@ -441,15 +1422,49 @@ $("#verify").onclick = async () => {
   const out = $("#verifyout"); out.innerHTML = '<span class="tag">Asking OpenAI…</span>';
   try{
     const v = await api("/api/verify", {});
+    state.cache.delete(v.trace_id);
     const ok = v.originals_found.length === 0;
     out.innerHTML = `<div class="callout ${ok ? "good" : "bad"}" style="margin:0"><b>${ok ? "✓" : "✕"} OpenAI stored ${v.stored_input.length} message${v.stored_input.length===1?"":"s"}.
       ${v.originals_found.length} of ${v.originals_checked} private details appear in them.</b>
       ${v.standins_found.length ? `Stand-ins it holds instead: ${v.standins_found.map(s => `<span class="mono">${esc(s)}</span>`).join(", ")}.` : ""}
-      ${ok ? "" : `Found: ${v.originals_found.map(esc).join(", ")}.`}</div>
+      ${ok ? "" : `Found: ${v.originals_found.map(esc).join(", ")}.`} <a href="#/trace/${v.trace_id}">Open trace →</a></div>
       <pre style="margin-top:8px; max-height:180px">${esc(v.stored_input.join("\n\n"))}</pre>`;
   }catch(e){ out.innerHTML = `<div class="callout bad" style="margin:0">${esc(e.message)}</div>`; }
 };
 $("#rawtoggle").onclick = e => { e.preventDefault(); state.showRaw = !state.showRaw; renderAnswer(); };
+
+// setup and settings
+$("#connect").onclick = connect;
+$("#key").addEventListener("keydown", e => { if(e.key === "Enter") connect(); });
+$("#eye").onclick = () => {
+  const k = $("#key"), show = k.type === "password"; k.type = show ? "text" : "password";
+  $("#eye").setAttribute("aria-pressed", String(show)); $("#eye").setAttribute("aria-label", show ? "Hide key" : "Show key");
+  $("#eye").lastElementChild.textContent = show ? "Hide" : "Show"; k.focus();
+};
+$("#storeswitch").onclick = () => setSwitch($("#storeswitch"), !switchOn($("#storeswitch")));
+$("#dryrun").onclick = e => { e.preventDefault(); sessionStorage.setItem("lethe.dry", "1"); showSetup(false); };
+$("#setupcancel").onclick = e => { e.preventDefault(); $("#key").value = ""; showSetup(false); };
+$("#keybtn").onclick = e => { e.stopPropagation(); togglePopover(); };
+document.addEventListener("click", e => { if(!$("#settings").hidden && !e.target.closest(".keywrap")) togglePopover(false); });
+$("#pp-store").onclick = async () => {
+  const want = !switchOn($("#pp-store"));
+  try{ applyStatus(await api("/api/settings", {store: want})); toast(want ? "Verification mode on: new requests are stored by OpenAI for 30 days." : "Verification mode off: new requests are sent with store=false."); }
+  catch(e){ toast(e.message); }
+};
+$("#pp-change").onclick = () => { togglePopover(false); showSetup(true, {cancellable: true}); };
+$("#pp-forget").onclick = async () => {
+  togglePopover(false);
+  try{ const s = await api("/api/key/forget", {}); sessionStorage.removeItem("lethe.dry"); applyStatus(s); showSetup(true); toast("Key forgotten. It is no longer in the server's memory."); }
+  catch(e){ toast(e.message); }
+};
+
+async function init(){
+  const s = await api("/api/status");
+  applyStatus(s);
+  if(needsSetup(s)) showSetup(true);
+  route();
+}
+window.addEventListener("hashchange", route);
 init().catch(e => toast(e.message));
 </script>
 </body>

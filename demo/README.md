@@ -9,13 +9,23 @@ swarms: anywhere a request leaves for a model.
 
 ## Run it
 
-With Docker (recommended):
+With Docker (recommended), straight from [Docker Hub](https://hub.docker.com/r/aeropj/lethe-demo):
 
 ```bash
-cd demo
-cp .env.example .env          # put your OPENAI_API_KEY in it
-docker compose up --build     # open http://localhost:8787
+docker run --rm -p 127.0.0.1:8787:8787 aeropj/lethe-demo     # open http://localhost:8787
 ```
+
+To build it yourself instead: `docker build -t lethe-demo demo`.
+
+The page opens on a key screen. Paste an OpenAI API key and press Connect. The server checks it against
+`GET /v1/models`, picks up to three GPT models your project can use, and keeps the key in the container's
+memory only: it is never written to disk, logged, or sent anywhere except api.openai.com. The key menu in
+the header shows it masked, and can change or forget it. "Try a dry run" skips the key: every step still
+happens, and the trace shows the exact request that would be sent.
+
+Presets still work: `-e OPENAI_API_KEY` (or `OPENROUTER_API_KEY`) skips the key screen, and
+`LETHE_OPENAI_STORE=0` or `1` sets verification mode. `docker compose up --build` reads them from
+`demo/.env`, which is git-ignored and excluded from the image.
 
 Without Docker:
 
@@ -24,12 +34,29 @@ pip install cryptography
 python3 demo/server.py
 ```
 
-With no key it runs dry: every step happens, and the lab card shows the exact request that would be sent.
-`demo/.env` is git-ignored and excluded from the image.
+The port is published to localhost only. The server spends your key and has no login, so do not expose it.
+
+## Observability
+
+Every question and replay is traced. Open **Observability** in the header, or **Open trace** under an
+answer, to see one request end to end:
+
+- **KPIs**: total latency, Lethe's overhead (a few milliseconds, well under 1% of a model call), model
+  latency, tokens, details hidden, sealed bytes on the wire, verification status.
+- **Waterfall**: the nine steps on one clock, coloured by party. "Zoom Lethe steps" compresses the model
+  call so the on-device and gateway steps are readable.
+- **The journey**: each step's real input and output. The highlighted swap and entity table, the sealed
+  request as a hex dump with its sizes (plaintext, padded, ciphertext, on the wire), what the relay saw,
+  the gateway's decrypted payload and credential check, the exact HTTP request and response from OpenAI,
+  the sealed answer, and the restore as a side-by-side diff with the vault.
+- **Prove it**: fetches OpenAI's stored copy of the request and searches it for every private detail.
+  Copy the response and request IDs, or a `curl` to check yourself. See [VERIFY.md](VERIFY.md).
+- **Export trace JSON** downloads the whole trace. Traces live in memory (the last 50) and the key never
+  enters one.
 
 **Verify on OpenAI's side** that it never received your real details: [VERIFY.md](VERIFY.md). With
-`LETHE_OPENAI_STORE=1` (the compose default) OpenAI keeps each request, and the Lab card's
-"Ask OpenAI what it stored" button fetches it back and searches it for everything you typed.
+verification mode on (the default) OpenAI keeps each request for 30 days, so "Verify with OpenAI" can
+fetch it back and search it for everything you typed. Turn it off in the key menu for normal use.
 
 ## What happens when you press "Ask privately"
 

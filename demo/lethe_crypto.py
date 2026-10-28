@@ -20,14 +20,19 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
 BUCKETS = (1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144)
 RAW = dict(encoding=serialization.Encoding.Raw, format=serialization.PublicFormat.Raw)
+ALGORITHM = "X25519 + HKDF-SHA256 + ChaCha20-Poly1305"
+KEY_BYTES, NONCE_BYTES, TAG_BYTES = 32, 12, 16  # a sealed request is: ephemeral key | nonce | ciphertext + tag
 
 
 # ---------------------------------------------------------------- padding
+def bucket(n: int) -> int:
+    """The fixed size a message of n bytes is padded to."""
+    size = next((b for b in BUCKETS if b > n), None)
+    return size if size is not None else (n // BUCKETS[-1] + 1) * BUCKETS[-1]
+
+
 def pad(data: bytes) -> bytes:
-    size = next((b for b in BUCKETS if b > len(data)), None)
-    if size is None:
-        size = (len(data) // BUCKETS[-1] + 1) * BUCKETS[-1]
-    return data + b"\x80" + b"\x00" * (size - len(data) - 1)
+    return data + b"\x80" + b"\x00" * (bucket(len(data)) - len(data) - 1)
 
 
 def unpad(data: bytes) -> bytes:
@@ -99,21 +104,26 @@ def seal_request(gateway_pk: bytes, plaintext: bytes):
     enc = eph.public_key().public_bytes(**RAW)
     shared = eph.exchange(x25519.X25519PublicKey.from_public_bytes(gateway_pk))
     k_req, k_res = _keys(shared, enc, gateway_pk)
-    nonce = os.urandom(12)
+    nonce = os.urandom(NONCE_BYTES)
     return enc + nonce + ChaCha20Poly1305(k_req).encrypt(nonce, pad(plaintext), None), k_res
 
 
+def split_request(blob: bytes):
+    """A sealed request on the wire: the sender's ephemeral X25519 key, the nonce, then the ciphertext."""
+    return blob[:KEY_BYTES], blob[KEY_BYTES:KEY_BYTES + NONCE_BYTES], blob[KEY_BYTES + NONCE_BYTES:]
+
+
 def open_request(gateway_sk, gateway_pk: bytes, blob: bytes):
-    enc, nonce, ct = blob[:32], blob[32:44], blob[44:]
+    enc, nonce, ct = split_request(blob)
     shared = gateway_sk.exchange(x25519.X25519PublicKey.from_public_bytes(enc))
     k_req, k_res = _keys(shared, enc, gateway_pk)
     return unpad(ChaCha20Poly1305(k_req).decrypt(nonce, ct, None)), k_res
 
 
 def seal_response(k_res: bytes, plaintext: bytes) -> bytes:
-    nonce = os.urandom(12)
+    nonce = os.urandom(NONCE_BYTES)
     return nonce + ChaCha20Poly1305(k_res).encrypt(nonce, pad(plaintext), None)
 
 
 def open_response(k_res: bytes, blob: bytes) -> bytes:
-    return unpad(ChaCha20Poly1305(k_res).decrypt(blob[:12], blob[12:], None))
+    return unpad(ChaCha20Poly1305(k_res).decrypt(blob[:NONCE_BYTES], blob[NONCE_BYTES:], None))

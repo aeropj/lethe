@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Synthesise a quiet ambient bed for the film: slow major-key pads, a few soft bell notes, room reverb.
 
-  python3 demo/video/music.py [seconds]  -> demo/video/out/music.wav
+  python3 demo/video/music.py [seconds] [swell,swell,...] [out.wav]  -> demo/video/out/music.wav
 """
 import sys
 import wave
@@ -11,6 +11,8 @@ import numpy as np
 
 SR = 44100
 OUT = Path(__file__).resolve().parent / "out" / "music.wav"
+if len(sys.argv) > 3:
+    OUT = Path(sys.argv[3])
 
 
 def hz(midi):
@@ -63,8 +65,9 @@ def main():
         mix[1, i0:i0 + len(t)] += 0.32 * tone * pan
 
     # gentle low swell under the title card (16 s) and the end card (88.4 s)
-    for at in (16.0, 88.4):
-        i0 = int((at - 0.5) * SR)
+    swells = [float(x) for x in sys.argv[2].split(",")] if len(sys.argv) > 2 else [16.0, 88.4]
+    for at in swells:
+        i0 = max(0, int((at - 0.5) * SR))
         t = np.arange(min(int(7 * SR), n - i0)) / SR
         sw = np.sin(2 * np.pi * hz(38) * t) * np.sin(np.pi * np.clip(t / 7, 0, 1)) ** 2
         mix[:, i0:i0 + len(t)] += 0.8 * sw
